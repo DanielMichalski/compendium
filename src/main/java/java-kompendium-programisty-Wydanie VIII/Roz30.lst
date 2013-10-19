@@ -1,0 +1,269 @@
+Listing 1.
+// Prosta aplikacja na bazie biblioteki Swing.
+import javax.swing.*;
+
+class SwingDemo {
+
+  SwingDemo() {
+
+    // Tworzy nowy kontener typu JFrame.
+    JFrame jfrm = new JFrame("Prosta aplikacja na bazie biblioteki Swing");
+
+    // Okreœla pocz¹tkowe wymiary ramki.
+    jfrm.setSize(275, 100);
+
+    // Koñczy program w momencie zamkniêcia aplikacji przez u¿ytkownika.
+    jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    // Tworzy etykietê tekstow¹.
+    JLabel jlab = new JLabel("Swing to rozbudowane interfejsy GUI.");
+
+    // Dodaje etykietê do panelu treœci.
+    jfrm.add(jlab);
+
+    // Wyœwietla ramkê.
+    jfrm.setVisible(true);
+  }
+
+  public static void main(String args[]) {
+    // Tworzy ramkê w w¹tku rozdzielaj¹cym zdarzenia.
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new SwingDemo();
+      }
+    });
+  }
+}
+
+Listing 2.
+// Obs³uga zdarzenia w programie na bazie biblioteki Swing.
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+class EventDemo {
+
+  JLabel jlab;
+
+  EventDemo() {
+
+    // Tworzy nowy kontener typu JFrame.
+    JFrame jfrm = new JFrame("Przyk³ad zdarzenia");
+
+    // Wskazuje obiekt FlowLayout jako mened¿era uk³adu graficznego.
+    jfrm.setLayout(new FlowLayout());
+
+    // Okreœla pocz¹tkowe wymiary ramki.
+    jfrm.setSize(220, 90);
+
+    // Koñczy program w momencie zamkniêcia aplikacji przez u¿ytkownika.
+    jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    // Tworzy dwa przyciski.
+    JButton jbtnAlpha = new JButton("Alfa");
+    JButton jbtnBeta = new JButton("Beta");
+
+    // Dodaje obiekt nas³uchuj¹cy do przycisku Alfa.
+    jbtnAlpha.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent ae) {
+        jlab.setText("Naciœniêto przycisk Alfa.");
+      }
+    });
+
+    // Dodaje obiekt nas³uchuj¹cy do przycisku Beta.
+    jbtnBeta.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent ae) {
+        jlab.setText("Naciœniêto przycisk Beta.");
+      }
+    });
+
+    // Dodaje oba przyciski do panelu treœci.
+    jfrm.add(jbtnAlpha);
+    jfrm.add(jbtnBeta);
+
+    // Tworzy etykietê tekstow¹.
+    jlab = new JLabel("Naciœnij przycisk.");
+
+    // Dodaje etykietê do panelu treœci.
+    jfrm.add(jlab);
+
+    // Wyœwietla ramkê.
+    jfrm.setVisible(true);
+  }
+
+  public static void main(String args[]) {
+    // Tworzy ramkê w w¹tku rozdzielaj¹cym zdarzenia.
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new EventDemo();
+      }
+    });
+  }
+}
+
+Listing 3.
+// Prosty aplet na bazie biblioteki Swing.
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+/*
+Aplet mo¿na uruchomiæ za pomoc¹ nastêpuj¹cego kodu jêzyka HTML:
+<applet code="MySwingApplet" width=220 height=90>
+</applet>
+*/
+
+public class MySwingApplet extends JApplet {
+  JButton jbtnAlpha;
+  JButton jbtnBeta;
+
+  JLabel jlab;
+
+  // Inicjalizuje aplet.
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(new Runnable () {
+        public void run() {
+          makeGUI(); // Inicjalizuje graficzny interfejs u¿ytkownika.
+        }
+      });
+    } catch(Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku "+ exc);
+    }
+  }
+
+  // Aplet nie wymaga przykrywania metod start(), stop() ani
+  // destroy().
+
+  // Konfiguruje i inicjalizuje graficzny interfejs u¿ytkownika.
+  private void makeGUI() {
+
+    // Ustawia FlowLayout w roli mened¿era uk³adu graficznego tego apletu.
+    setLayout(new FlowLayout());
+
+    // Tworzy dwa przyciski.
+    jbtnAlpha = new JButton("Alpha");
+    jbtnBeta = new JButton("Beta");
+
+    // Dodaje obiekt nas³uchuj¹cy do przycisku Alfa.
+    jbtnAlpha.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent le) {
+        jlab.setText("Naciœniêto przycisk Alfa.");
+      }
+    });
+
+    // Dodaje obiekt nas³uchuj¹cy do przycisku Beta.
+    jbtnBeta.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent le) {
+        jlab.setText("Naciœniêto przycisk Beta.");
+      }
+    });
+
+    // Dodaje oba przyciski do panelu treœci.
+    add(jbtnAlpha);
+    add(jbtnBeta);
+
+    // Tworzy etykietê tekstow¹.
+    jlab = new JLabel("Naciœnij przycisk.");
+
+    // Dodaje etykietê do panelu treœci.
+    add(jlab);
+  }
+}
+
+Listing 4.
+// Rysuje odcinki na panelu.
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.*;
+
+// Ta klasa rozszerza klasê JPanel. Klasa przykrywa
+// metodê paintComponent() wersj¹ rysuj¹c¹
+// losowe odcinki na powierzchni panelu.
+class PaintPanel extends JPanel {
+  Insets ins; // Zawiera obramowanie panelu.
+
+  Random rand; // S³u¿y do generowania liczb losowych.
+
+  // Konstruuje panel.
+  PaintPanel() {
+
+    // Umieszcza obramowanie wokó³ panelu.
+    setBorder(
+      BorderFactory.createLineBorder(Color.RED, 5));
+      rand = new Random();
+    }
+
+    // Przykrywa metodê paintComponent().
+    protected void paintComponent(Graphics g) {
+      // Zawsze nale¿y najpierw wywo³aæ metodê nadklasy.
+      super.paintComponent(g);
+
+      int x, y, x2, y2;
+
+      // Uzyskuje wysokoœæ i szerokoœæ komponentu.
+      int height = getHeight();
+      int width = getWidth();
+
+      // Uzyskuje wymiary obramowania.
+      ins = getInsets();
+
+      // Rysuje dziesiêæ odcinków ³¹cz¹cych losowo wygenerowane punkty koñcowe.
+      for(int i=0; i < 10; i++) {
+        // Uzyskuje losowe wspó³rzêdne wyznaczaj¹ce
+        // punkty koñcowe poszczególnych odcinków.
+        x = rand.nextInt(width-ins.left);
+        y = rand.nextInt(height-ins.bottom);
+        x2 = rand.nextInt(width-ins.left);
+        y2 = rand.nextInt(height-ins.bottom);
+
+        // Rysuje odcinek.
+        g.drawLine(x, y, x2, y2);
+      }
+    }
+  }
+
+  // Demonstruje rysowanie bezpoœrednio na panelu.
+  class PaintDemo {
+
+    JLabel jlab;
+    PaintPanel pp;
+
+    PaintDemo() {
+
+    // Tworzy nowy kontener typu JFrame.
+    JFrame jfrm = new JFrame("Przyk³ad rysowania");
+
+    // Okreœla pocz¹tkowe wymiary ramki.
+    jfrm.setSize(200, 150);
+
+    // Koñczy program w momencie zamkniêcia aplikacji przez u¿ytkownika.
+    jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    // Tworzy panel, na którym bêd¹ rysowane odcinki.
+    pp = new PaintPanel();
+
+    // Dodaje panel do panelu treœci. Poniewa¿ zastosowano domyœlnego
+    // mened¿era uk³adu BorderLayout, wymiary panelu zostan¹
+    // automatycznie dostosowane do wymiarów œrodkowego obszaru.
+    jfrm.add(pp);
+
+    // Wyœwietla ramkê.
+    jfrm.setVisible(true);
+  }
+
+  public static void main(String args[]) {
+
+    // Tworzy ramkê w w¹tku rozdzielaj¹cym zdarzenia.
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new PaintDemo();
+      }
+    });
+  }
+}
+

@@ -1,0 +1,244 @@
+Listing 1.
+import java.io.*;
+import javax.servlet.*;
+
+public class HelloServlet extends GenericServlet {
+
+   public void service(ServletRequest request,
+      ServletResponse response)
+   throws ServletException, IOException {
+      response.setContentType("text/html");
+      PrintWriter pw = response response.getWriter();
+      pw.println("<B>Witaj!");
+      pw.close();
+   }
+}
+
+Listing 2.
+<html>
+<body>
+<center>
+<form name="Form1"
+   method="post"
+   action="http://localhost:8080/examples/servlets/servlet/PostParametersServlet">
+<table>
+<tr>
+   <td><B>Pracownik</td>
+   <td><input type=textbox name="e" size="25" value=""></td>
+</tr>
+<tr>
+   <td><B>Telefon</td>
+   <td><input type=textbox name="p" size="25" value=""></td>
+</tr>
+</table>
+<input type=submit value="Wyœlij">
+</body>
+</html>
+
+Listing 3.
+import java.io.*;
+import java.util.*;
+import javax.servlet.*;
+
+public class PostParametersServlet
+extends GenericServlet {
+
+   public void service(ServiceRequest request,
+      ServletResponse response)
+   throws ServletException, IOException {
+   
+      // Pobieranie obiektu typu PrintWriter.
+      PrintWriter pw = response.getWriter();
+
+      // Pobieranie listy parametrów.
+      Enumeration e = request.getParameterNames();
+
+      // Wyœwietlanie nazw parametrów wraz z ich wartoœciami.
+      while(e.hasMoreElements()) {
+         String pname = (String)e.nextElement();
+         pw.print(pname + " = ");
+         String pvalue = request.getParameter(pname);
+         pw.println(pvalue);
+      }
+      pw.close();
+   }
+}
+
+Listing 4.
+<http>
+<body>
+<center>
+<form name="Form1"
+  action="http://localhost:8080/examples/servlets/servlet/ColorGetServlet">
+<B>Kolor:</B>
+<select name="kolor" size="1">
+<option value="Czerwony">Czerwony</option>
+<option value="Zielony">Zielony</option>
+<option value="Niebieski">Niebieski</option>
+</select>
+<br><br>
+<input type=submit value="Wyœlij">
+</form>
+</body>
+</html>
+
+Listing 5.
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ColorGetServlet extends HttpServlet {
+
+   public void doGet(HttpServletRequest request,
+      HttpServletResponse response)
+   throws ServletException, IOException {
+  
+      String color = request.getParameter("kolor");
+      response.setContentType("text/html");
+      PrintWriter pw = response.getWriter();
+      pw.println("<B>Wybrany kolor: ");
+      pw.println(color);
+      pw.close();
+   }
+}
+
+Listing 6.
+<http>
+<body>
+<center>
+<form name="Form1"
+  method="post"
+  action="http://localhost:8080/examples/servlets/servlet/ColorPostServlet">
+<B>Kolor:</B>
+<select name="kolor" size="1">
+<option value="Czerwony">Czerwony</option>
+<option value="Zielony">Zielony</option>
+<option value="Niebieski">Niebieski</option>
+</select>
+<br><br>
+<input type=submit value="Wyœlij">
+</form>
+</body>
+</html>
+
+Listing 7.
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ColorPostServlet extends HttpServlet {
+
+   public void doPost(HttpServletRequest request,
+      HttpServletResponse response)
+   throws ServletException, IOException {
+  
+      String color = request.getParameter("kolor");
+      response.setContentType("text/html");
+      PrintWriter pw = response.getWriter();
+      pw.println("<B>Wybrany kolor: ");
+      pw.println(color);
+      pw.close();
+   }
+}
+
+Listing 8.
+<html>
+<body>
+<center>
+<form name="Form1"
+  method="post"
+  action="http://localhost:8080/examples/servlets/servlet/AddCookieServlet">
+<B>Wpisz wartoœæ znacznika MyCookie:</B>
+<input type=textbox name="data" size=25 value="">
+<input type=submit value="Wyœlij">
+</form>
+</body>
+</html>
+
+Listing 9.
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class AddCookieServlet extends HttpServlet {
+
+   public void doPost(HttpServletRequest request,
+      HttpServletResponse response)
+   throws ServletException, IOException {
+
+      // Pobieranie parametru z ¿¹dania HTTP.
+      String data = request.getParameter("data");
+      // Tworzenie znacznika kontekstu u¿ytkownika.
+      Cookie cookie = new Cookie("MyCookie", data);
+
+      // Dodawanie znacznika do ¿¹dania HTTP.
+      response.addCookie(cookie);
+
+      // Wyœwietlanie komunikatu w oknie przegl¹darki.
+      response.setContentType("text/html");
+      PrintWriter pw = response.getWriter();
+      pw.println("<B>W znaczniku MyCookie zosta³a umieszczona wartoœæ");
+      pw.println(data);
+      pw.close();
+   }
+}
+
+Listing 10.
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class GetCookiesServlet extends HttpServlet {
+
+   public void doGet(HttpServletRequest request, HttpServletResponse response)
+   throws ServletException, IOException {
+
+      // Pobieranie znaczników kontekstu u¿ytkownika z nag³ówka ¿¹dania.
+      Cookie[] cookies = request.getCookies();
+
+      // Wyœwietlanie znaczników.
+      response.setContextType("text/html");
+      PrintWriter pw = response.getWriter();
+      pw.println("<B>");
+      for(int i = 0; i < cookies.length; i++) {
+         String name = cookies[i].getName();
+         String value = cookies[i].gtValue();
+         pw.println("name = " + name + "; value = " + value);
+      }
+      pw.close();
+   }
+}
+
+Listing 11.
+import java.io.*;
+import java.util.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class DataServlet extends HttpServlet {
+
+   public void doGet(HttpServletRequest request, HttpServletResponse response)
+   throws ServletException, IOException {
+
+      // Pobieranie obiektu typu HttpSession.
+      HttpSession hs = request.getSession(true);
+
+      // Tworzenie obiektu typu PrintWriter.
+      response.setContentType("text/html");
+      PrintWriter pw = response.getWriter();
+      pw.print("<B>");
+
+      // Wyœwietlanie daty/czasu ostatniego dostêpu do serwletu.
+      Date date = (Date)hs.getAttribute("date");
+      if(date != null) {
+         pw.print("Ostatni dostêp do strony: " + date + "<br>");
+      }
+
+      // Wyœwietlanie aktualnej daty/czasu.
+      date = new Date();
+      hs.setAttribute("date", date);
+      pw.println("Aktualna data: " + date);
+   }
+}
+
+

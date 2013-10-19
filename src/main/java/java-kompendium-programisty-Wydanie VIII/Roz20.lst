@@ -1,0 +1,672 @@
+Listing 1.
+// Przyk³ad u¿ycia kana³u wejœcia-wyjœcia do odczytania pliku. Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+
+public class ExplicitChannelRead {
+  public static void main(String args[]) {
+    int count;
+    Path filepath = null;
+
+    // Uzyskujemy najpierw œcie¿kê do pliku.
+    try {
+      filepath = Paths.get("test.txt");
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+      return;
+    }
+
+    // Uzyskujemy nastêpnie kana³ do tego pliku (wewn¹trz bloku wyra¿enia try-with-resources).
+    try ( SeekableByteChannel fChan = Files.newByteChannel(filepath) )
+    {
+      // Alokacja bufora.
+      ByteBuffer mBuf = ByteBuffer.allocate(128);
+      do {
+        // Odczytuje dane i umieszcza w buforze.
+        count = fChan.read(mBuf);
+        // Przerywa w momencie osi¹gniêcia koñca pliku.
+        if(count != -1) {
+          // Cofa pozycjê w buforze, aby mo¿na by³o odczytaæ jego zawartoœæ.
+          mBuf.rewind();
+          // Odczytuje i wyœwietla dane z bufora.
+          // Na ekranie jest wyœwietlana znakowa reprezentacja kolejnych bajtów.
+          for(int i=0; i < count; i++)
+            System.out.print((char)mBuf.get());
+        }
+      } while(count != -1);
+      System.out.println();
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 2.
+// Skrócona wersja kodu otwieraj¹cego kana³. Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+
+public class ExplicitChannelRead {
+  public static void main(String args[]) {
+    int count;
+
+    // Tym razem kana³ jest otwierany dla obiektu typu Path zwróconego przez metodê Paths.get().
+    // Zmienna filepath nie jest ju¿ potrzebna.
+    try ( SeekableByteChannel fChan =
+            Files.newByteChannel(Paths.get("test.txt")) )
+    {
+      // Alokacja bufora.
+      ByteBuffer mBuf = ByteBuffer.allocate(128);
+      do {
+        // Odczyt z bufora.
+        count = fChan.read(mBuf);
+        // Przerywa w momencie osi¹gniêcia koñca pliku.
+        if(count != -1) {
+          // Cofa pozycjê w buforze, aby mo¿na by³o odczytaæ jego zawartoœæ.
+          mBuf.rewind();
+          // Odczytuje i wyœwietla dane z bufora.
+          // Na ekranie jest wyœwietlana znakowa reprezentacja kolejnych bajtów.
+          for(int i=0; i < count; i++)
+            System.out.print((char)mBuf.get());
+        }
+      } while(count != -1);
+      System.out.println();
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 3.
+// Przyk³ad odczytu odwzorowanej zawartoœci pliku. Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+
+public class MappedChannelRead {
+  public static void main(String args[]) {
+    // Uzyskujemy kana³ do pliku (wewn¹trz bloku wyra¿enia try-with-resources).
+    try ( FileChannel fChan =
+         (FileChannel) Files.newByteChannel(Paths.get("test.txt")) )
+    {
+      // Uzyskuje rozmiar pliku.
+      long fSize = fChan.size();
+      // Odwzorowuje plik na bufor.
+      MappedByteBuffer mBuf = fChan.map(FileChannel.MapMode.READ_ONLY, 0, fSize);
+      // Odczytuje i wyœwietla kolejne bajty z bufora.
+      for(int i=0; i < fSize; i++)
+        System.out.print((char)mBuf.get());
+      System.out.println();
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 4.
+// Zapisywanie danych w pliku za pomoc¹ elementów systemu NIO. Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+
+public class ExplicitChannelWrite {
+  public static void main(String args[]) {
+    // Uzyskujemy kana³ do pliku (wewn¹trz bloku wyra¿enia try-with-resources).
+    try ( FileChannel fChan = (FileChannel)
+            Files.newByteChannel(Paths.get("test.txt"),
+                                 StandardOpenOption.WRITE,
+                                 StandardOpenOption.CREATE) )
+    {
+      // Tworzy bufor.
+      ByteBuffer mBuf = ByteBuffer.allocate(26);
+
+      // Zapisuje bajty w buforze.
+      for(int i=0; i<26; i++)
+        mBuf.put((byte)('A' + i));
+
+      // Zeruje pozycjê w buforze, aby mo¿na by³o zapisaæ jego zawartoœæ.
+      mBuf.rewind();
+
+      // Zapisuje zawartoœæ bufora w pliku wyjœciowym.
+      fChan.write(mBuf);
+
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e); 
+      System.exit(1);
+    }
+  }
+}
+
+Listing 5.
+for(int h=0; h<3; h++) {
+  // Zapisuje bajty w buforze.
+  for(int i=0; i<26; i++)
+  mBuf.put((byte)('A' + i));
+
+  // Zeruje pozycjê w buforze, aby mo¿na by³o zapisaæ jego zawartoœæ.
+  mBuf.rewind();
+
+  // Zapisuje zawartoœæ bufora w pliku wyjœciowym.
+  fChan.write(mBuf);
+
+  // Zeruje pozycjê w buforze, aby mo¿na by³o ponownie zapisaæ jego zawartoœæ.
+  mBuf.rewind();
+}
+
+Listing 6.
+// Zapis w odwzorowanym pliku. Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+
+public class MappedChannelWrite {
+  public static void main(String args[]) {
+    // Uzyskujemy kana³ do pliku (wewn¹trz bloku wyra¿enia try-with-resources).
+    try ( FileChannel fChan = (FileChannel)
+          Files.newByteChannel(Paths.get("test.txt"),
+                               StandardOpenOption.WRITE,
+                               StandardOpenOption.READ,
+                               StandardOpenOption.CREATE) )
+    {
+      // Odwzorowuje nastêpnie plik na bufor.
+      MappedByteBuffer mBuf = fChan.map(FileChannel.MapMode.READ_WRITE, 0, 26);
+
+      // Zapisuje bajty w buforze.
+      for(int i=0; i<26; i++)
+        mBuf.put((byte)('A' + i));
+
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 7.
+// Kopiowanie pliku za pomoc¹ systemu NIO. Wymaga wersji JDK 7 lub nowszej.
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+
+public class NIOCopy {
+  public static void main(String args[]) {
+
+    if(args.length != 2) {
+      System.out.println("Sposób u¿ycia: Copy Ÿród³o cel");
+      return;
+    }
+
+    try {
+      Path source = Paths.get(args[0]);
+      Path target = Paths.get(args[1]);
+
+      // Kopiuje plik.
+      Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 8.
+/* Wyœwietla zawartoœæ pliku tekstowego za pomoc¹ elementów systemu NIO obs³uguj¹cych strumienie.
+   Wymaga wersji JDK 7 lub nowszej.
+
+   Podczas uruchamiania tego programu nale¿y podaæ nazwê pliku, którego zawartoœæ ma byæ wyœwietlona.
+   Aby na przyk³ad wyœwietliæ plik nazwany TEST.TXT, nale¿y u¿yæ nastêpuj¹cego polecenia.
+
+   java ShowFile TEST.TXT
+*/
+import java.io.*;
+import java.nio.file.*;
+
+class ShowFile {
+  public static void main(String args[])
+  {
+    int i;
+
+    // Uzyskuje najpierw nazwê pliku podan¹ przez u¿ytkownika.
+    if(args.length != 1) {
+      System.out.println("Sposób u¿ycia: ShowFile nazwa-pliku");
+      return;
+    }
+
+    // Otwiera plik i uzyskuje powi¹zany z nim strumieñ.
+    try ( InputStream fin = Files.newInputStream(Paths.get(args[0])) )
+    {
+      do {
+        i = fin.read();
+        if(i != -1) System.out.print((char) i);
+      } while(i != -1);
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 9.
+// Przyk³ad u¿ycia strumienia wyjœciowego z wykorzystaniem elementów systemu NIO. Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.file.*;
+
+class NIOStreamWrite {
+  public static void main(String args[])
+  {
+    // Otwiera plik i uzyskuje powi¹zany z nim strumieñ.
+    try ( OutputStream fout =
+          new BufferedOutputStream(
+                Files.newOutputStream(Paths.get("test.txt"))) )
+    {
+      // Zapisuje bajty w strumieniu.
+      for(int i=0; i < 26; i++)
+        fout.write((byte)('A' + i));
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e); 
+    }
+  }
+}
+
+Listing 10.
+// Uzyskiwanie informacji o œcie¿ce i pliku.
+// Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+
+class PathDemo {
+  public static void main(String args[]) {
+    Path filepath = Paths.get("examples\\test.txt");
+
+    System.out.println("Nazwa pliku: " + filepath.getName(1));
+    System.out.println("Œcie¿ka: " + filepath);
+    System.out.println("Œcie¿ka bezwzglêdna: " + filepath.toAbsolutePath());
+    System.out.println("Katalog macierzysty: " + filepath.getParent());
+
+    if(Files.exists(filepath))
+      System.out.println("Plik istnieje");
+    else
+      System.out.println("Plik nie istnieje");
+
+    try {
+      if(Files.isHidden(filepath))
+        System.out.println("Plik jest ukryty");
+      else
+        System.out.println("Plik nie jest ukryty");
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e); 
+    }
+
+    Files.isWritable(filepath);
+    System.out.println("Plik jest dostêpny do zapisu");
+
+    Files.isReadable(filepath);
+    System.out.println("Plik jest dostêpny do odczytu");
+
+    try {
+      BasicFileAttributes attribs =
+        Files.readAttributes(filepath, BasicFileAttributes.class);
+
+      if(attribs.isDirectory())
+        System.out.println("Plik jest katalogiem");
+      else
+        System.out.println("Plik nie jest katalogiem");
+
+      if(attribs.isRegularFile())
+        System.out.println("Plik jest zwyk³ym plikiem");
+      else
+        System.out.println("Plik nie jest zwyk³ym plikiem");
+
+      if(attribs.isSymbolicLink())
+        System.out.println("Plik jest dowi¹zaniem symbolicznym");
+      else
+        System.out.println("Plik nie jest dowi¹zaniem symbolicznym");
+
+      System.out.println("Ostatnia modyfikacja pliku: " + attribs.lastModifiedTime());
+      System.out.println("Rozmiar pliku: " + attribs.size() + " bajtów");
+    } catch(IOException e) {
+      System.out.println("B³¹d odczytu atrybutów: " + e);
+    }
+  }
+}
+
+Listing 11.
+// Wyœwietla zawartoœæ katalogu. Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+
+class DirList {
+  public static void main(String args[]) {
+    String dirname = "\\MyDir";
+
+    // Uzyskuje strumieñ katalogu i zarz¹dza otrzymanym obiektem (w bloku try).
+    try ( DirectoryStream<Path> dirstrm =
+            Files.newDirectoryStream(Paths.get(dirname)) )
+    {
+      System.out.println("Katalog " + dirname);
+
+      // Poniewa¿ DirectoryStream implementuje interfejs Iterable,
+      // do wyœwietlania zawartoœci katalogu mo¿emy u¿yæ pêtli for-each.
+      for(Path entry : dirstrm) {
+        BasicFileAttributes attribs =
+            Files.readAttributes(entry, BasicFileAttributes.class);
+
+        if(attribs.isDirectory())
+          System.out.print("<DIR> ");
+        else
+          System.out.print(" ");
+
+        System.out.println(entry.getName(1));
+      }
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch(NotDirectoryException e) {
+      System.out.println(dirname + " nie jest katalogiem.");
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e); 
+    }
+  }
+}
+
+Listing 12.
+// Wyœwietla zawartoœæ katalogu z³o¿on¹ tylko z plików dostêpnych do zapisu.
+
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+
+class DirList {
+  public static void main(String args[]) {
+    String dirname = "\\MyDir";
+
+    // Tworzy filtr zwracaj¹cy wartoœæ true tylko dla plików dostêpnych do zapisu.
+    DirectoryStream.Filter<Path> how = new DirectoryStream.Filter<Path>() {
+      public boolean accept(Path filename) throws IOException {
+        if(Files.isWritable(filename)) return true;
+          return false;
+      }
+    };
+
+    // Uzyskuje strumieñ katalogu z plikami dostêpnymi do zapisu i zarz¹dza otrzymanym obiektem (w bloku try).
+    try (DirectoryStream<Path> dirstrm =
+            Files.newDirectoryStream(Paths.get(dirname), how) )
+    {
+      System.out.println("Katalog " + dirname);
+
+      for(Path entry : dirstrm) {
+        BasicFileAttributes attribs =
+          Files.readAttributes(entry, BasicFileAttributes.class);
+
+        if(attribs.isDirectory())
+          System.out.print("<DIR> ");
+        else
+          System.out.print(" ");
+
+        System.out.println(entry.getName(1));
+      }
+    } catch(InvalidPathException e) {
+      System.out.println("B³¹d œcie¿ki: " + e);
+    } catch(NotDirectoryException e) {
+      System.out.println(dirname + " nie jest katalogiem.");
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e); 
+    }
+  }
+}
+
+Listing 13.
+// Prosty przyk³ad u¿ycia metody walkFileTree() do wyœwietlania drzewa katalogów.
+// Wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+
+// Tworzy w³asn¹ wersjê klasy SimpleFileVisitor przykrywaj¹c¹
+// metodê visitFile().
+class MyFileVisitor extends SimpleFileVisitor<Path> {
+  public FileVisitResult visitFile(Path path, BasicFileAttributes attribs)
+      throws IOException
+  {
+    System.out.println(path);
+    return FileVisitResult.CONTINUE;
+  }
+}
+
+class DirTreeList {
+  public static void main(String args[]) {
+    String dirname = "\\MyDir";
+
+    System.out.println("Drzewo katalogów rozpoczynaj¹ce siê od " + dirname + ":\n");
+
+    try {
+      Files.walkFileTree(Paths.get(dirname), new MyFileVisitor());
+    } catch (IOException exc) {
+      System.out.println("B³¹d wejœcia-wyjœcia");
+    }
+  }
+}
+
+Listing 14.
+// Przyk³ad u¿ycia kana³ów do odczytania pliku. Wersja sprzed wydania JDK 7.
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+
+public class ExplicitChannelRead {
+  public static void main(String args[]) {
+    FileInputStream fIn = null;
+    FileChannel fChan = null;
+    ByteBuffer mBuf;
+    int count;
+
+    try {
+      // Otwiera najpierw plik z danymi wejœciowymi.
+      fIn = new FileInputStream("test.txt");
+      // Uzyskuje nastêpnie kana³ do tego pliku.
+      fChan = fIn.getChannel();
+      // Alokacja bufora.
+      mBuf = ByteBuffer.allocate(128);
+      do {
+        // Odczyt z bufora.
+        count = fChan.read(mBuf);
+
+        // Przerywa w momencie osi¹gniêcia koñca pliku.
+        if(count != -1) {
+
+          // Cofa pozycjê w buforze, aby mo¿na by³o odczytaæ jego zawartoœæ.
+          mBuf.rewind();
+
+          // Odczytuje dane z bufora.
+          // Dane s¹ wyœwietlane na ekranie.
+          for(int i=0; i < count; i++)
+            System.out.print((char)mBuf.get());
+        }
+      } while(count != -1);
+
+      System.out.println();
+
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    } finally {
+      try {
+        if(fChan != null) fChan.close(); // zamyka kana³
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania kana³u.");
+      }
+      try {
+        if(fIn != null) fIn.close(); // zamyka plik
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania pliku.");
+      }
+    }
+  }
+}
+
+Listing 15.
+// Przyk³ad odczytu odwzorowanej zawartoœci pliku. Wersja sprzed wydania JDK 7.
+
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+
+public class MappedChannelRead {
+  public static void main(String args[]) {
+    FileInputStream fIn = null;
+    FileChannel fChan = null;
+    long fSize;
+    MappedByteBuffer mBuf;
+
+    try {
+      // Otwiera najpierw plik z danymi wejœciowymi.
+      fIn = new FileInputStream("test.txt");
+
+      // Uzyskuje nastêpnie kana³ do tego pliku.
+      fChan = fIn.getChannel();
+
+      // Uzyskuje rozmiar pliku.
+      fSize = fChan.size();
+
+      // Odwzorowuje plik na bufor.
+      mBuf = fChan.map(FileChannel.MapMode.READ_ONLY, 0, fSize);
+
+      // Odczytuje i wyœwietla kolejne bajty z bufora.
+      for(int i=0; i < fSize; i++)
+        System.out.print((char)mBuf.get());
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    } finally {
+      try {
+        if(fChan != null) fChan.close(); // zamyka kana³
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania kana³u.");
+      }
+      try {
+        if(fIn != null) fIn.close(); // zamyka plik
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania pliku.");
+      }
+    }
+  }
+}
+
+Listing 16.
+// Zapisywanie danych w pliku za pomoc¹ elementów systemu NIO. Wersja sprzed wydania JDK 7.
+
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+
+public class ExplicitChannelWrite {
+  public static void main(String args[]) {
+    FileOutputStream fOut = null;
+    FileChannel fChan = null;
+    ByteBuffer mBuf;
+
+    try {
+      // Otwiera najpierw plik dla danych wyjœciowych.
+      fOut = new FileOutputStream("test.txt");
+
+      // Uzyskuje nastêpnie kana³ do tego pliku.
+      fChan = fOut.getChannel();
+
+      // Tworzy bufor.
+      mBuf = ByteBuffer.allocate(26);
+
+      // Zapisuje bajty w buforze.
+      for(int i=0; i<26; i++)
+        mBuf.put((byte)('A' + i));
+
+      // Zeruje pozycjê w buforze, aby mo¿na by³o zapisaæ jego zawartoœæ.
+      mBuf.rewind();
+
+      // Zapisuje zawartoœæ bufora w pliku wyjœciowym.
+      fChan.write(mBuf);
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    } finally {
+      try {
+        if(fChan != null) fChan.close(); // zamyka kana³
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania kana³u.");
+      }
+      try {
+        if(fOut != null) fOut.close(); // zamyka plik
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania pliku.");
+      }
+    }
+  }
+}
+
+Listing 17.
+// Zapis w odwzorowanym pliku. Wersja sprzed wydania JDK 7.
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+
+public class MappedChannelWrite {
+  public static void main(String args[]) {
+    RandomAccessFile fOut = null;
+    FileChannel fChan = null;
+    ByteBuffer mBuf;
+
+    try {
+      fOut = new RandomAccessFile("test.txt", "rw");
+
+      // Uzyskuje nastêpnie kana³ do tego pliku.
+      fChan = fOut.getChannel();
+
+      // Odwzorowuje nastêpnie plik na bufor.
+      mBuf = fChan.map(FileChannel.MapMode.READ_WRITE, 0, 26);
+
+      // Zapisuje bajty w buforze.
+      for(int i=0; i<26; i++)
+        mBuf.put((byte)('A' + i));
+    } catch (IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    } finally {
+      try {
+        if(fChan != null) fChan.close(); // zamyka kana³
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania kana³u.");
+      }
+      try {
+        if(fOut != null) fOut.close(); // zamyka plik
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania pliku.");
+      }
+    }
+  }
+}
+

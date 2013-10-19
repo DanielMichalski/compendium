@@ -1,0 +1,448 @@
+Listing 1.
+class DoubleDemo {
+  public static void main(String args[]) {
+    Double d1 = new Double(3.14159);
+    Double d2 = new Double("314159E-5");
+
+    System.out.println(d1 + " = " + d2 + " -> " + d1.equals(d2));
+  }
+}
+
+Listing 2.
+// Przyk³ad u¿ycia metod isInfinite() i isNaN().
+class InfNaN {
+  public static void main(String args[]) {
+    Double d1 = new Double(1/0.);
+    Double d2 = new Double(0/0.);
+
+    System.out.println(d1 + ": " + d1.isInfinite() + ", " + d1.isNaN());
+    System.out.println(d2 + ": " + d2.isInfinite() + ", " + d2.isNaN());
+  }
+}
+
+Listing 3.
+/* Program sumuje listê wartoœci przekazanych przez
+   u¿ytkownika. Do konwersji liczby z reprezentacji 
+   tekstowej na wewnêtrzn¹ korzysta z metody parseInt().
+*/
+
+import java.io.*;
+
+class ParseDemo {
+  public static void main(String args[])
+    throws IOException
+  {
+    // utworzenie BufferedReader na podstawie System.in
+    BufferedReader br = new
+      BufferedReader(new InputStreamReader(System.in));
+    String str;
+    int i;
+    int sum=0;
+
+    System.out.println("Wpisz liczby; wpisz 0, aby wyjœæ.");
+    do {
+      str = br.readLine();
+      try {
+        i = Integer.parseInt(str);
+      } catch(NumberFormatException e) {
+        System.out.println("B³êdny format");
+        i = 0;
+      }
+      sum += i;
+      System.out.println("Suma wpisanych liczb wynosi: " + sum);
+    } while(i != 0);
+  }
+}
+
+Listing 4.
+/* Konwersja liczby ca³kowitej do postaci
+   binarnej, szesnastkowej i ósemkowej.
+*/
+
+class StringConversions {
+  public static void main(String args[]) {
+    int num = 19648;
+
+    System.out.println(num + " zapisane binarnie: " +
+                       Integer.toBinaryString(num));
+
+    System.out.println(num + " zapisane ósemkowo: " +
+                       Integer.toOctalString(num));
+
+    System.out.println(num + " zapisane szesnastkowo: " +
+                       Integer.toHexString(num));
+  }
+}
+
+Listing 5.
+// Przyk³ad u¿ycia kilku metod is...
+
+class IsDemo {
+  public static void main(String args[]) {
+    char a[] = {'a', 'b', '5', '?', 'A', ' '};
+
+    for(int i=0; i<a.length; i++) {
+      if(Character.isDigit(a[i]))
+        System.out.println(a[i] + " jest cyfr¹.");
+      if(Character.isLetter(a[i]))
+        System.out.println(a[i] + " jest liter¹.");
+      if(Character.isWhitespace(a[i]))
+        System.out.println(a[i] + " jest znakiem bia³ym.");
+      if(Character.isUpperCase(a[i]))
+        System.out.println(a[i] + " jest wielk¹ liter¹.");
+      if(Character.isLowerCase(a[i]))
+        System.out.println(a[i] + " jest ma³¹ liter¹.");
+    }
+  }
+}
+
+Listing 6.
+// Przyk³ad u¿ycia metod totalMemory(), freeMemory() i gc().
+
+class MemoryDemo {
+  public static void main(String args[]) {
+    Runtime r = Runtime.getRuntime();
+    long mem1, mem2;
+    Integer someints[] = new Integer[1000];
+
+    System.out.println("£¹czna liczba bajtów pamiêci: " +
+                       r.totalMemory());
+
+    mem1 = r.freeMemory();
+    System.out.println("Pocz¹tkowa iloœæ wolnej pamiêci: " + mem1);
+    r.gc();
+    mem1 = r.freeMemory();
+    System.out.println("Wolna pamiêæ po oczyszczeniu z nieu¿ywanych obiektów: "
+                       + mem1);
+
+    for(int i=0; i<1000; i++)
+      someints[i] = new Integer(i); // alokacja obiektów Integer
+
+    mem2 = r.freeMemory();
+    System.out.println("Wolna pamiêæ po alokacji: "
+                       + mem2);
+    System.out.println("Pamiêæ zu¿yta przez alokacjê: "
+                       + (mem1-mem2));
+    // spowodowanie nieu¿ywania obiektów Integers
+    for(int i=0; i<1000; i++) someints[i] = null;
+
+    r.gc(); // wymuszenie usuniêcia obiektów
+
+    mem2 = r.freeMemory();
+    System.out.println("Wolna pamiêæ po usuniêciu" +
+                       " porzuconych obiektów Integers: " + mem2);
+
+  }
+}
+
+Listing 7.
+// Przyk³ad u¿ycia metody exec().
+class ExecDemo {
+  public static void main(String args[]) {
+    Runtime r = Runtime.getRuntime();
+    Process p = null;
+
+    try {
+      p = r.exec("notepad");
+    } catch (Exception e) {
+      System.out.println("B³¹d wykonania programu notepad.");
+    }
+  }
+}
+
+Listing 8.
+// Oczekiwanie na zakoñczenie programu notepad.
+class ExecDemoFini {
+  public static void main(String args[]) {
+    Runtime r = Runtime.getRuntime();
+    Process p = null;
+
+    try {
+      p = r.exec("notepad");
+      p.waitFor();
+    } catch (Exception e) {
+      System.out.println("B³¹d wykonania programu notepad.");
+    }
+    System.out.println("Notepad zwróci³ kod b³êdu " + p.exitValue());
+  }
+}
+
+Listing 9.
+class PBDemo {
+  public static void main(String args[]) {
+
+    try {
+      ProcessBuilder proc =
+        new ProcessBuilder("notepad.exe", "testfile");
+      proc.start();
+    } catch (Exception e) {
+      System.out.println("B³¹d wykonania programu notepad.");
+    }
+  }
+}
+
+
+Listing 10.
+// Badanie czasu wykonania programu.
+
+class Elapsed {
+  public static void main(String args[]) {
+    long start, end;
+
+    System.out.println("Sprawdzanie czasu wykonania pêtli od 0 do 1 000 000");
+
+    // sprawdzanie czasu wykonania pêtli od 0 do 1 000 000
+    start = System.currentTimeMillis(); // pobranie czasu pocz¹tkowego
+    for(int i=0; i < 1000000; i++) ;
+    end = System.currentTimeMillis(); // pobranie czasu koñcowego
+
+    System.out.println("Czas wykonania: " + (end-start));
+  }
+}
+
+Listing 11.
+// Metoda arraycopy().
+
+class ACDemo {
+  static byte a[] = { 65, 66, 67, 68, 69, 70, 71, 72, 73, 74 };
+  static byte b[] = { 77, 77, 77, 77, 77, 77, 77, 77, 77, 77 };
+
+  public static void main(String args[]) {
+    System.out.println("a = " + new String(a));
+    System.out.println("b = " + new String(b));
+    System.arraycopy(a, 0, b, 0, a.length);
+    System.out.println("a = " + new String(a));
+    System.out.println("b = " + new String(b));
+    System.arraycopy(a, 0, a, 1, a.length - 1);
+    System.arraycopy(b, 1, b, 0, b.length - 1);
+    System.out.println("a = " + new String(a));
+    System.out.println("b = " + new String(b));
+  }
+}
+
+Listing 12.
+class ShowUserDir {
+  public static void main(String args[]) {
+    System.out.println(System.getProperty("user.dir"));
+  }
+}
+
+Listing 13.
+// Przyk³ad wykorzystania metody clone().
+
+class TestClone implements Cloneable {
+  int a;
+  double b;
+  // Ta metoda wywo³uje metodê clone() klasy Object.
+  TestClone cloneTest() {
+    try {
+      // wywo³anie clone() z Object
+      return (TestClone) super.clone();
+    } catch(CloneNotSupportedException e) {
+      System.out.println("Klonowanie niedozwolone.");
+      return this;
+    }
+  }
+}
+
+class CloneDemo {
+  public static void main(String args[]) {
+    TestClone x1 = new TestClone();
+    TestClone x2;
+
+    x1.a = 10;
+    x1.b = 20.98;
+
+    x2 = x1.cloneTest(); // klonowanie x1
+
+    System.out.println("x1: " + x1.a + " " + x1.b);
+    System.out.println("x2: " + x2.a + " " + x2.b);
+  }
+}
+
+Listing 14.
+// Przes³oniêcie metody clone().
+
+class TestClone implements Cloneable {
+  int a;
+  double b;
+
+  // metoda clone() zosta³a przes³oniêta i jest teraz metod¹ publiczn¹
+  public Object clone() {
+    try {
+      // wywo³anie clone() z Object
+      return super.clone();
+    } catch(CloneNotSupportedException e) {
+      System.out.println("Klonowanie niedozwolone.");
+      return this;
+    }
+  }
+}
+
+class CloneDemo2 {
+  public static void main(String args[]) {
+    TestClone x1 = new TestClone();
+    TestClone x2;
+    x1.a = 10;
+    x1.b = 20.98;
+
+    // tutaj clone() jest wywo³ywane bezpoœrednio
+    x2 = (TestClone) x1.clone();
+
+    System.out.println("x1: " + x1.a + " " + x1.b);
+    System.out.println("x2: " + x2.a + " " + x2.b);
+  }
+}
+
+Listing 15.
+// Wykorzystanie informacji o typie w trakcie dzia³ania programu.
+
+class X {
+  int a;
+  float b;
+}
+
+class Y extends X {
+  double c;
+}
+
+class RTTI {
+  public static void main(String args[]) {
+    X x = new X();
+    Y y = new Y();
+    Class<?> clObj;
+
+    clObj = x.getClass(); // pobranie referencji do Class
+    System.out.println("x jest obiektem typu: " +
+                       clObj.getName());
+
+    clObj = y.getClass(); // pobranie referencji do Class
+    System.out.println("y jest obiektem typu: " +
+                       clObj.getName());
+    clObj = clObj.getSuperclass();
+    System.out.println("klasa bazowa y to " +
+                       clObj.getName());
+  }
+}
+
+Listing 16.
+// Przyk³ad u¿ycia metod toDegrees() i toRadians().
+class Angles {
+  public static void main(String args[]) {
+    double theta = 120.0;
+    System.out.println(theta + " stopni to " +
+                       Math.toRadians(theta) + " radianów.");
+
+    theta = 1.312;
+    System.out.println(theta + " radianów to " +
+                       Math.toDegrees(theta) + " stopni.");
+  }
+}
+
+Listing 17.
+// Przyk³ad grup w¹tków.
+class NewThread extends Thread {
+  boolean suspendFlag;
+
+  NewThread(String threadname, ThreadGroup tgOb) {
+    super(tgOb, threadname);
+    System.out.println("Nowy w¹tek: " + this);
+    suspendFlag = false;
+    start(); // uruchomienie w¹tku
+  }
+
+  // Pocz¹tek w¹tku.
+  public void run() {
+    try {
+      for(int i = 5; i > 0; i--) {
+        System.out.println(getName() + ": " + i);
+        Thread.sleep(1000);
+        synchronized(this) {
+          while(suspendFlag) {
+            wait();
+          }
+        }
+      }
+    } catch (Exception e) {
+      System.out.println("Wyj¹tek w " + getName());
+    }
+    System.out.println(getName() + " zakoñczony.");
+  }
+
+  void mysuspend() {
+    suspendFlag = true;
+  }
+
+  synchronized void myresume() {
+    suspendFlag = false;
+    notify();
+  }
+}
+
+class ThreadGroupDemo {
+  public static void main(String args[]) {
+    ThreadGroup groupA = new ThreadGroup("Grupa A");
+    ThreadGroup groupB = new ThreadGroup("Grupa B");
+
+    NewThread ob1 = new NewThread("Jeden", groupA);
+    NewThread ob2 = new NewThread("Dwa", groupA);
+    NewThread ob3 = new NewThread("Trzy", groupB);
+    NewThread ob4 = new NewThread("Cztery", groupB);
+
+    System.out.println("\nOto wynik dzia³ania list():");
+    groupA.list();
+    groupB.list();
+    System.out.println();
+    System.out.println("Zawieszenie grupy A");
+    Thread tga[] = new Thread[groupA.activeCount()];
+    groupA.enumerate(tga); // pobranie w¹tków z grupy
+    for(int i = 0; i < tga.length; i++) {
+      ((NewThread)tga[i]).mysuspend(); // zawieszenie poszczególnych w¹tków
+    }
+
+    try {
+      Thread.sleep(4000);
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano g³ówny w¹tek.");
+    }
+
+    System.out.println("Wznowienie grupy A");
+    for(int i = 0; i < tga.length; i++) {
+      ((NewThread)tga[i]).myresume(); // wznowienie w¹tków z grupy
+    }
+
+    // oczekiwanie na zakoñczenie w¹tków
+    try {
+      System.out.println("Oczekiwanie na zakoñczenie w¹tków.");
+      ob1.join();
+      ob2.join();
+      ob3.join();
+      ob4.join();
+    } catch (Exception e) {
+      System.out.println("Wyj¹tek w g³ównym w¹tku.");
+    }
+
+    System.out.println("Zakoñczenie w¹tku g³ównego.");
+  }
+}
+
+Listing 18.
+// Przyk³ad u¿ycia klasy Package.
+class PkgTest {
+  public static void main(String args[]) {
+    Package pkgs[];
+
+    pkgs = Package.getPackages();
+
+    for(int i=0; i < pkgs.length; i++)
+      System.out.println(
+             pkgs[i].getName() + " " +
+             pkgs[i].getImplementationTitle() + " " +
+             pkgs[i].getImplementationVendor() + " " +
+             pkgs[i].getImplementationVersion()
+      );
+
+  }
+}
+
+

@@ -1,0 +1,329 @@
+Listing 1.
+// Szkielet apletu.
+import java.awt.*;
+import java.applet.*;
+/*
+<applet code="AppletSkel" width=300 height=100>
+</applet>
+*/
+
+public class AppletSkel extends Applet {
+  // Wywo³ywana jako pierwsza.
+  public void init() {
+    // Inicjalizacja
+  }
+
+  /* Wywo³ywana jako druga (zaraz po metodzie init()). Metoda start() jest wywo³ywana
+     tak¿e wtedy, gdy aplet jest ponownie uruchamiany. */
+  public void start() {
+    // rozpoczyna lub wznawia wykonywanie
+  }
+
+  // Wywo³ywana w momencie zatrzymania pracy apletu
+  public void stop() {
+    // wstrzymuje wykonywanie
+  }
+
+  /* Wywo³ywana na koñcu dzia³ania apletu. Jest to ostatnia wykonywana
+     metoda apletu. */
+  public void destroy() {
+    // wykonuje dzia³ania zmierzaj¹ce do ostatecznego zamkniêcia apletu
+  }
+
+  // Wywo³ywana w momencie, w którym okno apletu musi zostaæ przywrócone
+  public void paint(Graphics g) {
+    // ponownie wyœwietla zawartoœæ okna
+  }
+}
+
+Listing 2.
+/* Prosty aplet ustawiaj¹cy kolor pierwszego planu i kolor
+   t³a oraz wyœwietlaj¹cy w oknie ³añcuch. */
+import java.awt.*;
+import java.applet.*;
+/*
+<applet code="Sample" width=300 height=50>
+</applet>
+*/
+
+public class Sample extends Applet{
+  String msg;
+
+  // ustawia kolor pierwszego planu i kolor t³a
+  public void init() {
+    setBackground(Color.cyan);
+    setForeground(Color.red);
+    msg = "Wewn¹trz metody init( ) --";
+  }
+  // Inicjalizuje ³añcuch, który zostanie póŸniej wyœwietlony.
+  public void start() {
+    msg += " Wewn¹trz metody start( ) --";
+  }
+
+  // Wyœwietla ³añcuch msg w oknie apletu.
+  public void paint(Graphics g) {
+    msg += " Wewn¹trz metody paint( ).";
+    g.drawString(msg, 10, 30);
+  }
+}
+
+Listing 3.
+/* Prosty aplet z paskiem reklamowym.
+
+   Aplet tworzy w¹tek, który przewija komunikat reprezentowany
+   przez zmienn¹ tekstow¹ msg od prawej do lewej strony na
+   ca³ej szerokoœci okna apletu.
+*/
+import java.awt.*;
+import java.applet.*;
+/*
+<applet code="SimpleBanner" width=300 height=50>
+</applet>
+*/
+
+public class SimpleBanner extends Applet implements Runnable {
+  String msg = " Prosty, przewijany pasek reklamowy.";
+  Thread t = null;
+  int state;
+  boolean stopFlag;
+
+  // Ustawia kolory i inicjalizuje w¹tek.
+  public void init() {
+    setBackground(Color.cyan);
+    setForeground(Color.red);
+  }
+
+  // Uruchamia w¹tek
+  public void start() {
+    t = new Thread(this);
+    stopFlag = false;
+    t.start();
+  }
+
+  // Punkt startu w¹tku obs³uguj¹cego nasz pasek reklamowy.
+  public void run() {
+
+    // Wyœwietla pasek
+    for( ; ; ) {
+      try {
+        repaint();
+        Thread.sleep(250);
+        if(stopFlag)
+          break;
+      } catch(InterruptedException e) {}
+    }
+  }
+
+  // Wstrzymuje wyœwietlanie paska.
+  public void stop() {
+    stopFlag = true;
+    t = null;
+  }
+
+  // Wyœwietla pasek.
+  public void paint(Graphics g) {
+    char ch;
+
+    ch = msg.charAt(0);
+    msg = msg.substring(1, msg.length());
+    msg += ch;
+
+    g.drawString(msg, 50, 30);
+  }
+}
+
+Listing 4.
+// Przyk³ad u¿ycia paska stanu.
+import java.awt.*;
+import java.applet.*;
+/*
+<applet code="StatusWindow" width=300 height=50>
+</applet>
+*/
+
+public class StatusWindow extends Applet{
+  public void init() {
+    setBackground(Color.cyan);
+  }
+
+  // Wyœwietla ³añcuch msg w oknie apletu.
+  public void paint(Graphics g) {
+    g.drawString("Ten tekst jest wyœwietlany w oknie apletu.", 10, 20);
+    showStatus("Ten tekst jest wyœwietlany w pasku stanu.");
+  }
+}
+
+Listing 5.
+// Przyk³ad u¿ycia parametrów
+import java.awt.*;
+import java.applet.*;
+/*
+<applet code="ParamDemo" width=300 height=80>
+<param name=fontName value=Courier>
+<param name=fontSize value=14>
+<param name=leading value=2>
+<param name=accountEnabled value=true>
+</applet>
+*/
+
+public class ParamDemo extends Applet{
+  String fontName;
+  int fontSize;
+  float leading;
+  boolean active;
+
+  // Inicjalizuje tekst przeznaczony do wyœwietlenia.
+  public void start() {
+    String param;
+
+    fontName = getParameter("fontName");
+    if(fontName == null)
+      fontName = "Nie znaleziono";
+
+    param = getParameter("fontSize");
+    try {
+      if(param != null)
+        fontSize = Integer.parseInt(param);
+      else
+        fontSize = 0;
+    } catch(NumberFormatException e) {
+      fontSize = -1;
+    }
+
+    param = getParameter("leading");
+    try {
+      if(param != null)
+        leading = Float.valueOf(param).floatValue();
+      else
+        leading = 0;
+    } catch(NumberFormatException e) {
+      leading = -1;
+    }
+
+    param = getParameter("accountEnabled");
+    if(param != null)
+      active = Boolean.valueOf(param).booleanValue();
+  }
+
+  // Wyœwietla parametry.
+  public void paint(Graphics g) {
+    g.drawString("Nazwa czcionki: " + fontName, 0, 10);
+    g.drawString("Rozmiar czcionki: " + fontSize, 0, 26);
+    g.drawString("Interlinia: " + leading, 0, 42);
+    g.drawString("Aktywne konto: " + active, 0, 58);
+  }
+}
+
+Listing 6.
+// Sparametryzowany pasek reklamowy
+import java.awt.*;
+import java.applet.*;
+/*
+<applet code="ParamBanner" width=300 height=50>
+<param name=message value="Java sprawia, ¿e strony WWW mog¹ siê poruszaæ!">
+</applet>
+*/
+
+public class ParamBanner extends Applet implements Runnable {
+  String msg;
+  Thread t = null;
+  int state;
+  boolean stopFlag;
+
+  // Ustawia kolory i inicjalizuje w¹tek.
+  public void init() {
+    setBackground(Color.cyan);
+    setForeground(Color.red);
+  }
+
+  // Uruchamia w¹tek
+  public void start() {
+    msg = getParameter("message");
+    if(msg == null) msg = "Nie znaleziono komunikatu.";
+    msg = " " + msg;
+    t = new Thread(this);
+    stopFlag = false;
+    t.start();
+  }
+
+  // Punkt startu w¹tku obs³uguj¹cego nasz pasek reklamowy.
+  public void run() {
+
+    // Wyœwietla pasek reklamowy
+    for( ; ; ) {
+      try {
+        repaint();
+        Thread.sleep(250);
+        if(stopFlag)
+          break;
+      } catch(InterruptedException e) {}
+    }
+  }
+
+  // Wstrzymuje wyœwietlanie paska.
+  public void stop() {
+    stopFlag = true;
+    t = null;
+  }
+
+  // Wyœwietla pasek reklamowy.
+  public void paint(Graphics g) {
+    char ch;
+
+    ch = msg.charAt(0);
+    msg = msg.substring(1, msg.length());
+    msg += ch;
+
+    g.drawString(msg, 50, 30);
+  }
+}
+
+Listing 7.
+// Wyœwietla katalogi bazowe kodu i dokumentu.
+import java.awt.*;
+import java.applet.*;
+import java.net.*;
+/*
+<applet code="Bases" width=300 height=50>
+</applet>
+*/
+
+public class Bases extends Applet{ 
+  // Wyœwietla katalogi bazowe kodu i dokumentu.
+  public void paint(Graphics g) {
+    String msg;
+
+    URL url = getCodeBase(); // pobiera katalog bazowy kodu
+    msg = "Katalog bazowy kodu: " + url.toString();
+    g.drawString(msg, 10, 20);
+
+    url = getDocumentBase(); // pobiera katalog bazowy dokumentu
+    msg = "Katalog bazowy dokumentu: " + url.toString();
+    g.drawString(msg, 10, 40);
+  }
+}
+
+Listing 8.
+/* Przyk³ad wykorzystania kontekstu apletu (metod getCodeBase() i
+   showDocument()) do wyœwietlenia dokumentu HTML.
+*/
+
+import java.awt.*;
+import java.applet.*;
+import java.net.*;
+/*
+<applet code="ACDemo" width=300 height=50>
+</applet>
+*/
+public class ACDemo extends Applet{
+  public void start() {
+    AppletContext ac = getAppletContext();
+    URL url = getCodeBase(); // pobiera adres URL tego apletu
+
+    try {
+      ac.showDocument(new URL(url+"Test.html"));
+    } catch(MalformedURLException e) {
+      showStatus("Nie znaleziono adresu URL");
+    }
+  }
+}

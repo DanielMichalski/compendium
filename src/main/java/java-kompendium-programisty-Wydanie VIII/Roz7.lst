@@ -1,0 +1,884 @@
+Listing 1.
+// Przyk³ad przeci¹¿ania metod.
+class OverloadDemo {
+  void test() {
+    System.out.println("Brak parametrów.");
+  }
+
+  // Przeci¹¿ona metoda test z jednym parametrem typu int.
+  void test(int a) {
+    System.out.println("a: " + a);
+  }
+
+  // Przeci¹¿ona metoda test z dwoma parametrami.
+  void test(int a, int b) {
+    System.out.println("a i b: " + a + " " + b);
+  }
+
+  // Przeci¹¿ona metoda test z jednym parametrem typu double.
+  double test(double a) {
+    System.out.println("double a: " + a);
+    return a*a;
+  }
+}
+  
+class Overload {
+  public static void main(String args[]) {
+    OverloadDemo ob = new OverloadDemo();
+    double result;
+
+    // wywo³anie wszystkich wersji metody test()
+    ob.test(); 
+    ob.test(10);
+    ob.test(10, 20);
+    result = ob.test(123.25);
+    System.out.println("Wynik wykonania ob.test(123.25): " + result);
+  }
+}
+
+Listing 2.
+// Przy wyborze przeci¹¿anej metody Java stosuje równie¿ automatyczn¹ konwersjê typów.
+class OverloadDemo {
+  void test() {
+    System.out.println("Brak parametrów.");
+  }
+  // Przeci¹¿ona wersja dla dwóch parametrów.
+  void test(int a, int b) {
+    System.out.println("a i b: " + a + " " + b);
+  }
+
+  // Przeci¹¿ona wersja dla jednego parametru typu double.
+  void test(double a) {
+    System.out.println("Wewn¹trz test(double) a: " + a);
+  }
+}
+  
+class Overload {
+  public static void main(String args[]) {
+    OverloadDemo ob = new OverloadDemo();
+    int i = 88;
+
+    ob.test(); 
+    ob.test(10, 20);
+
+    ob.test(i); // spowoduje wywo³anie test(double)
+    ob.test(123.2); // spowoduje wywo³anie test(double)
+  }
+}
+
+Listing 3.
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // Konstruktor klasy Box.
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+Listing 4.
+/* Klasa Box zawiera trzy konstruktory, które
+   na ró¿ne sposoby inicjalizuj¹ wymiary pude³ka.
+*/
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // konstruktor u¿ywany, gdy podano wszystkie wymiary
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // konstruktor u¿ywany przy braku wymiarów
+  Box() {
+    width = -1;  // wartoœæ -1
+    height = -1; // wskazuje 
+    depth = -1;  // niezainicjalizowane pude³ko
+  }
+
+  // konstruktor u¿ywany do tworzenia szeœcianów
+  Box(double len) {
+    width = height = depth = len;
+  }
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+class OverloadCons {
+  public static void main(String args[]) {
+    // utworzenie pude³ek za pomoc¹ ró¿nych konstruktorów
+    Box mybox1 = new Box(10, 20, 15);
+    Box mybox2 = new Box();
+    Box mycube = new Box(7);
+
+    double vol;
+
+    // pobranie objêtoœci pierwszego pude³ka
+    vol = mybox1.volume();
+    System.out.println("Objêtoœæ mybox1 wynosi " + vol);
+
+    // pobranie objêtoœci drugiego pude³ka
+    vol = mybox2.volume();
+    System.out.println("Objêtoœæ mybox2 wynosi " + vol);
+
+    // pobranie objêtoœci szeœcianu
+    vol = mycube.volume();
+    System.out.println("Objêtoœæ mycube wynosi " + vol);
+  }
+}
+
+Listing 5.
+// Do metod mo¿na przekazywaæ obiekty.
+class Test {
+  int a, b;
+
+  Test(int i, int j) {
+    a = i;
+    b = j;
+  }
+
+  // zwraca true, jeœli obiekt o jest równy aktualnemu obiektowi
+  boolean equals(Test o) {
+    if(o.a == a && o.b == b) return true;
+    else return false;
+  }
+}
+
+class PassOb {
+  public static void main(String args[]) {
+    Test ob1 = new Test(100, 22);
+    Test ob2 = new Test(100, 22);
+    Test ob3 = new Test(-1, -1);
+    
+    System.out.println("ob1 == ob2: " + ob1.equals(ob2));
+
+    System.out.println("ob1 == ob3: " + ob1.equals(ob3));
+  }
+}
+
+Listing 6.
+// Jeden obiekt Box mo¿e pos³u¿yæ do inicjalizacji innego obiektu Box.
+
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // tworzenie klonu obiektu
+  Box(Box ob) { // przekazanie obiektu do konstruktora
+    width = ob.width;
+    height = ob.height;
+    depth = ob.depth;
+  }
+
+  // konstruktor u¿ywany, gdy podano wszystkie wymiary
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // konstruktor u¿ywany przy braku wymiarów
+  Box() {
+    width = -1;  // wartoœæ -1
+    height = -1; // wskazuje 
+    depth = -1;  // niezainicjalizowane pude³ko
+  }
+
+  // konstruktor u¿ywany do tworzenia szeœcianów
+  Box(double len) {
+    width = height = depth = len;
+  }
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+  
+class OverloadCons2 {
+  public static void main(String args[]) {
+    // tworzenie pude³ek za pomoc¹ ró¿nych konstruktorów
+    Box mybox1 = new Box(10, 20, 15);
+    Box mybox2 = new Box();
+    Box mycube = new Box(7);
+
+    Box myclone = new Box(mybox1); // tworzenie kopii obiektu mybox1
+
+    double vol;
+    // pobranie objêtoœci pierwszego pude³ka
+    vol = mybox1.volume();
+    System.out.println("Objêtoœæ mybox1 wynosi " + vol);
+
+    // pobranie objêtoœci drugiego pude³ka
+    vol = mybox2.volume();
+    System.out.println("Objêtoœæ mybox2 wynosi " + vol);
+
+    // pobranie objêtoœci szeœcianu
+    vol = mycube.volume();
+    System.out.println("Objêtoœæ mycube wynosi " + vol);
+
+    // pobranie objêtoœci klonu
+    vol = myclone.volume();
+    System.out.println("Objêtoœæ clone wynosi " + vol);
+  }
+}
+
+Listing 7.
+// Typy proste s¹ przekazywane przez wartoœæ.
+class Test {
+  void meth(int i, int j) {
+    i *= 2;
+    j /= 2;
+  }
+}
+
+class CallByValue {
+  public static void main(String args[]) {
+    Test ob = new Test();
+    int a = 15, b = 20;
+    System.out.println("a i b przed wywo³aniem: " +
+                       a + " " + b);
+
+    ob.meth(a, b); 
+
+    System.out.println("a i b po wywo³aniu: " +
+                       a + " " + b);
+  }
+}
+
+Listing 8.
+// Obiekty s¹ przekazywane przez referencjê.
+
+class Test {
+  int a, b;
+
+  Test(int i, int j) {
+    a = i;
+    b = j;
+  }
+
+  // przekazanie obiektu
+  void meth(Test o) {
+    o.a *=  2;
+    o.b /= 2;
+  }
+}
+
+class CallByRef {
+  public static void main(String args[]) {
+    Test ob = new Test(15, 20);
+    
+    System.out.println("ob.a i ob.b przed wywo³aniem: " +
+                       ob.a + " " + ob.b);
+    ob.meth(ob); 
+
+    System.out.println("ob.a i ob.b po wywo³aniu: " +
+                       ob.a + " " + ob.b);
+  }
+}
+
+Listing 9.
+// Zwrócenie obiektu.
+class Test {
+  int a;
+
+  Test(int i) {
+    a = i;
+  }
+
+  Test incrByTen() {
+    Test temp = new Test(a+10);
+    return temp;
+  }
+}
+
+class RetOb {
+  public static void main(String args[]) {
+    Test ob1 = new Test(2);
+    Test ob2;
+
+    ob2 = ob1.incrByTen();
+    System.out.println("ob1.a: " + ob1.a);
+    System.out.println("ob2.a: " + ob2.a);
+
+    ob2 = ob2.incrByTen();
+    System.out.println("ob2.a po drugim zwiêkszeniu: "
+                        + ob2.a);
+  }
+}
+
+Listing 10.
+// Prosty przyk³ad rekurencji.
+class Factorial {
+  // to jest metoda rekurencyjna
+  int fact(int n) {
+    int result;
+
+    if(n==1) return 1;
+    result = fact(n-1) * n;
+    return result;
+  }
+}
+
+class Recursion {
+  public static void main(String args[]) {
+    Factorial f = new Factorial();
+
+    System.out.println("3! wynosi " + f.fact(3));
+    System.out.println("4! wynosi " + f.fact(4));
+    System.out.println("5! wynosi " + f.fact(5));
+  }
+}
+
+Listing 11.
+// Kolejny przyk³ad obrazuj¹cy rekurencjê.
+
+class RecTest {
+  int values[];
+
+  RecTest(int i) {
+    values = new int[i];
+  }
+
+  // rekurencyjne wyœwietlanie tablicy
+  void printArray(int i) {
+    if(i==0) return;
+    else printArray(i-1);
+    System.out.println("[" + (i-1) + "] " + values[i-1]);
+  }
+}
+
+class Recursion2 {
+  public static void main(String args[]) {
+    RecTest ob = new RecTest(10);
+    int i;
+
+    for(i=0; i<10; i++) ob.values[i] = i;
+    
+    ob.printArray(10);
+  }
+}
+
+Listing 12.
+/* Program ilustruje ró¿nicê miêdzy dostêpem
+   prywatnym i publicznym.
+*/
+class Test {
+  int a; // dostêp domyœlny
+  public int b; // dostêp publiczny
+  private int c; // dostêp prywatny
+
+  // metoda korzystaj¹ca ze zmiennej c
+  void setc(int i) { // ustawienie wartoœci zmiennej c
+    c = i;
+  }
+  int getc() { // pobranie wartoœci zmiennej c
+    return c;
+  }
+}
+  
+class AccessTest {
+  public static void main(String args[]) {
+    Test ob = new Test();
+
+    // Poni¿sze instrukcje s¹ poprawne, zmienne a i b s¹ dostêpne publicznie.
+    ob.a = 10;
+    ob.b = 20;
+
+    // Wykonanie poni¿szej instrukcji spowodowa³oby zg³oszenie b³êdu.
+    // ob.c = 100; // B³¹d!
+
+    // Dostêp do zmiennej c tylko przez metodê. 
+    ob.setc(100); // OK
+   
+    System.out.println("a, b i c: " + ob.a + " " +
+                       ob.b + " " + ob.getc());
+  }
+}
+
+Listing 13.
+// Klasa definiuje stos liczb ca³kowitych mog¹cy przechowywaæ do 10 wartoœci. 
+class Stack {
+  /* Teraz zmienne stck i tos s¹ prywatne. Oznacza to, ¿e
+     nie mog¹ zostaæ zmienione celowo lub przypadkowo
+     w sposób zagra¿aj¹cy dzia³aniu stosu.
+  */
+  private int stck[] = new int[10];
+  private int tos;
+  
+  // inicjalizacja szczytu stosu
+  Stack() {
+    tos = -1;
+  }
+
+  // umieszczenie elementu na szczycie stosu
+  void push(int item) {
+    if(tos==9)
+      System.out.println("Stos jest pe³ny.");
+    else
+      stck[++tos] = item;
+  }
+
+  // zdjêcie elementu ze szczytu stosu
+  int pop() {
+    if(tos < 0) {
+      System.out.println("Stos nie zawiera ¿adnych elementów.");
+      return 0;
+    }
+    else
+      return stck[tos--];
+  }
+}
+
+Listing 14.
+class TestStack {
+  public static void main(String args[]) {
+    Stack mystack1 = new Stack();
+    Stack mystack2 = new Stack();
+
+    // umieszczenie pewnych liczb na stosach
+    for(int i=0; i<10; i++) mystack1.push(i);
+    for(int i=10; i<20; i++) mystack2.push(i);
+
+    // zdjêcie liczb ze stosów
+    System.out.println("Stos w mystack1:");
+    for(int i=0; i<10; i++)
+       System.out.println(mystack1.pop());
+
+    System.out.println("Stos w mystack2:");
+    for(int i=0; i<10; i++)
+       System.out.println(mystack2.pop());
+
+    // poni¿sze instrukcje nie s¹ poprawne
+    // mystack1.tos = -2;
+    // mystack2.stck[3] = 100; 
+  }
+}
+
+Listing 15.
+// Przyk³ad statycznych zmiennych, metod i bloków.
+class UseStatic {
+  static int a = 3;
+  static int b;
+
+  static void meth(int x) {
+    System.out.println("x = " + x);
+    System.out.println("a = " + a);
+    System.out.println("b = " + b);
+  }
+  static {
+    System.out.println("Inicjalizacja w bloku statycznym.");
+    b = a * 4;
+  }
+
+  public static void main(String args[]) {
+    meth(42);
+  }
+}
+
+Listing 16.
+class StaticDemo {
+  static int a = 42;
+  static int b = 99;
+
+  static void callme() {
+    System.out.println("a = " + a);
+  }
+}
+
+class StaticByName {
+  public static void main(String args[]) {
+    StaticDemo.callme();
+    System.out.println("b = " + StaticDemo.b);
+  }
+}
+
+Listing 17.
+final int FILE_NEW = 1;
+final int FILE_OPEN = 2;
+final int FILE_SAVE = 3;
+final int FILE_SAVEAS = 4;
+final int FILE_QUIT = 5;
+
+Listing 18.
+// Program korzystaj¹cy ze zmiennej length tablic.
+class Length {
+  public static void main(String args[]) {
+    int a1[] = new int[10];
+    int a2[] = {3, 5, 7, 1, 8, 99, 44, -10};
+    int a3[] = {4, 3, 2, 1};
+    System.out.println("rozmiar a1 wynosi " + a1.length);
+    System.out.println("rozmiar a2 wynosi " + a2.length);
+    System.out.println("rozmiar a3 wynosi " + a3.length);
+  }
+}
+
+Listing 19.
+// Ulepszona klasa Stack wykorzystuj¹ca rozmiar tablicy.
+class Stack {
+  private int stck[];
+  private int tos;
+
+  // alokacja i inicjalizacja stosu
+  Stack(int size) {
+    stck = new int[size];
+    tos = -1;
+  }
+
+  // umieszczenie elementu na szczycie stosu
+  void push(int item) {
+    if(tos==stck.length-1) // u¿ycie zmiennej sk³adowej length
+      System.out.println("Stos jest pe³ny.");
+    else
+      stck[++tos] = item;
+  }
+
+  // zdjêcie elementu ze szczytu stosu
+  int pop() {
+    if(tos < 0) {
+      System.out.println("Stos nie zawiera ¿adnych elementów.");
+      return 0;
+    }
+    else
+      return stck[tos--];
+  }
+}
+
+class TestStack2 {
+  public static void main(String args[]) {
+    Stack mystack1 = new Stack(5);
+    Stack mystack2 = new Stack(8);
+    // umieszczenie pewnych liczb na stosach
+    for(int i=0; i<5; i++) mystack1.push(i);
+    for(int i=10; i<8; i++) mystack2.push(i);
+
+    // zdjêcie liczb ze stosów
+    System.out.println("Stos w mystack1:");
+    for(int i=0; i<5; i++)
+       System.out.println(mystack1.pop());
+
+    System.out.println("Stos w mystack2:");
+    for(int i=0; i<8; i++)
+       System.out.println(mystack2.pop());
+  }
+}
+
+Listing 20.
+// Przyk³ad klasy wewnêtrznej.
+class Outer {
+  int outer_x = 100;
+
+  void test() {
+    Inner inner = new Inner();
+    inner.display();
+  }
+
+  // to jest klasa wewnêtrzna
+  class Inner {
+    void display() {
+      System.out.println("display: outer_x = " + outer_x);
+    }
+  }
+}
+
+class InnerClassDemo {
+  public static void main(String args[]) {
+    Outer outer = new Outer();
+    outer.test();
+  }
+}
+
+Listing 21.
+// Tego programu nie uda siê skompilowaæ.
+class Outer {
+  int outer_x = 100;
+
+  void test() {
+    Inner inner = new Inner();
+    inner.display();
+  }
+
+  // klasa wewnêtrzna
+  class Inner {
+    int y = 10; // y jest lokalne dla Inner
+
+    void display() {
+      System.out.println("display: outer_x = " + outer_x);
+    }
+  }
+  void showy() {
+    System.out.println(y); // b³¹d, y nie jest znane!
+  }
+}
+
+class InnerClassDemo {
+  public static void main(String args[]) {
+    Outer outer = new Outer();
+    outer.test();
+  }
+}
+
+Listing 22.
+// Definicja klasy wewnêtrznej wewn¹trz bloku pêtli for.
+class Outer {
+  int outer_x = 100;
+
+  void test() {
+    for(int i=0; i<10; i++) {
+      class Inner {
+        void display() {
+          System.out.println("display: outer_x = " + outer_x);
+        }
+      }
+      Inner inner = new Inner();
+      inner.display();
+    }
+  }
+}
+
+class InnerClassDemo {
+  public static void main(String args[]) {
+    Outer outer = new Outer();
+    outer.test();
+  }
+}
+
+Listing 23.
+// £¹czenie ci¹gów znaków.
+class StringDemo {
+  public static void main(String args[]) {
+    String strOb1 = "Pierwszy tekst";
+    String strOb2 = "Drugi tekst";
+    String strOb3 = strOb1 + " i " + strOb2;
+
+    System.out.println(strOb1);
+    System.out.println(strOb2);
+    System.out.println(strOb3);
+  }
+}
+
+Listing 24.
+// Przyk³ad u¿ycia kilku metod klasy String.
+class StringDemo2 {
+  public static void main(String args[]) {
+    String strOb1 = "Pierwszy tekst";
+    String strOb2 = "Drugi tekst";
+    String strOb3 = strOb1;
+
+    System.out.println("D³ugoœæ strOb1: " +
+                       strOb1.length());
+
+    System.out.println("Znak o indeksie 3 z strOb1: " +
+                       strOb1.charAt(3));
+
+    if(strOb1.equals(strOb2))
+      System.out.println("strOb1 == strOb2");
+    else
+      System.out.println("strOb1 != strOb2");
+
+    if(strOb1.equals(strOb3))
+      System.out.println("strOb1 == strOb3");
+    else
+      System.out.println("strOb1 != strOb3");
+  }
+}
+
+Listing 25.
+// Tablica obiektów typu String.
+class StringDemo3 {
+  public static void main(String args[]) {
+    String str[] = { "jeden", "dwa", "trzy" };
+
+    for(int i=0; i<str.length; i++)
+      System.out.println("str[" + i + "]: " +
+                          str[i]);
+  }
+}
+
+Listing 26.
+// Wyœwietla wszystkie argumenty wiersza poleceñ.
+class CommandLine {
+  public static void main(String args[]) {
+    for(int i=0; i<args.length; i++)
+      System.out.println("args[" + i + "]: " +
+                          args[i]);
+  }
+}
+
+Listing 27.
+// U¿ycie tablicy do przekazywania zmiennej liczby argumentów
+// do metody. Jest to rozwi¹zanie stosowane przed wprowadzeniem
+// metod o zmiennej liczbie argumentów.
+class PassArray {
+  static void vaTest(int v[]) {
+    System.out.print("Liczba argumentów: " + v.length +
+                       " Zawartoœæ: ");
+
+    for(int x : v)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+
+  public static void main(String args[])
+  {
+    // Zauwa¿ sposób tworzenia tablicy wymagany do
+    // przechowywania argumentów.
+    int n1[] = { 10 };
+    int n2[] = { 1, 2, 3 };
+    int n3[] = { };
+
+    vaTest(n1); // 1 argument
+    vaTest(n2); // 3 argumenty
+    vaTest(n3); // brak argumentów
+  }
+}
+
+Listing 28.
+// Metoda o zmiennej liczbie argumentów.
+class VarArgs {
+
+  // Metoda vaTest() jest typu varargs.
+  static void vaTest(int ... v) {
+    System.out.print("Liczba argumentów: " + v.length +
+                       " Zawartoœæ: ");
+
+    for(int x : v)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+  public static void main(String args[])
+  {
+
+    // Zauwa¿, ¿e teraz metoda vaTest() jest
+    // po prostu wywo³ywana ze zmienn¹ liczb¹ argumentów.
+    vaTest(10);      // 1 argument
+    vaTest(1, 2, 3); // 3 argumenty
+    vaTest();        // brak argumentów
+  }
+}
+
+Listing 29.
+// Metoda typu varargs z tradycyjnymi parametrami.
+class VarArgs2 {
+
+  // Tutaj msg to tradycyjny parametr a v to 
+  // parametr typu varargs.
+  static void vaTest(String msg, int ... v) {
+    System.out.print(msg + v.length +
+                       " Zawartoœæ: ");
+
+    for(int x : v)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+
+  public static void main(String args[])
+  {
+    vaTest("Jeden parametr typu vararg: ", 10);
+    vaTest("Trzy parametry typu vararg: ", 1, 2, 3);
+    vaTest("Brak parametrów typu vararg: ");
+  }
+}
+
+Listing 30.
+// Metody typu vararg i przeci¹¿anie.
+class VarArgs3 {
+
+  static void vaTest(int ... v) {
+    System.out.print("vaTest(int ...): " +
+                     "Liczba argumentów: " + v.length +
+                     " Zawartoœæ: ");
+
+    for(int x : v)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+  static void vaTest(boolean ... v) {
+    System.out.print("vaTest(boolean ...) " +
+                     "Liczba argumentów: " + v.length +
+                     " Zawartoœæ: ");
+
+    for(boolean x : v)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+
+  static void vaTest(String msg, int ... v) {
+    System.out.print("vaTest(String, int ...): " +
+                     msg + v.length +
+                     " Zawartoœæ: ");
+
+    for(int x : v)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+
+  public static void main(String args[])
+  {
+    vaTest(1, 2, 3);
+    vaTest("Testowanie: ", 10, 20);
+    vaTest(true, false, false);
+  }
+}
+
+Listing 31.
+// Zmienna liczba argumentów, przeci¹¿anie i niejednoznacznoœæ.
+//
+// Program zawiera b³¹d, wiêc nie zostanie skompilowany!
+class VarArgs4 {
+
+  static void vaTest(int ... v) {
+    System.out.print("vaTest(Integer ...): " +
+                     "Liczba argumentów: " + v.length +
+                     " Zawartoœæ: ");
+
+    for(int x : v)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+
+  static void vaTest(boolean ... v) {
+    System.out.print("vaTest(boolean ...) " +
+                     "Liczba argumentów: " + v.length +
+                     " Zawartoœæ: ");
+
+    for(boolean x : v)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+
+
+  public static void main(String args[])
+  {
+    vaTest(1, 2, 3);  // OK
+    vaTest(true, false, false); // OK
+
+    vaTest(); // B³¹d: niejednoznacznoœæ!
+  }
+}
+
+

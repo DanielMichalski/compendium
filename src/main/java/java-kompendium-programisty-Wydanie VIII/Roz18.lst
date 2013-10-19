@@ -1,0 +1,815 @@
+Listing 1.
+// Demonstruje u¿ycie klasy StringTokenizer.
+import java.util.StringTokenizer;
+
+class STDemo {
+  static String in = "tytu³=Java. Kompendium programisty;" +
+    "autor=Schildt;" +
+    "wydawca=Helion;" +
+    "copyright=2011";
+  public static void main(String args[]) {
+    StringTokenizer st = new StringTokenizer(in, "=;");
+
+    while(st.hasMoreTokens()) {
+      String key = st.nextToken();
+      String val = st.nextToken();
+      System.out.println(key + "\t" + val);
+    }
+  }
+}
+
+Listing 2.
+// Demonstruje u¿ycie klasy BitSet.
+import java.util.BitSet;
+
+class BitSetDemo {
+  public static void main(String args[]) {
+    BitSet bits1 = new BitSet(16);
+    BitSet bits2 = new BitSet(16);
+
+    // ustawia kilka bitów
+    for(int i=0; i<16; i++) {
+      if((i%2) == 0) bits1.set(i);
+      if((i%5) != 0) bits2.set(i);
+    }
+
+    System.out.println("Pocz¹tkowy wzorzec w obiekcie bits1: ");
+    System.out.println(bits1);
+    System.out.println("\nPocz¹tkowy wzorzec w obiekcie bits2: ");
+    System.out.println(bits2);
+
+    // KONIUNKCJA bitów
+    bits2.and(bits1);
+    System.out.println("\nbits2 I bits1: ");
+    System.out.println(bits2);
+
+    // ALTERNATYWA bitów
+    bits2.or(bits1);
+    System.out.println("\nbits2 LUB bits1: ");
+    System.out.println(bits2);
+
+    // RÓ¯NICA SYMETRYCZNA bitów
+    bits2.xor(bits1);
+    System.out.println("\nbits2 LUB WYKLUCZAJ¥CE bits1: ");
+    System.out.println(bits2);
+  }
+}
+
+Listing 3.
+// Wyœwietla datê i godzinê z wykorzystaniem samych metod klasy Date.
+import java.util.Date;
+
+class DateDemo {
+  public static void main(String args[]) {
+    // tworzy obiekt klasy Date
+    Date date = new Date();
+    
+    // wyœwietla datê i godzinê za pomoc¹ metody toString()
+    System.out.println(date);
+
+    // wyœwietla wyra¿ony w milisekundach czas, jaki up³yn¹³ od pó³nocy 1 stycznia 1970 roku (GMT)
+    long msec = date.getTime();
+    System.out.println("Milisekundy od 1 stycznia 1970 roku (GMT) = " + msec);
+  }
+}
+
+Listing 4.
+// Demonstruje u¿ycie klasy Calendar.
+import java.util.Calendar;
+
+class CalendarDemo {
+  public static void main(String args[]) {
+    String months[] = {
+             "Sty", "Lut", "Mar", "Kwi", 
+             "Maj", "Cze", "Lip", "Sie",
+             "Wrz", "PaŸ", "Lis", "Gru"};
+
+    // Tworzy obiekt klasy Calendar zainicjalizowany
+    // bie¿¹c¹ dat¹ i godzin¹ z domyœlnymi ustawieniami
+    // regionalnymi i domyœln¹ stref¹ czasow¹.
+    Calendar calendar = Calendar.getInstance();
+
+    // Wyœwietla informacje o bie¿¹cej dacie i godzinie.
+    System.out.print("Data: ");
+    System.out.print(calendar.get(Calendar.DATE));
+    System.out.print(". " + months[calendar.get(Calendar.MONTH)] + " ");
+    System.out.println(calendar.get(Calendar.YEAR));
+
+    System.out.print("Godzina: ");
+    System.out.print(calendar.get(Calendar.HOUR) + ":");
+    System.out.print(calendar.get(Calendar.MINUTE) + ":");
+    System.out.println(calendar.get(Calendar.SECOND));
+
+    // Ustawia i wyœwietla informacje o dacie i godzinie.
+    calendar.set(Calendar.HOUR, 10);
+    calendar.set(Calendar.MINUTE, 29);
+    calendar.set(Calendar.SECOND, 22);
+
+    System.out.print("Zaktualizowana godzina: ");
+    System.out.print(calendar.get(Calendar.HOUR) + ":");
+    System.out.print(calendar.get(Calendar.MINUTE) + ":");
+    System.out.println(calendar.get(Calendar.SECOND));
+  }
+}
+
+Listing 5.
+// Demonstruje u¿ycie klasy GregorianCalendar.
+import java.util.*;
+
+class GregorianCalendarDemo {
+  public static void main(String args[]) {
+    String months[] = {
+             "Sty", "Lut", "Mar", "Kwi", 
+             "Maj", "Cze", "Lip", "Sie",
+             "Wrz", "PaŸ", "Lis", "Gru"};
+    int year;
+
+    // Tworzy obiekt klasy GregorianCalendar zainicjalizowany
+    // bie¿¹c¹ dat¹ i godzin¹ z domyœlnymi ustawieniami
+    // regionalnymi i domyœln¹ stref¹ czasow¹.
+    GregorianCalendar gcalendar = new GregorianCalendar();
+
+    // Wyœwietla informacje o bie¿¹cej dacie i godzinie.
+    System.out.print("Data: ");
+    System.out.print(gcalendar.get(Calendar.DATE));
+    System.out.print(". " + months[gcalendar.get(Calendar.MONTH)] + " ");
+    System.out.println(year = gcalendar.get(Calendar.YEAR));
+
+    System.out.print("Godzina: ");
+    System.out.print(gcalendar.get(Calendar.HOUR) + ":");
+    System.out.print(gcalendar.get(Calendar.MINUTE) + ":");
+    System.out.println(gcalendar.get(Calendar.SECOND));
+
+    // Sprawdza, czy bie¿¹cy rok jest rokiem przestêpnym.
+    if(gcalendar.isLeapYear(year)) {
+      System.out.println("Bie¿¹cy rok jest rokiem przestêpnym");
+    }
+    else {
+      System.out.println("Bie¿¹cy rok nie jest rokiem przestêpnym");
+    }
+  }
+}
+
+Listing 6.
+// Demonstruje losowanie wartoœci Gaussa.
+import java.util.Random;
+
+class RandDemo {
+  public static void main(String args[]) {
+    Random r = new Random();
+    double val;
+    double sum = 0;
+    int bell[] = new int[10];
+
+    for(int i=0; i<100; i++) {
+      val = r.nextGaussian();
+      sum += val;
+      double t = -2;
+      for(int x=0; x<10; x++, t += 0.5)
+        if(val < t) {
+          bell[x]++;
+          break;
+        }
+    }
+    System.out.println("Œrednia arytmetyczna: " +
+                        (sum/100));
+
+    // Wyœwietla krzyw¹ Gaussa (odwrócon¹ o 90 stopni)
+    for(int i=0; i<10; i++) {
+      for(int x=bell[i]; x>0; x--)
+        System.out.print("*");
+      System.out.println();
+    }
+  }
+}
+
+Listing 7.
+/* Demonstruje u¿ycie klasy dziedzicz¹cej z Observable oraz
+   klasy implementuj¹cej interfejs Observer.
+*/
+
+import java.util.*;
+
+// To jest klasa obserwuj¹ca.
+class Watcher implements Observer {
+  public void update(Observable obj, Object arg) {
+    System.out.println("wywo³ano metodê update(), licznik wynosi " +
+                       ((Integer)arg).intValue());
+  }
+}
+
+// To jest obserwowana klasa.
+class BeingWatched extends Observable {
+  void counter(int period) {
+    for( ; period >=0; period--) {
+      setChanged();
+      notifyObservers(new Integer(period));
+      try {
+        Thread.sleep(100);
+      } catch(InterruptedException e) {
+        System.out.println("Przerwano operacjê wstrzymania");
+      }
+    }
+  }
+
+}
+
+class ObserverDemo {
+  public static void main(String args[]) {
+    BeingWatched observed = new BeingWatched();
+    Watcher observing = new Watcher();
+
+    /* Dodaje obiekt obserwuj¹cy do listy obserwatorów
+       dla danego obiektu obserwowanego.  */
+    observed.addObserver(observing);
+
+    observed.counter(10);
+  }
+}
+
+Listing 8.
+/* Obiekt mo¿e byæ obserwowany przez dwóch lub wiêcej
+   obserwatorów.
+*/
+
+import java.util.*;
+
+// To jest pierwsza klasa obserwuj¹ca.
+class Watcher1 implements Observer {
+  public void update(Observable obj, Object arg) {
+    System.out.println("wywo³ano metodê update(), licznik wynosi " +
+                       ((Integer)arg).intValue());
+  }
+}
+
+// To jest druga klasa obserwuj¹ca.
+class Watcher2 implements Observer {
+  public void update(Observable obj, Object arg) {
+    // Sygnalizuje koniec przetwarzania.
+    if(((Integer)arg).intValue() == 0)
+      System.out.println("Gotowe" + '\7');
+  }
+}
+
+// To jest obserwowana klasa.
+class BeingWatched extends Observable {
+  void counter(int period) {
+    for( ; period >=0; period--) {
+      setChanged();
+      notifyObservers(new Integer(period));
+      try {
+        Thread.sleep(100);
+      } catch(InterruptedException e) {
+        System.out.println("Przerwano operacjê wstrzymania");
+      }
+    }
+  }
+}
+
+class TwoObservers {
+  public static void main(String args[]) {
+    BeingWatched observed = new BeingWatched();
+    Watcher1 observing1 = new Watcher1();
+    Watcher2 observing2 = new Watcher2();
+
+    // dodaje oba obiekty obserwuj¹ce
+    observed.addObserver(observing1);
+    observed.addObserver(observing2);
+
+    observed.counter(10);
+  }
+}
+
+Listing 9.
+// Demonstruje u¿ycie klas Timer i TimerTask.
+
+import java.util.*;
+
+class MyTimerTask extends TimerTask {
+  public void run() {
+    System.out.println("Uruchomiono planowane zadanie.");
+  }
+}
+
+class TTest {
+  public static void main(String args[]) {
+    MyTimerTask myTask = new MyTimerTask();
+    Timer myTimer = new Timer();
+
+    /* Ustawia pocz¹tkowy czas wstrzymania równy jednej sekundzie,
+       po czym powtarza dzia³anie co pó³ sekundy.
+    */
+    myTimer.schedule(myTask, 1000, 500);
+    
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException exc) {}
+
+    myTimer.cancel();
+  }
+}
+
+Listing 10.
+// Demonstruje u¿ycie klasy Currency.
+import java.util.*;
+
+class CurDemo {
+  public static void main(String args[]) {
+    Currency c;
+
+    c = Currency.getInstance(Locale.US);
+
+    System.out.println("Symbol: " + c.getSymbol());
+    System.out.println("Domyœlna liczba cyfr po przecinku: " +
+                       c.getDefaultFractionDigits());
+  }
+}
+
+Listing 11.
+// Bardzo prosty przyk³ad u¿ycia klasy Formatter. 
+import java.util.*; 
+ 
+class FormatDemo { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+ 
+    fmt.format("Formatowanie %s jest bardzo proste: %d %f", "w Javie", 10, 98.6); 
+ 
+    System.out.println(fmt);
+    fmt.close();
+  } 
+}
+
+Listing 12.
+// Demonstruje u¿ycie specyfikatora formatu %g.
+import java.util.*; 
+ 
+class FormatDemo2 { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+ 
+    for(double i=1000; i < 1.0e+10; i *= 100) { 
+      fmt.format("%g ", i); 
+      System.out.println(fmt); 
+    } 
+    fmt.close();
+
+  } 
+}
+
+Listing 13.
+// Formatowanie daty i czasu. 
+import java.util.*; 
+ 
+class TimeDateFormat { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+    Calendar cal = Calendar.getInstance(); 
+ 
+    // Wyœwietla czas w domyœlnym formacie 12-godzinnym.
+    fmt.format("%tr", cal); 
+    System.out.println(fmt);
+    fmt.close();
+ 
+    // Wyœwietla kompletne informacje o dacie i godzinie.
+    fmt = new Formatter(); 
+    fmt.format("%tc", cal); 
+    System.out.println(fmt); 
+    fmt.close();
+ 
+    // Wyœwietla sam¹ godzinê i minuty.
+    fmt = new Formatter(); 
+    fmt.format("%tl:%tM", cal, cal); 
+    System.out.println(fmt); 
+    fmt.close();
+ 
+    // Wyœwietla nazwê i numer miesi¹ca.
+    fmt = new Formatter(); 
+    fmt.format("%tB %tb %tm", cal, cal, cal); 
+    System.out.println(fmt); 
+    fmt.close();
+  } 
+}
+
+Listing 14.
+// Demonstruje u¿ycie specyfikatorów formatów %n i %%. 
+import java.util.*; 
+ 
+class FormatDemo3 { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+ 
+    fmt.format("Kopiowanie pliku%nTransfer jest gotowy w %d%%", 88); 
+    System.out.println(fmt);
+    fmt.close();
+  } 
+}
+
+Listing 15.
+// Demonstruje u¿ycie specyfikatora szerokoœci pola. 
+import java.util.*; 
+ 
+class FormatDemo4 { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+ 
+    fmt.format("|%f|%n|%12f|%n|%012f|", 
+               10.12345, 10.12345, 10.12345); 
+ 
+    System.out.println(fmt); 
+    fmt.close();
+
+  } 
+}
+
+Listing 16.
+// Tworzy tabelê z kwadratami i szeœcianami liczb.
+import java.util.*; 
+ 
+class FieldWidthDemo { 
+  public static void main(String args[]) { 
+    Formatter fmt; 
+  
+    for(int i=1; i <= 10; i++) { 
+      fmt = new Formatter(); 
+      fmt.format("%4d %4d %4d", i, i*i, i*i*i); 
+      System.out.println(fmt);
+      fmt.close();
+    } 
+ 
+  } 
+}
+
+Listing 17.
+// Demonstruje u¿ycie specyfikatora precyzji. 
+import java.util.*; 
+ 
+class PrecisionDemo { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+ 
+    // Formatuje cztery miejsca po przecinku. 
+    fmt.format("%.4f", 123.1234567); 
+    System.out.println(fmt); 
+    fmt.close();
+ 
+    // Formatuje dwa miejsca po przecinku w 16-znakowym polu. 
+    fmt = new Formatter(); 
+    fmt.format("%16.2e", 123.1234567); 
+    System.out.println(fmt); 
+    fmt.close();
+ 
+    // Wyœwietla najwy¿ej 15 znaków ³añcucha. 
+    fmt = new Formatter(); 
+    fmt.format("%.15s", "Formatowanie w Javie jest teraz bardzo proste."); 
+    System.out.println(fmt); 
+    fmt.close();
+  } 
+}
+
+Listing 18.
+// Demonstruje justowanie do lewej krawêdzi. 
+import java.util.*; 
+ 
+class LeftJustify { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+ 
+    // Domyœlne justowanie do prawej
+    fmt.format("|%10.2f|", 123.123); 
+    System.out.println(fmt);
+    fmt.close();
+ 
+    // A teraz justowanie do lewej. 
+    fmt = new Formatter(); 
+    fmt.format("|%-10.2f|", 123.123); 
+    System.out.println(fmt); 
+    fmt.close();
+  } 
+}
+
+Listing 19.
+// Demonstruje u¿ycie specyfikatora formatu spacji. 
+import java.util.*; 
+ 
+class FormatDemo5 { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+ 
+    fmt.format("% d", -100); 
+    System.out.println(fmt); 
+    fmt.close();
+ 
+    fmt = new Formatter(); 
+    fmt.format("% d", 100); 
+    System.out.println(fmt); 
+    fmt.close();
+ 
+    fmt = new Formatter(); 
+    fmt.format("% d", -200); 
+    System.out.println(fmt); 
+    fmt.close();
+ 
+    fmt = new Formatter(); 
+    fmt.format("% d", 200); 
+    System.out.println(fmt); 
+    fmt.close();
+  } 
+}
+
+Listing 20.
+// Przyk³ad u¿ycia indeksów wzglêdnych celem uproszczenia
+// tworzenia niestandardowego formatu daty i czasu. 
+import java.util.*; 
+ 
+class FormatDemo6 { 
+  public static void main(String args[]) { 
+    Formatter fmt = new Formatter(); 
+    Calendar cal = Calendar.getInstance(); 
+ 
+    fmt.format("Jest %te. dzieñ miesi¹ca %<tB roku %<tY.", cal); 
+    System.out.println(fmt);
+    fmt.close();
+  } 
+}
+
+Listing 21.
+// U¿ycie automatycznego zarz¹dzania zasobami dla obiektu klasy Formatter.
+import java.util.*;
+
+class FormatDemo {
+  public static void main(String args[]) {
+    try (Formatter fmt = new Formatter())
+    {
+      fmt.format("Formatowanie %s jest bardzo proste: %d %f",
+                 "w Javie", 10, 98.6);
+      System.out.println(fmt);
+    }
+  }
+}
+
+Listing 22.
+// U¿ycie klasy Scanner do wyznaczenia œredniej arytmetycznej dla listy wartoœci. 
+import java.util.*; 
+ 
+class AvgNums { 
+  public static void main(String args[]) { 
+    Scanner conin = new Scanner(System.in); 
+ 
+    int count = 0; 
+    double sum = 0.0; 
+ 
+    System.out.println("Podaj liczby do wyliczenia œredniej."); 
+ 
+    // Odczytuje i sumuje liczby. 
+    while(conin.hasNext()) { 
+      if(conin.hasNextDouble()) { 
+        sum += conin.nextDouble(); 
+        count++; 
+      } 
+      else { 
+        String str = conin.next();  
+        if(str.equals("gotowe")) break; 
+        else { 
+          System.out.println("B³¹d formatu danych."); 
+          return; 
+        } 
+      } 
+    } 
+ 
+    conin.close();
+    System.out.println("Œrednia wynosi " + sum / count); 
+  } 
+}
+
+Listing 23.
+// U¿ycie klasy Scanner do wyznaczenia œredniej arytmetycznej dla wartoœci z pliku tekstowego. 
+import java.util.*; 
+import java.io.*; 
+ 
+class AvgFile { 
+  public static void main(String args[]) 
+    throws IOException { 
+ 
+    int count = 0; 
+    double sum = 0.0; 
+ 
+    // Zapisuje dane wyjœciowe w pliku tekstowym. 
+    FileWriter fout = new FileWriter("test.txt"); 
+    fout.write("2 3.4 5 6 7.4 9.1 10.5 gotowe"); 
+    fout.close(); 
+ 
+    FileReader fin = new FileReader("Test.txt"); 
+ 
+    Scanner src = new Scanner(fin); 
+ 
+    // Odczytuje i sumuje liczby. 
+    while(src.hasNext()) { 
+      if(src.hasNextDouble()) { 
+        sum += src.nextDouble(); 
+        count++; 
+      } 
+      else { 
+        String str = src.next();  
+        if(str.equals("gotowe")) break; 
+        else { 
+          System.out.println("B³¹d formatu pliku."); 
+          return; 
+        } 
+      } 
+    } 
+ 
+    src.close(); 
+    System.out.println("Œrednia wynosi " + sum / count); 
+  } 
+}
+
+Listing 24.
+// U¿ycie klasy Scanner do odczytywania z pliku tekstowego ró¿nych typów danych. 
+import java.util.*; 
+import java.io.*; 
+ 
+class ScanMixed { 
+  public static void main(String args[]) 
+    throws IOException { 
+ 
+    int i; 
+    double d; 
+    boolean b; 
+    String str; 
+ 
+    // Zapisuje dane wyjœciowe w pliku tekstowym. 
+    FileWriter fout = new FileWriter("test.txt"); 
+    fout.write("Testowanie klasy Scanner 10 12.2 jeden true dwa false"); 
+    fout.close(); 
+ 
+    FileReader fin = new FileReader("Test.txt"); 
+ 
+    Scanner src = new Scanner(fin); 
+  
+    // Odczytuje wszystkie dane wejœciowe. 
+    while(src.hasNext()) { 
+      if(src.hasNextInt()) { 
+        i = src.nextInt(); 
+        System.out.println("int: " + i); 
+      } 
+      else if(src.hasNextDouble()) { 
+        d = src.nextDouble(); 
+        System.out.println("double: " + d); 
+      } 
+      else if(src.hasNextBoolean()) { 
+        b = src.nextBoolean(); 
+        System.out.println("boolean: " + b); 
+      } 
+      else { 
+        str = src.next(); 
+        System.out.println("String: " + str); 
+      } 
+    } 
+ 
+    src.close(); 
+  } 
+}
+
+Listing 25.
+// U¿ycie klasy Scanner do wyznaczenia œredniej arytmetycznej dla listy 
+// wartoœci oddzielonych przecinkami.  
+import java.util.*; 
+import java.io.*; 
+ 
+class SetDelimiters { 
+  public static void main(String args[]) 
+    throws IOException { 
+ 
+    int count = 0; 
+    double sum = 0.0; 
+ 
+    // Zapisuje dane wyjœciowe w pliku tekstowym. 
+    FileWriter fout = new FileWriter("test.txt"); 
+ 
+    // Wartoœci s¹ teraz umieszczane na liœcie oddzielonej przecinkami. 
+    fout.write("2, 3.4,    5,6, 7.4, 9.1, 10.5, gotowe"); 
+    fout.close(); 
+ 
+    FileReader fin = new FileReader("Test.txt"); 
+ 
+    Scanner src = new Scanner(fin); 
+ 
+    // Ustawia zbiór separatorów z³o¿ony z przecinka i spacji. 
+    src.useDelimiter(", *"); 
+ 
+    // Odczytuje i sumuje liczby. 
+    while(src.hasNext()) { 
+      if(src.hasNextDouble()) { 
+        sum += src.nextDouble(); 
+        count++; 
+      } 
+      else { 
+        String str = src.next();  
+        if(str.equals("gotowe")) break; 
+        else { 
+          System.out.println("B³¹d formatu pliku."); 
+          return; 
+        } 
+      } 
+    } 
+ 
+    src.close(); 
+    System.out.println("Œrednia wynosi " + sum / count); 
+  } 
+}
+
+Listing 26.
+// Demonstruje u¿ycie metody findInLine(). 
+import java.util.*; 
+ 
+class FindInLineDemo { 
+  public static void main(String args[]) { 
+    String instr = "Imiê: Tomasz Wiek: 28 ID: 77"; 
+ 
+    Scanner conin = new Scanner(instr); 
+ 
+    // Odnajduje i wyœwietla wiek. 
+    conin.findInLine("Wiek:"); // znajduje "Wiek:"
+    if(conin.hasNext()) 
+      System.out.println(conin.next()); 
+    else 
+      System.out.println("B³¹d!"); 
+ 
+    conin.close();
+  } 
+}
+
+Listing 27.
+import java.util.*;
+public class SampleRB extends ListResourceBundle {
+  protected Object[][] getContents() {
+    Object[][] resources = new Object[3][2];
+
+    resources[0][0] = "title";
+    resources[0][1] = "Mój program";
+
+    resources[1][0] = "StopText";
+    resources[1][1] = "Zatrzymaj";
+
+    resources[2][0] = "StartText";
+    resources[2][1] = "Uruchom";
+
+    return resources;
+  }
+}
+
+Listing 28.
+import java.util.*;
+
+// Wersja niemiecka.
+public class SampleRB_de extends ListResourceBundle {
+  protected Object[][] getContents() {
+    Object[][] resources = new Object[3][2];
+
+    resources[0][0] = "title";
+    resources[0][1] = "Mein Programm";
+
+    resources[1][0] = "StopText";
+    resources[1][1] = "Anschlag";
+
+    resources[2][0] = "StartText";
+    resources[2][1] = "Anfang";
+
+    return resources;
+  }
+}
+
+Listing 29.
+// Przyk³ad stosowania pakietów zasobów.
+import java.util.*;
+
+class LRBDemo {
+  public static void main(String args[]) {
+    // £aduje domyœlny pakiet zasobów.
+    ResourceBundle rd = ResourceBundle.getBundle("SampleRB");
+
+    System.out.println("Polska wersja: ");
+    System.out.println("£añcuch dla klucza Title: " +
+                       rd.getString("title"));
+
+    System.out.println("£añcuch dla klucza StopText: " +
+                       rd.getString("StopText"));
+
+    System.out.println("£añcuch dla klucza StartText: " +
+                       rd.getString("StartText"));
+
+    // £aduje niemieckojêzyczny pakiet zasobów.
+    rd = ResourceBundle.getBundle("SampleRB", Locale.GERMAN);
+
+    System.out.println("\nNiemiecka wersja: ");
+    System.out.println("£añcuch dla klucza Title: " +
+                       rd.getString("title"));
+
+    System.out.println("£añcuch dla klucza StopText: " +
+                       rd.getString("StopText"));
+
+    System.out.println("£añcuch dla klucza StartText: " +
+                       rd.getString("StartText"));
+  }
+}

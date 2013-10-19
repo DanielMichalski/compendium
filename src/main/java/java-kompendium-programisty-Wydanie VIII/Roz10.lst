@@ -1,0 +1,355 @@
+Listing 1.
+class Exc0 {
+  public static void main(String args[]) {
+    int d = 0;
+    int a = 42 / d;
+  }
+}
+
+Listing 2.
+class Exc1 {
+  static void subroutine() {
+    int d = 0;
+    int a = 10 / d;
+  }
+  public static void main(String args[]) {
+    Exc1.subroutine();
+  }
+}
+
+Listing 3.
+class Exc2 {
+  public static void main(String args[]) {
+    int d, a;
+
+    try { // monitorowanie bloku kodu
+      d = 0;
+      a = 42 / d;
+      System.out.println("To nie zostanie wyœwietlone.");
+    } catch (ArithmeticException e) { // z³apanie b³êdu dzielenia przez zero
+      System.out.println("Dzielenie przez zero.");
+    }
+    System.out.println("Po konstrukcji catch.");
+  }
+}
+
+Listing 4.
+// Obs³u¿enie wyj¹tku i kontynuacja dzia³ania programu.
+import java.util.Random;
+
+class HandleError {
+  public static void main(String args[]) {
+    int a=0, b=0, c=0;
+    Random r = new Random();
+
+    for(int i=0; i<32000; i++) {
+      try {
+        b = r.nextInt();
+        c = r.nextInt();
+        a = 12345 / (b/c);
+      } catch (ArithmeticException e) {
+        System.out.println("Dzielenie przez zero.");
+        a = 0; // ustawienie na 0 i kontynuacja dzia³ania
+      }
+      System.out.println("a: " + a);
+    }
+  }
+}
+
+Listing 5.
+catch (ArithmeticException e) {
+  System.out.println("Wyj¹tek: " + e);
+  a = 0; // ustawienie na 0 i kontynuacja dzia³ania
+}
+
+Listing 6.
+// Wykorzystanie wielu klauzul catch.
+class MultiCatch {
+  public static void main(String args[]) {
+    try {
+      int a = args.length;
+      System.out.println("a = " + a);
+      int b = 42 / a;
+      int c[] = { 1 };
+      c[42] = 99;
+    } catch(ArithmeticException e) {
+      System.out.println("Dzielenie przez zero: " + e);
+    } catch(ArrayIndexOutOfBoundsException e) {
+      System.out.println("Indeks poza dopuszczalnymi granicami: " + e);
+    }
+    System.out.println("Po blokach try i catch.");
+  }
+}
+
+Listing 7.
+/*  Ten program zawiera b³¹d.
+ 
+    Podklasa musi siê pojawiæ przed klas¹ bazow¹
+    w ci¹gu klauzul catch. Jeœli tak siê nie stanie, 
+    powstanie nieosi¹galny kod i
+    kompilator zg³osi b³¹d.
+*/
+class SuperSubCatch {
+  public static void main(String args[]) {
+    try {
+      int a = 0;
+      int b = 42 / a;
+    } catch(Exception e) {
+      System.out.println("Wy³apanie ogólnego wyj¹tku.");
+    }
+    /* Ta klauzula catch nigdy nie zostanie wykonana, poniewa¿
+       ArithmeticException to podklasa klasy Exception. */
+    catch(ArithmeticException e) { // B£¥D - nieosi¹galnoœæ kodu
+      System.out.println("Program nigdy tego nie wykona.");
+    }
+  }
+}
+
+Listing 8.
+// Przyk³ad zagnie¿d¿ania konstrukcji try.
+class NestTry {
+  public static void main(String args[]) {
+    try {
+      int a = args.length;
+
+      /* Jeœli nie ma argumentów wiersza poleceñ,
+         poni¿sza instrukcja powoduje zg³oszenie b³êdu
+         dzielenia przez zero. */
+      int b = 42 / a;
+
+      System.out.println("a = " + a);
+
+      try { // zagnie¿d¿ony blok
+        /* Jeœli istnieje jeden argument wiersza poleceñ,
+           wtedy poni¿szy kod spowoduje zg³oszenie 
+           b³êdu dzielenia przez zero. */
+        if(a==1) a = a/(a-a); // dzielenie przez zero
+        /* Dla dwóch argumentów zostanie zg³oszony b³¹d
+           przekroczenia granic tablicy. */
+        if(a==2) {
+          int c[] = { 1 };
+          c[42] = 99; // wyj¹tek przekroczenia granic tablicy
+        }
+      } catch(ArrayIndexOutOfBoundsException e) {
+        System.out.println("Indeks poza dopuszczalnymi granicami: " + e);
+      }
+
+    } catch(ArithmeticException e) {
+      System.out.println("Dzielenie przez 0: " + e);
+    }
+  }
+}
+
+Listing 9.
+/* Konstrukcje try mog¹ byæ zagnie¿d¿one niejawnie dziêki 
+   wywo³aniom metod. */
+class MethNestTry {
+  static void nesttry(int a) {
+    try { // zagnie¿d¿ony blok try
+      /* Jeœli istnieje jeden argument wiersza poleceñ,
+         wtedy poni¿szy kod spowoduje zg³oszenie 
+         b³êdu dzielenia przez zero. */
+      if(a==1) a = a/(a-a); // dzielenie przez zero
+
+      /* Dla dwóch argumentów zostanie zg³oszony b³¹d
+         przekroczenia granic tablicy. */
+      if(a==2) {
+        int c[] = { 1 };
+        c[42] = 99; // wyj¹tek przekroczenia granic tablicy
+      }
+    } catch(ArrayIndexOutOfBoundsException e) {
+      System.out.println("Indeks poza dopuszczalnymi granicami: " + e);
+    }
+  }
+
+  public static void main(String args[]) {
+    try {
+      int a = args.length;
+
+      /* Jeœli nie ma argumentów wiersza poleceñ,
+         poni¿sza instrukcja powoduje zg³oszenie b³êdu
+         dzielenia przez zero. */
+      int b = 42 / a;
+
+      System.out.println("a = " + a);
+
+      nesttry(a);
+    } catch(ArithmeticException e) {
+      System.out.println("Dzielenie przez 0: " + e);
+    }
+  }
+}
+
+Listing 10.
+// Przyk³ad u¿ycia throw.
+class ThrowDemo {
+  static void demoproc() {
+    try {
+      throw new NullPointerException("demo");
+    } catch(NullPointerException e) {
+      System.out.println("Z³apane wewn¹trz metody demoproc().");
+      throw e; // ponowne zg³oszenie wyj¹tku
+    }
+  }
+
+  public static void main(String args[]) {
+    try {
+      demoproc();
+    } catch(NullPointerException e) {
+      System.out.println("Ponowne z³apanie: " + e);
+    }
+  }
+}
+
+
+Listing 11.
+// Ten program zawiera b³¹d, wiêc nie uda siê go skompilowaæ.
+class ThrowsDemo {
+  static void throwOne() {
+    System.out.println("Wewn¹trz throwOne.");
+    throw new IllegalAccessException("demo");
+  }
+  public static void main(String args[]) {
+    throwOne();
+  }
+}
+
+Listing 12.
+// Poprawna wersja.
+class ThrowsDemo {
+  static void throwOne() throws IllegalAccessException {
+    System.out.println("Wewn¹trz throwOne.");
+    throw new IllegalAccessException("demo");
+  }
+  public static void main(String args[]) {
+    try {
+      throwOne();
+    } catch (IllegalAccessException e) {
+      System.out.println("Z³apano " + e);
+    }
+  }
+}
+
+Listing 13.
+// Przyk³ad u¿ycia bloku finally.
+class FinallyDemo {
+  // Zg³oszenie wyj¹tku poza metodê.
+  static void procA() {
+    try {
+      System.out.println("Wewn¹trz procA");
+      throw new RuntimeException("demo");
+    } finally {
+      System.out.println("finally z procA");
+    }
+  }
+
+  // Powrót z wnêtrza bloku try.
+  static void procB() {
+    try {
+      System.out.println("Wewn¹trz procB");
+      return;
+    } finally {
+      System.out.println("finally z procB");
+    }
+  }
+
+  // Wykonanie bloku finally w normalnie wykonywanym programie.
+  static void procC() {
+    try {
+      System.out.println("Wewn¹trz procC");
+    } finally {
+      System.out.println("finally z procC");
+    }
+  }
+
+  public static void main(String args[]) {
+    try {
+      procA();
+    } catch (Exception e) {
+      System.out.println("Z³apanie wyj¹tku");
+    }
+    procB();
+    procC();
+  }
+}
+
+
+Listing 14.
+// Program zg³asza wyj¹tek, który wczeœniej zadeklarowa³.
+class MyException extends Exception {
+  private int detail;
+
+  MyException(int a) {
+    detail = a;
+  }
+  public String toString() {
+    return "MyException[" + detail + "]";
+  }
+}
+
+class ExceptionDemo {
+  static void compute(int a) throws MyException {
+    System.out.println("Wywo³anie compute(" + a + ")");
+    if(a > 10)
+      throw new MyException(a);
+    System.out.println("Normalne wyjœcie");
+  }
+
+  public static void main(String args[]) {
+    try {
+      compute(1);
+      compute(20);
+    } catch (MyException e) {
+      System.out.println("Z³apano " + e);
+    }
+  }
+}
+
+Listing 15.
+// Przyk³ad ³añcucha wyj¹tków.
+class ChainExcDemo {
+  static void demoproc() {
+    // utworzenie wyj¹tku
+    NullPointerException e =
+      new NullPointerException("najwy¿szy poziom");
+
+    // dodanie powodu
+    e.initCause(new ArithmeticException("powód"));
+
+    throw e;
+  }
+
+  public static void main(String args[]) {
+    try {
+      demoproc();
+    } catch(NullPointerException e) {
+      // wyœwietlenie wyj¹tku najwy¿szego poziomu
+      System.out.println("Z³apano: " + e);
+
+      // wyœwietlenie wyj¹tku powodu
+      System.out.println("Oryginalny powód: " +
+                          e.getCause());
+    }
+  }
+}
+
+Listing 16.
+// Demonstruje mechanizm wielokrotnego ³apania (JDK 7).
+class MultiCatch {
+  public static void main(String args[]) {
+    int a=10, b=0;
+    int vals[] = { 1, 2, 3 };
+
+    try {
+      int result = a / b; // generuje wyj¹tek ArithmeticException
+
+      // vals[10] = 19; // generuje wyj¹tek ArrayIndexOutOfBoundsException
+
+      // Ta klauzula catch przechwytuje oba wyj¹tki.
+    } catch(ArithmeticException | ArrayIndexOutOfBoundsException e) {
+      System.out.println("Z³apano wyj¹tek: " + e);
+    }
+    System.out.println("Po wielokrotnym ³apaniu.");
+  }
+}
+

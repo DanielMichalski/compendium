@@ -1,0 +1,337 @@
+Listing 1.
+// Utworzenie obiektu String na podstawie innego obiektu String.
+class MakeString {
+  public static void main(String args[]) {
+    char c[] = {'J', 'a', 'v', 'a'};
+    String s1 = new String(c);
+    String s2 = new String(s1); 
+
+    System.out.println(s1);
+    System.out.println(s2);
+  }
+}
+
+Listing 2.
+// Tworzenie obiektu String na podstawie fragmentu tablicy bajtów.
+class SubStringCons {
+  public static void main(String args[]) {
+    byte ascii[] = {65, 66, 67, 68, 69, 70 };
+
+    String s1 = new String(ascii);
+    System.out.println(s1);
+
+    String s2 = new String(ascii, 2, 3);
+    System.out.println(s2);
+  }
+}
+
+Listing 3.
+// Konkatenacja zapobiega koniecznoœci tworzenia bardzo d³ugich wierszy tekstu.
+class ConCat {
+  public static void main(String args[]) {
+    String longStr = "To by³by bardzo " +
+      "d³ugi wiersz, gdyby mia³ zostaæ napisany " +
+      "w ca³oœci. Mo¿na temu zapobiec, stosuj¹c " +
+      "konkatenacjê ³añcuchów.";
+
+    System.out.println(longStr);
+  }
+}
+
+Listing 4.
+// Przykrycie metody toString() w klasie Box.
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  public String toString() {
+    return "Wymiary: " + width + " na " + 
+            depth + " na " + height + ".";
+  }
+}
+
+class toStringDemo {
+  public static void main(String args[]) {
+    Box b = new Box(10, 12, 14);
+    String s = "Pude³ko b: " + b; // konkatenacja obiektu Box
+
+    System.out.println(b); // konwersja obiektu na tekst
+    System.out.println(s);
+  }
+}
+
+Listing 5.
+class getCharsDemo {
+  public static void main(String args[]) {
+    String s = "To jest przyk³ad u¿ycia metody getChars().";
+    int start = 8;
+    int end = 16;
+    char buf[] = new char[end - start];
+
+    s.getChars(start, end, buf, 0);
+    System.out.println(buf);
+  }
+}
+
+Listing 6.
+// Przyk³ad u¿ycia metod equals() i equalsIgnoreCase().
+class equalsDemo {
+  public static void main(String args[]) {
+    String s1 = "Witaj";
+    String s2 = "Witaj";
+    String s3 = "Czeœæ";
+    String s4 = "WITAJ";
+    System.out.println(s1 + " equals " + s2 + " -> " +
+                       s1.equals(s2));
+    System.out.println(s1 + " equals " + s3 + " -> " +
+                       s1.equals(s3));
+    System.out.println(s1 + " equals " + s4 + " -> " +
+                       s1.equals(s4));
+    System.out.println(s1 + " equalsIgnoreCase " + s4 + " -> " +
+                       s1.equalsIgnoreCase(s4));
+  }
+}
+
+Listing 7.
+// equals() kontra ==
+class EqualsNotEqualTo {
+  public static void main(String args[]) {
+    String s1 = "Witaj";
+    String s2 = new String(s1);
+
+    System.out.println(s1 + " equals " + s2 + " -> " +  
+                       s1.equals(s2));
+    System.out.println(s1 + " == " + s2 + " -> " + (s1 == s2));
+  }
+}
+
+Listing 8.
+// Sortowanie b¹belkowe obiektów String.
+class SortString {
+  static String arr[] = {
+    "Nadszed³", "czas", "by", "ka¿dy", "szanuj¹cy", "siê", "obywatel", "pomóg³",
+    "swojemu", "krajowi", "jak", "tylko", "potrafi"
+  };
+  public static void main(String args[]) {
+    for(int j = 0; j < arr.length; j++) {
+      for(int i = j + 1; i < arr.length; i++) {
+        if(arr[i].compareTo(arr[j]) < 0) {
+          String t = arr[j];
+          arr[j] = arr[i];
+          arr[i] = t;
+        }
+      }
+      System.out.println(arr[j]);
+    }
+  }
+}
+
+Listing 9.
+// Przyk³ad u¿ycia indexOf() i lastIndexOf().
+class indexOfDemo {
+  public static void main(String args[]) {
+    String s = "Czy byæ mi³ym znaczy to samo co byæ dobrym? " +
+               "Czy bycie dobrym jest równoznaczne z byciem mi³ym?";
+
+    System.out.println(s);
+    System.out.println("indexOf(b) = " +
+                       s.indexOf('b'));
+    System.out.println("lastIndexOf(b) = " +
+                       s.lastIndexOf('b'));
+    System.out.println("indexOf(byæ) = " +
+                       s.indexOf("byæ"));
+    System.out.println("lastIndexOf(byæ) = " +
+                       s.lastIndexOf("byæ"));
+    System.out.println("indexOf(b, 10) = " +
+                       s.indexOf('b', 10));
+    System.out.println("lastIndexOf(b, 60) = " +
+                       s.lastIndexOf('b', 60));
+    System.out.println("indexOf(byæ, 10) = " +
+                       s.indexOf("byæ", 10));
+    System.out.println("lastIndexOf(bycie, 60) = " +
+                       s.lastIndexOf("bycie", 60));
+  }
+}
+
+Listing 10.
+// Zastêpowanie pod³añcucha.
+class StringReplace {
+  public static void main(String args[]) {
+    String org = "To jest test. To te¿ jest test.";
+    String search = "jest";
+    String sub = "by³";
+    String result = "";
+    int i;
+
+    do { // zast¹pienie wszystkich pasuj¹cych pod³añcuchów
+      System.out.println(org);
+      i = org.indexOf(search);
+      if(i != -1) {
+        result = org.substring(0, i);
+        result = result + sub;
+        result = result + org.substring(i + search.length());
+        org = result;
+      }
+    } while(i != -1);
+
+  }
+}
+
+Listing 11.
+// Wykorzystanie metody trim() do przetwarzania poleceñ.
+import java.io.*;
+
+class UseTrim {
+  public static void main(String args[])
+    throws IOException
+  {
+    // utworzenie BufferedReader przy u¿yciu System.in
+    BufferedReader br = new
+      BufferedReader(new InputStreamReader(System.in));
+    String str;
+
+    System.out.println("Wpisz 'stop', aby wyjœæ.");
+    System.out.println("Wpisz nazwê województwa: ");
+    do {
+      str = br.readLine();
+      str = str.trim(); // usuniêcie znaków bia³ych
+
+      if(str.equals("œl¹skie"))
+        System.out.println("Miasto wojewódzkie: Katowice.");
+      else if(str.equals("mazowieckie"))
+        System.out.println("Miasto wojewódzkie: Warszawa.");
+      else if(str.equals("ma³opolskie"))
+        System.out.println("Miasto wojewódzkie: Kraków.");
+      else if(str.equals("opolskie"))
+        System.out.println("Miasto wojewódzkie: Opole.");
+      // ...
+    } while(!str.equals("stop"));
+  }
+}
+
+Listing 12.
+// Przyk³ad u¿ycia toUpperCase() i toLowerCase().
+
+class ChangeCase {
+  public static void main(String args[])
+  {
+    String s = "To jest test.";
+
+    System.out.println("Orygina³: " + s);
+
+    String upper = s.toUpperCase();
+    String lower = s.toLowerCase();
+
+    System.out.println("Wielkie litery: " + upper);
+    System.out.println("Ma³e litery: " + lower);
+  }
+}
+
+Listing 13.
+// D³ugoœæ tekstu a pojemnoœæ obiektu StringBuffer .
+class StringBufferDemo {
+  public static void main(String args[]) {
+    StringBuffer sb = new StringBuffer("Witaj");
+
+    System.out.println("bufor = " + sb);
+    System.out.println("d³ugoœæ = " + sb.length());
+    System.out.println("pojemnoœæ = " + sb.capacity());
+  }
+}
+
+Listing 14.
+// Przyk³ad zastosowania metod charAt() i setCharAt().
+class setCharAtDemo {
+  public static void main(String args[]) {
+    StringBuffer sb = new StringBuffer("Witaj");
+    System.out.println("bufor przed = " + sb);
+    System.out.println("charAt(1) przed = " + sb.charAt(1));
+      sb.setCharAt(1, 'y');
+      sb.setLength(2);
+      System.out.println("bufor po = " + sb);
+      System.out.println("charAt(1) po = " + sb.charAt(1));
+  }
+}
+
+Listing 15.
+// Metoda append().
+class appendDemo {
+  public static void main(String args[]) {
+    String s;
+    int a = 42;
+    StringBuffer sb = new StringBuffer(40);
+
+    s = sb.append("a = ").append(a).append("!").toString();
+    System.out.println(s);
+  }
+}
+
+Listing 16.
+// Metoda insert().
+class insertDemo {
+  public static void main(String args[]) {
+    StringBuffer sb = new StringBuffer("Bardzo Javê!");
+
+    sb.insert(7, "lubiê ");
+    System.out.println(sb);
+  }
+}
+
+Listing 17.
+// U¿ycie metody reverse() do odwrócenia tekstu z StringBuffer.
+class ReverseDemo {
+  public static void main(String args[]) {
+    StringBuffer s = new StringBuffer("abcdef");
+
+    System.out.println(s);
+    s.reverse();
+    System.out.println(s);
+  }
+}
+
+Listing 18.
+// Przyk³ad u¿ycia metod delete() i deleteCharAt().
+class deleteDemo {
+  public static void main(String args[]) {
+    StringBuffer sb = new StringBuffer("To jest test.");
+
+    sb.delete(2, 7);
+    System.out.println("Po delete: " + sb);
+
+    sb.deleteCharAt(0);
+    System.out.println("Po deleteCharAt: " + sb);
+  }
+}
+
+Listing 19.
+// Przyk³ad u¿ycia metody replace().
+class replaceDemo {
+  public static void main(String args[]) {
+    StringBuffer sb = new StringBuffer("To jest test.");
+
+    sb.replace(3, 7, "by³");
+    System.out.println("Po replace: " + sb);
+  }
+}
+
+Listing 20.
+class IndexOfDemo {
+  public static void main(String args[]) {
+    StringBuffer sb = new StringBuffer("jeden dwa jeden");
+    int i;
+    i = sb.indexOf("jeden");
+    System.out.println("Indeks pierwszego wyst¹pienia: " + i);
+
+    i = sb.lastIndexOf("jeden");
+    System.out.println("Indeks ostatniego wyst¹pienia: " + i);
+  }
+}
+
+

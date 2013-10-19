@@ -1,0 +1,339 @@
+Listing 1.
+class Box {
+  double width;
+  double height;
+  double depth;
+}
+
+Listing 2.
+/* Program korzystaj¹cy z klasy Box.
+
+   Nadaj plikowi nazwê BoxDemo.java.
+*/
+class Box {
+  double width;
+  double height;
+  double depth;
+}
+
+// Ta klasa deklaruje obiekt typu Box.
+class BoxDemo {
+  public static void main(String args[]) {
+    Box mybox = new Box();
+    double vol;
+
+    // przypisanie wartoœci zmiennym obiektu mybox
+    mybox.width = 10;
+    mybox.height = 20;
+    mybox.depth = 15;
+
+    // obliczenie objêtoœci pude³ka
+    vol = mybox.width * mybox.height * mybox.depth;
+
+    System.out.println("Objêtoœæ: " + vol);
+  }
+}
+
+Listing 3.
+// Program tworzy dwa obiekty klasy Box.
+
+class Box {
+  double width;
+  double height;
+  double depth;
+}
+  
+class BoxDemo2 {
+  public static void main(String args[]) {
+    Box mybox1 = new Box();
+    Box mybox2 = new Box();
+    double vol;
+
+    // przypisanie wartoœci do zmiennych obiektu mybox1
+    mybox1.width = 10;
+    mybox1.height = 20;
+    mybox1.depth = 15;
+
+    // przypisanie innych wartoœci do zmiennych obiektu mybox2
+    mybox2.width = 3;
+    mybox2.height = 6;
+    mybox2.depth = 9;
+
+    // obliczenie objêtoœci pierwszego pude³ka
+    vol = mybox1.width * mybox1.height * mybox1.depth;
+    System.out.println("Objêtoœæ: " + vol);
+
+    // obliczenie objêtoœci drugiego pude³ka
+    vol = mybox2.width * mybox2.height * mybox2.depth;
+    System.out.println("Objêtoœæ: " + vol);
+  }
+}
+
+Listing 4.
+// Program definiuje metodê wewn¹trz klasy Box.
+
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // wyœwietlenie objêtoœci pude³ka
+  void volume() {
+    System.out.print("Objêtoœæ: ");
+    System.out.println(width * height * depth);
+  }
+}
+
+class BoxDemo3 {
+  public static void main(String args[]) {
+    Box mybox1 = new Box();
+    Box mybox2 = new Box();
+
+    // przypisanie wartoœci do zmiennych obiektu mybox1
+    mybox1.width = 10;
+    mybox1.height = 20;
+    mybox1.depth = 15;
+
+    // przypisanie wartoœci do zmiennych obiektu mybox2
+    mybox2.width = 3;
+    mybox2.height = 6;
+    mybox2.depth = 9;
+
+    // wyœwietlenie objêtoœci pierwszego pude³ka
+    mybox1.volume();
+
+    // wyœwietlenie objêtoœci drugiego pude³ka
+    mybox2.volume();
+  }
+}
+
+Listing 5.
+// Teraz metoda volume() zwraca objêtoœæ pude³ka.
+
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+class BoxDemo4 {
+  public static void main(String args[]) {
+    Box mybox1 = new Box();
+    Box mybox2 = new Box();
+    double vol;
+
+    // przypisanie wartoœci do zmiennych obiektu mybox1
+    mybox1.width = 10;
+    mybox1.height = 20;
+    mybox1.depth = 15;
+
+    // przypisanie wartoœci do zmiennych obiektu mybox1
+    mybox2.width = 3;
+    mybox2.height = 6;
+    mybox2.depth = 9;
+
+    // pobranie objêtoœci pierwszego pude³ka
+    vol = mybox1.volume();
+    System.out.println("Objêtoœæ: " + vol);
+
+    // pobranie objêtoœci drugiego pude³ka
+    vol = mybox2.volume();
+    System.out.println("Objêtoœæ: " + vol);
+  }
+}
+
+Listing 6.
+// Program u¿ywa sparametryzowanej metody.
+
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+
+  // ustaw wymiary pude³ka
+  void setDim(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+}
+
+class BoxDemo5 {
+  public static void main(String args[]) {
+    Box mybox1 = new Box();
+    Box mybox2 = new Box();
+    double vol;
+
+    // inicjalizacja pude³ek
+    mybox1.setDim(10, 20, 15);
+    mybox2.setDim(3, 6, 9);
+
+    // pobranie objêtoœci pierwszego pude³ka
+    vol = mybox1.volume();
+    System.out.println("Objêtoœæ: " + vol);
+
+    // pobranie objêtoœci drugiego pude³ka
+    vol = mybox2.volume();
+    System.out.println("Objêtoœæ: " + vol);
+  }
+}
+
+Listing 7.
+/* Klasa Box u¿ywa konstruktora 
+   w celu ustalenia pocz¹tkowych wymiarów pude³ka.
+*/
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // Konstruktor klasy Box.
+  Box() {
+    System.out.println("Konstrukcja obiektu Box");
+    width = 10;
+    height = 10;
+    depth = 10;
+  }
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+class BoxDemo6 {
+  public static void main(String args[]) {
+    // deklaracja, alokacja i inicjalizacja obiektów Box
+    Box mybox1 = new Box();
+    Box mybox2 = new Box();
+
+    double vol;
+
+    // pobranie objêtoœci pierwszego pude³ka
+    vol = mybox1.volume();
+    System.out.println("Objêtoœæ: " + vol);
+
+    // pobranie objêtoœci drugiego pude³ka
+    vol = mybox2.volume();
+    System.out.println("Objêtoœæ: " + vol);
+  }
+}
+
+Listing 8.
+/* Klasa Box u¿ywa konstruktora sparametryzowanego 
+   w celu ustalenia pocz¹tkowych wymiarów pude³ka.
+*/
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // Konstruktor klasy Box.
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+class BoxDemo7 {
+  public static void main(String args[]) {
+    // deklaracja, alokacja i inicjalizacja obiektów Box
+    Box mybox1 = new Box(10, 20, 15);
+    Box mybox2 = new Box(3, 6, 9);
+
+    double vol;
+
+    // pobranie objêtoœci pierwszego pude³ka
+    vol = mybox1.volume();
+    System.out.println("Objêtoœæ: " + vol);
+
+    // pobranie objêtoœci drugiego pude³ka
+    vol = mybox2.volume();
+    System.out.println("Objêtoœæ: " + vol);
+  }
+}
+
+Listing 9.
+// Nadmiarowe wykorzystanie this.
+Box(double w, double h, double d) {
+  this.width = w;
+  this.height = h;
+  this.depth = d;
+}
+
+Listing 10.
+// S³owo kluczowe this rozwi¹zuje problem konfliktu nazw.
+Box(double width, double height, double depth) {
+  this.width = width;
+  this.height = height;
+  this.depth = depth;
+}
+
+Listing 11.
+// Klasa definiuje stos liczb ca³kowitych mog¹cy przechowywaæ do 10 wartoœci.
+class Stack {
+  int stck[] = new int[10];
+  int tos;
+
+  // inicjalizacja szczytu stosu
+  Stack() {
+    tos = -1;
+  }
+
+  // umieszczenie elementu na szczycie stosu
+  void push(int item) {
+    if(tos==9)
+      System.out.println("Stos jest pe³ny.");
+    else
+      stck[++tos] = item;
+  }
+
+  // zdjêcie elementu ze szczytu stosu
+  int pop() {
+    if(tos < 0) {
+      System.out.println("Stos nie zawiera ¿adnych elementów.");
+      return 0;
+    }
+    else
+      return stck[tos--];
+  }
+}
+
+Listing 12.
+class TestStack {
+  public static void main(String args[]) {
+    Stack mystack1 = new Stack();
+    Stack mystack2 = new Stack();
+
+    // umieszczenie pewnych liczb na stosach
+    for(int i=0; i<10; i++) mystack1.push(i);
+    for(int i=10; i<20; i++) mystack2.push(i);
+
+    // zdjêcie liczb ze stosów
+    System.out.println("Stos w mystack1:");
+    for(int i=0; i<10; i++)
+       System.out.println(mystack1.pop());
+
+    System.out.println("Stos w mystack2:");
+    for(int i=0; i<10; i++)
+       System.out.println(mystack2.pop());
+  }
+}
+
+

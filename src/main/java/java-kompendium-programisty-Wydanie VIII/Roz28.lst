@@ -1,0 +1,345 @@
+Listing 1.
+// Demonstracja prostego dopasowywania do wzorca.
+import java.util.regex.*;
+
+class RegExpr {
+   public static void main(String args[]) {
+      Pattern pat;
+      Matcher mat;
+      boolean found;
+
+      pat = Pattern.compile("Java");
+      mat = pat.matcher("Java");
+      found = mat.matches(); // Sprawdzenie, czy sekwencja pasuje do wzorca.
+
+      System.out.println("Dopasowywanie s³owa Java do s³owa Java");
+      if(found) System.out.println("Pasuje");
+      else System.out.println("Nie pasuje");
+
+      System.out.println();
+
+      System.out.println("Dopasowywanie s³owa Java do s³owa Java 7");
+      mat = pat.matcher("Java 7"); // Tworzenie nowego obiektu typu Matcher.
+
+      found = mat.matches(); // Sprawdzenie, czy sekwencja pasuje do wzorca.
+
+      if(found) System.out.println("Pasuje");
+      else System.out.println("Nie pasuje");
+   }
+}
+
+Listing 2.
+// Przyk³ad wykorzystania metody find() do znalezienia fragmentu sekwencji.
+import java.util.regex.*;
+
+class RegExpr2 {
+   public static void main(String args[]) {
+      Pattern pat = Pattern.compile("Java");
+      Matcher mat = pat.matcher("Java 7");
+
+      System.out.println("Szukam s³owa Java w sekwencji Java 7");
+
+      if(mat.find()) System.out.println("S³owo znalezione");
+      else System.ut.println("S³owo nie zosta³o znalezione");
+   }
+}
+
+Listing 3.
+// Przyk³ad wykorzystania metody find() do odnajdywania wielokrotnych wyst¹pieñ sekwencji.
+import java.util.regex.*;
+
+class RegExpr3 {
+   public static void main(String args[]) {
+      Pattern pat = Pattern.compile("test");
+      Matcher mat = pat.matcher("test 1 2 3 test");
+
+      while(mat.find()) {
+         System.out.println("S³owo test znalezione pod indeksem " + mat.start());
+      }
+   }
+}
+
+Listing 4.
+// Przyk³ad wykorzystania kwantyfikatora
+import java.util.regex.*;
+
+class RegExpr4 {
+   public static void main(String args[]) {
+      Pattern pat = Pattern.compile("W+");
+      Matcher mat = pat.matcher("W WW WWW");
+
+      while(mat.find())
+         System.out.println("Dopasowana sekwencja: " + mat.group());
+   }
+}
+
+Listing 5.
+// Program wykorzystuj¹cy znak zastêpczy i kwantyfikator.
+import java.util.regex.*;
+
+class RegExpr5 {
+   public static void main(Strings args[]) {
+      Pattern pat = Pattern.compile("e.+d");
+      Matcher mat = pat.matcher("extend cup end table");
+
+      while(mat.find())
+         System.out.println("Dopasowana sekwencja: " + mat.group());
+   }
+}
+
+Listing 6.
+// Korzystanie z kwantyfikatora ?.
+import java.util.regex.*;
+
+class RegExpr6 {
+   public static void main(String args[]) {
+      // Zachowanie oszczêdne.
+      Pattern pat = Pattern.compile("e.+?d");
+      Matcher mat = pat.matcher("extend cup end table");
+
+      while(mat.find())
+         System.out.println("Dopasowana sekwencja: " + mat.group());
+   }
+}
+
+Listing 7.
+// Korzystanie z klas znaków.
+import java.util.regex.*;
+
+class RegExpr7 {
+   public static void main(String args[]) {
+      // Dopasowywanie s³ów pisanych ma³ymi literami.
+      Pattern pat = Pattern.compile("[a-z]+");
+      Matcher mat = pat.matcher("to jest test.");
+
+      while(mat.find())
+         System.out.println("Dopasowana sekwencja: " + mat.group());
+  }
+}
+
+Listing 8.
+// Korzystanie z metody replaceAll().
+import java.util.regex.*;
+
+class RegExpr8{
+   public static void main(String args[]) {
+      String str = "Jon Jonathan Frank Ken Todd";
+
+      Pattern pat = Pattern.compile("Jon.*? ");
+      Matcher mat = pat.matcher(str);
+
+      System.out.println("Oryginalna sekwencja: " + str);
+
+      str = mat.replaceAll("Eric ");
+      
+      System.out.println("Zmodyfikowana sekwencja: " + str);
+   }
+}
+
+Listing 9.
+// Korzystanie z metody split().
+import java.util.regex.*;
+
+class RegExpr9 {
+   public static void main(String args[]) {
+
+      // Dopasowywanie s³ów pisanych ma³ymi literami.
+      Pattern pat = Pattern.compile("[ ,.!]");
+
+      String strs[] = pat.split("one two, alpha9 12!done.");
+
+      for(int i=0; i < strs.length; i++)
+         System.out.println("Nastêpny wyraz: " + strs[i]);
+
+   }
+}
+
+Listing 10.
+// Demonstracja sposobu dzia³ania refleksji.
+import java.awt.lang.reflect.*;
+public class ReflectionDemo1 {
+   public static void main(String args[]) {
+      try {
+         Class<?> c = Class.forName("java.awt.Dimension");
+         System.out.println("Konstruktory: ");
+         Constructor constructors[] = c.getConstructors();
+         for(int i = 0; i < constructors.length; i++) {
+            System.out.println(" " + constructors[i]);
+         }
+
+         System.out.println("Pola: ");
+         Fields fields[] = c.getFields();
+         for(int i = 0; i < fields.lenth; i++) {
+            System.out.println(" " + fields[i]);
+         }
+
+         System.out.println("Metody: ");
+         Method methods[] = c.getMethods();
+         for(int i = 0; i < methods.length; i++) {
+            System.out.println(" " + methods[i]);
+         }
+      }
+      catch(Exception e) {
+         System.out.println("Wyj¹tek: " + e);
+      }
+   }
+}
+
+Listing 11.
+// Wyœwietlanie metod typu public.
+import java.lang.reflect.*;
+public class ReflectionDemo2 {
+   public static void main(String args[]) {
+      try {
+         A a = new A();
+         Class<?> c = a.getClass();
+         System.out.println("Metody publiczne: ");
+         Method methods[] = c.getDeclaredMethods();
+         for(int i = 0; i < methods.length; i++) {
+            int modifiers = methods[i].getModifiers();
+            if(Modifier.isPublic(modifiers)) {
+               System.out.println(" " + methods[i].getName());
+            }
+         }
+      }
+      catch(Exception e) {
+         System.out.println("Wyj¹tek: " + e);
+      }
+   }
+}
+
+class A {
+   public void a1() {
+   }
+   public void a2() {
+   }
+   protected void a3() {
+   }
+   private void a4() {
+   }
+}
+
+Listing 12.
+import java.rmi.*;
+
+public interface AddServerIntf extends Remote {
+   double add(double d1, double d2) throws RemoteException;
+}
+
+Listing 13.
+import java.rmi.*;
+import java.rmi.server.*;
+
+public class AddServerImpl extends UnicastRemoteObject
+   implements AddServerIntf {
+
+   public AddServerImpl() throws RemoteException {
+   }
+   public double add(double d1, double d2) throws RemoteException {
+      return d1 + d2;
+   }
+}
+
+Listing 14.
+import java.net.*;
+import java.rmi.*;
+
+public class AddServer {
+   public static void main(String args[]) {
+
+      try {
+         AddServerImpl addServerImpl = new AddServerImpl();
+         Naming.rebind("AddServer", addServerImpl);
+      }
+      catch(Exception e) {
+         System.out.println("Wyj¹tek: " + e);
+      }
+   }
+}
+
+Listing 15.
+import java.rmi.*;
+
+public class AddClient {
+   public static void main(String args[]) {
+      try {
+          String addServerURL = "rmi://" + args[0] + "/AddServer";
+          AddServerIntf addServerIntf = 
+                  (AddServerIntf)Naming.lookup(addServerURL);
+         System.out.println("Pierwsza liczba: " + args[1]);
+         double d1 = Double.valueOf(args[1].doubleValue());
+         System.out.println("Druga liczba: " + args[2]);
+
+         double d2 = Double.ValueOf(args[2]).doubleValue();
+         System.out.println("Suma: " + addServerIntf.add(d1, d2));
+      }
+      catch(Exception e) {
+         System.out.println("Wyj¹tek: " + e);
+      }
+   }
+}
+
+Listing 16.
+// Demonstracja formatów dat.
+import java.text.*;
+import java.util.*;
+
+public class DateFormatDemo {
+   public static void main(String args[]) {
+      Date date = new Date();
+      DateFormat df;
+
+      df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.JAPAN);
+      System.out.println("Japonia: " + df.format(date));
+      
+      df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.KOREA);
+      System.out.println("Korea: " + df.format(date));
+
+      df = DateFormat.getDateInstance(DateFormat.LONG, Locale.UK);
+      System.out.println("Wielka Brytania: " + df.format(date));
+
+      df = DateFormat.getDateInstance(DateFormat.FULL, Locale.US);
+      System.out.println("Stany Zjednoczone: " + df.format(date));
+   }
+}
+
+Listing 17.
+// Demonstracja formatów czasu.
+import java.text.*;
+import java.util.*;
+
+public class TimeFormatDemo {
+   public static void main(String args[]) {
+      Date date = new Date();
+      DateFormat df;
+
+      df = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.JAPAN);
+      System.out.println("Japonia: " + df.format(date));
+
+      df = DateFormat.getTimeInstance(DateFormat.LONG, Locale.UK);
+      System.out.println("Wielka Brytania: " + df.format(date));
+
+      df = DateFormat.getTimeInstance(DateFormat.FULL, Locale.CANADA);
+      System.out.println("Kanada: " + df.format(date));
+   }
+}
+
+Listing 18.
+// Demonstracja zasad dzia³ania klasy SimpleDateFormat.
+import java.text.*;
+import java.util.*;
+
+public class SimpleDateFormatDemo {
+   public static void main(String args[]) {
+      Date date = new Date();
+      SimpleDateFormat sdf;
+      sdf = new SimpleDateFormat("hh:mm:ss");
+      System.out.println(sdf.format(date));
+      sdf = new SimpleDateFormat("dd MMM yyy hh:mm:ss zzz");
+      System.out.println(sdf.format(date));
+      sdf = new SimpleDateFormat("E MMM dd yyyy");
+      System.out.println(sdf.format(date));
+   }
+}
+
+

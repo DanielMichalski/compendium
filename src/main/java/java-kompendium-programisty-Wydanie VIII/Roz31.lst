@@ -1,0 +1,721 @@
+Listing 1.
+// Przyk³ad u¿ycia klas JLabel i ImageIcon.
+import java.awt.*;
+import javax.swing.*;
+/*
+<applet code="JLabelDemo" width=250 height=150>
+</applet>
+*/
+
+public class JLabelDemo extends JApplet {
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Tworzy ikonê.
+    ImageIcon ii = new ImageIcon("france.gif");
+
+    // Tworzy etykietê.
+    JLabel jl = new JLabel("Francja", ii, JLabel.CENTER);
+
+    // Dodaje etykietê do panelu treœci.
+    add(jl);
+  }
+}
+
+Listing 2.
+// Przyk³ad u¿ycia komponentu JTextField.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+/*
+  <applet code="JTextFieldDemo" width=300 height=50>
+  </applet>
+*/
+
+public class JTextFieldDemo extends JApplet {
+  JTextField jtf;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Zmiana mened¿era uk³adu graficznego na FlowLayout.
+    setLayout(new FlowLayout());
+
+    // Dodaje pole tekstowe do panelu treœci.
+    jtf = new JTextField(15);
+    add(jtf);
+    jtf.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent ae) {
+        // Po naciœniêciu klawisza Enter wyœwietla wpisany tekst.
+        showStatus(jtf.getText());
+      }
+    });
+  }
+}
+
+Listing 3.
+// Przyk³ad u¿ycia przycisków typu JButton z ikonami.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+/*
+  <applet code="JButtonDemo" width=250 height=450>
+  </applet>
+*/
+
+public class JButtonDemo extends JApplet
+implements ActionListener {
+  JLabel jlab;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+  // Zmiana mened¿era uk³adu graficznego na FlowLayout.
+  setLayout(new FlowLayout());
+
+  // Dodaje przyciski do panelu treœci.
+  ImageIcon france = new ImageIcon("france.gif");
+  JButton jb = new JButton(france);
+  jb.setActionCommand("Francja");
+  jb.addActionListener(this);
+  add(jb);
+
+  ImageIcon germany = new ImageIcon("germany.gif");
+  jb = new JButton(germany);
+  jb.setActionCommand("Niemcy");
+  jb.addActionListener(this);
+  add(jb);
+
+  ImageIcon italy = new ImageIcon("italy.gif");
+  jb = new JButton(italy);
+  jb.setActionCommand("W³ochy");
+  jb.addActionListener(this);
+  add(jb);
+
+  ImageIcon japan = new ImageIcon("japan.gif");
+  jb = new JButton(japan);
+  jb.setActionCommand("Japonia");
+  jb.addActionListener(this);
+  add(jb);
+
+  // Tworzy etykietê i dodaje j¹ do panelu treœci.
+  jlab = new JLabel("Wybierz flagê");
+  add(jlab);
+}
+
+  // Obs³uguje zdarzenia zwi¹zane z przyciskami.
+  public void actionPerformed(ActionEvent ae) {
+    jlab.setText("Wybra³eœ pañstwo " + ae.getActionCommand());
+  }
+}
+
+Listing 4.
+// Przyk³ad u¿ycia klasy JToggleButton.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+/*
+<applet code="JToggleButtonDemo" width=200 height=80>
+</applet>
+*/
+
+public class JToggleButtonDemo extends JApplet {
+
+  JLabel jlab;
+  JToggleButton jtbn;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Zmiana mened¿era uk³adu graficznego na FlowLayout.
+    setLayout(new FlowLayout());
+
+    // Tworzy etykietê.
+    jlab = new JLabel("Przycisk jest wy³¹czony.");
+
+    // Tworzy przycisk prze³¹cznika.
+    jtbn = new JToggleButton("W³¹czony/wy³¹czony");
+
+    // Dodaje obiekt nas³uchuj¹cy zdarzeñ typu ItemEvent do przycisku prze³¹cznika.
+    jtbn.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent ie) {
+        if(jtbn.isSelected())
+          jlab.setText("Przycisk jest w³¹czony.");
+        else
+          jlab.setText("Przycisk jest wy³¹czony.");
+      }
+    });
+
+    // Dodaje przycisk prze³¹cznika i etykietê do panelu treœci.
+    add(jtbn);
+    add(jlab);
+  }
+}
+
+
+Listing 5.
+// Przyk³ad u¿ycia klasy JCheckbox.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+/*
+  <applet code="JCheckBoxDemo" width=270 height=50>
+  </applet>
+*/
+
+public class JCheckBoxDemo extends JApplet
+    implements ItemListener {
+  JLabel jlab;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Zmiana mened¿era uk³adu graficznego na FlowLayout.
+    setLayout(new FlowLayout());
+
+    // Dodaje pola wyboru do panelu treœci.
+    JCheckBox cb = new JCheckBox("C");
+    cb.addItemListener(this);
+    add(cb);
+
+    cb = new JCheckBox("C++");
+    cb.addItemListener(this);
+    add(cb);
+
+    cb = new JCheckBox("Java");
+    cb.addItemListener(this);
+    add(cb);
+
+    cb = new JCheckBox("Perl");
+    cb.addItemListener(this);
+    add(cb);
+
+    // Tworzy etykietê i dodaje j¹ do panelu treœci.
+    jlab = new JLabel("Wybierz jêzyki");
+    add(jlab);
+  }
+
+  // Obs³uguje zdarzenia ItemEvent dla pól wyboru.
+  public void itemStateChanged(ItemEvent ie) {
+    JCheckBox cb = (JCheckBox)ie.getItem();
+    if(cb.isSelected())
+      jlab.setText("Pole " + cb.getText() + " jest zaznaczone.");
+    else
+      jlab.setText("Pole " + cb.getText() + " nie jest zaznaczone.");
+  }
+}
+
+Listing 6.
+// Przyk³ad u¿ycia klasy JRadioButton.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+/*
+  <applet code="JRadioButtonDemo" width=300 height=50>
+  </applet>
+*/
+
+public class JRadioButtonDemo extends JApplet
+    implements ActionListener {
+  JLabel jlab;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Zmiana mened¿era uk³adu graficznego na FlowLayout.
+    setLayout(new FlowLayout());
+
+    // Tworzy przyciski opcji i dodaje je do panelu treœci.
+    JRadioButton b1 = new JRadioButton("A");
+    b1.addActionListener(this);
+    add(b1);
+
+    JRadioButton b2 = new JRadioButton("B");
+    b2.addActionListener(this);
+    add(b2);
+
+    JRadioButton b3 = new JRadioButton("C");
+    b3.addActionListener(this);
+    add(b3);
+
+    // Definiuje grupê przycisków.
+    ButtonGroup bg = new ButtonGroup();
+    bg.add(b1);
+    bg.add(b2);
+    bg.add(b3);
+
+    // Tworzy etykietê i dodaje j¹ do panelu treœci.
+    jlab = new JLabel("Wybierz opcjê");
+    add(jlab);
+  }
+
+  // Obs³uguje wybór przycisku opcji.
+  public void actionPerformed(ActionEvent ae) {
+    jlab.setText("Wybra³eœ opcjê " + ae.getActionCommand());
+  }
+}
+
+Listing 7.
+// Przyk³ad u¿ycia klasy JTabbedPane.
+import javax.swing.*;
+/*
+   <applet code="JTabbedPaneDemo" width=400 height=100>
+   </applet>
+*/
+
+public class JTabbedPaneDemo extends JApplet {
+
+   public void init() {
+      try {
+         SwingUtilities.invokeAndWait(
+            new Runnable() {
+               public void run() {
+                  makeGUI();
+               }
+            }
+         );
+      } catch (Exception exc) {
+         System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+      }
+   }
+   
+   private void makeGUI() {
+      
+      JTabbedPane jtp = new JTabbedPane();
+      jtp.addTab("Miasta", newCitiesPanel());
+      jtp.addTab("Kolory", newColorsPanel());
+      jtp.addTab("Smaki", newFlavorsPanel());
+      add(jtp);
+   }
+}
+
+// Tworzy panele, które zostan¹ umieszczone na panelu podzielonym na zak³adki.
+class CitiesPanel extends JPanel {
+ 
+   public CitiesPanel() {
+   
+      JButton b1 = new JButton("Nowy Jork");
+      add(b1);
+      JButton b2 = new JButton("Londyn");
+      add(b2);
+      JButton b3 = new JButton("Hong Kong");
+      add(b3);
+      JButton b4 = new JButton("Tokio");
+      add(b4);
+   }
+}
+
+class ColorsPanel extends JPanel {
+  
+   public ColorsPanel() {
+        JCheckBox cb1 = new JCheckBox("Czerwony");
+      add(cb1);
+      JCheckBox cb2 = new JCheckBox("Zielony");
+      add(cb2);
+      JCheckBox cb3 = new JCheckBox("Niebieski");
+      add(cb3);
+   }
+}
+
+class FlavorsPanel extends JPanel {
+  
+   public FlavorsPanel() {  
+      JComboBox jcb = new JComboBox();
+      jcb.addItem("Waniliowy");
+      jcb.addItem("Czekoladowy");
+      jcb.addItem("Truskawkowy");
+      add(jcb);
+   }
+}
+
+Listing 8.
+// Przyk³ad u¿ycia klasy JScrollPane.
+import java.awt.*;
+import javax.swing.*;
+/*
+   <applet code="JScrollPaneDemo" width=400 height=100>
+   </applet>
+*/
+
+public class JScrollPaneDemo extends JApplet
+
+   public void init() {
+      try {
+         SwingUtilities.invokeAndWait(
+            new Runnable() {
+               public void run() {
+                  makeGUI();
+               }
+            }
+         );
+      } catch (Exception exc) {
+         System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+      }
+   }
+   
+   private void makeGUI() {
+   
+      // Dodaje 400 przycisków do panelu.
+      JPanel jp = new JPanel();
+      jp.setLayout(new GridLayout(20, 20));
+      int b = 0;
+
+      for(int i = 0; i < 20; i++) {
+         for(int j = 0; j < 20; j++) {
+            jp.add(new JButton("Przycisk " + b));
+            ++b;
+         }
+      }
+
+      // Tworzy panel z paskami przewijania.
+      JScrollPane jsp = new JScrollPane(jp);
+
+      // Dodaje panel z paskami przewijania do panelu zawartoœci.
+      // Poniewa¿ zastosowano domyœlny mened¿er uk³adu BorderLayout,
+      // panel zostanie dodany do centralnego obszaru okna.
+      add(jsp, BorderLayout.CENTER);
+   }
+}
+
+Listing 9.
+// Przyk³ad u¿ycia klasy JList.
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.*;
+import java.awt.event.*;
+
+/*
+  <applet code="JListDemo" width=200 height=120>
+  </applet>
+*/
+
+public class JListDemo extends JApplet {
+  JList<String> jlst;
+  JLabel jlab;
+  JScrollPane jscrlp;
+
+  // Tworzy tablicê z nazwami miast.
+  String Cities[] = { "Nowy Jork", "Chicago", "Houston",
+                      "Denver", "Los Angeles", "Seattle",
+                      "Londyn", "Pary¿", "Nowe Delhi",
+                      "Hongkong", "Tokio", "Sydney" };
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Zmiana mened¿era uk³adu graficznego na FlowLayout.
+    setLayout(new FlowLayout());
+
+    // Tworzy komponent typu JList.
+    jlst = new JList<String>(Cities);
+
+    // Ustawia tryb jednokrotnego wyboru.
+    jlst.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+    // Dodaje listê do panelu z paskami przewijania.
+    jscrlp = new JScrollPane(jlst);
+
+    // Ustawia preferowane wymiary panelu z przewijaniem.
+    jscrlp.setPreferredSize(new Dimension(120, 90));
+
+    // Tworzy etykietê wyœwietlaj¹c¹ nazwê wybranego miasta.
+    jlab = new JLabel("Wybierz miasto");
+
+    // Dodaje obiekt nas³uchuj¹cy zdarzeñ wyboru generowanych przez komponent listy.
+    jlst.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent le) {
+        // Uzyskuje indeks zmienionego elementu.
+        int idx = jlst.getSelectedIndex();
+
+        // Wyœwietla wybrany element (jeœli zosta³ zaznaczony).
+        if(idx != -1)
+          jlab.setText("Bie¿¹cy wybór: " + Cities[idx]);
+        else // W przeciwnym razie ponownie prosi o wybór miasta.
+          jlab.setText("Wybierz miasto");
+      }
+    });
+
+    // Dodaje listê i etykietê do panelu treœci.
+    add(jscrlp);
+    add(jlab);
+  }
+}
+
+Listing 10.
+// Przyk³ad u¿ycia klasy JComboBox.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+/*
+  <applet code="JComboBoxDemo" width=300 height=100>
+  </applet>
+*/
+
+public class JComboBoxDemo extends JApplet {
+  JLabel jlab;
+  ImageIcon france, germany, italy, japan;
+  JComboBox<String> jcb;
+
+  String flags[] = { "Francja", "Niemcy", "W³ochy", "Japonia" };
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Zmiana mened¿era uk³adu graficznego na FlowLayout.
+    setLayout(new FlowLayout());
+
+    // Tworzy obiekt listy kombinowanej i dodaje ten komponent do panelu treœci.
+    jcb = new JComboBox<String>(flags);
+    add(jcb);
+
+    // Obs³uguje wybór elementu listy.
+    jcb.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent ae) {
+        String s = (String) jcb.getSelectedItem();
+        jlab.setIcon(new ImageIcon(s + ".gif"));
+      }
+    });
+
+    // Tworzy etykietê i dodaje j¹ do panelu treœci.
+    jlab = new JLabel(new ImageIcon("francja.gif"));
+    add(jlab);
+  }
+}
+
+Listing 11.
+// Przyk³ad u¿ycia klasy JTree.
+import java.awt.*;
+import javax.swing.event.*;
+import javax.swing.*;
+import javax.swing.tree.*;
+/*
+  <applet code="JTreeDemo" width=400 height=200>
+  </applet>
+*/
+
+public class JTreeDemo extends JApplet {
+  JTree tree;
+  JLabel jlab;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Tworzy g³ówny wêze³ drzewa.
+    DefaultMutableTreeNode top = new DefaultMutableTreeNode("Opcje");
+
+    // Tworzy poddrzewo A.
+    DefaultMutableTreeNode a = new DefaultMutableTreeNode("A");
+    top.add(a);
+    DefaultMutableTreeNode a1 = new DefaultMutableTreeNode("A1");
+    a.add(a1);
+    DefaultMutableTreeNode a2 = new DefaultMutableTreeNode("A2");
+    a.add(a2);
+
+    // Tworzy poddrzewo B.
+    DefaultMutableTreeNode b = new DefaultMutableTreeNode("B");
+    top.add(b);
+    DefaultMutableTreeNode b1 = new DefaultMutableTreeNode("B1");
+    b.add(b1);
+    DefaultMutableTreeNode b2 = new DefaultMutableTreeNode("B2");
+    b.add(b2);
+    DefaultMutableTreeNode b3 = new DefaultMutableTreeNode("B3");
+    b.add(b3);
+
+    // Tworzy drzewo.
+    tree = new JTree(top);
+
+    // Dodaje drzewo do panelu z paskami przewijania.
+    JScrollPane jsp = new JScrollPane(tree);
+
+    // Dodaje przewijany panel do panelu treœci.
+    add(jsp);
+
+    // Dodaje etykietê do panelu treœci.
+    jlab = new JLabel();
+    add(jlab, BorderLayout.SOUTH);
+
+    // Obs³uguje zdarzenia wyboru wêz³ów drzewa.
+    tree.addTreeSelectionListener(new TreeSelectionListener() {
+      public void valueChanged(TreeSelectionEvent tse) {
+        jlab.setText("Wybrano " + tse.getPath());
+      }
+    });
+  }
+}
+
+Listing 12.
+// Przyk³ad u¿ycia klasy JTable.
+import java.awt.*;
+import javax.swing.*;
+/*
+  <applet code="JTableDemo" width=400 height=200>
+  </applet>
+*/
+
+public class JTableDemo extends JApplet {
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(
+        new Runnable() {
+          public void run() {
+            makeGUI();
+          }
+        }
+      );
+    } catch (Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  private void makeGUI() {
+
+    // Inicjalizuje nag³ówki kolumn.
+    String[] colHeads = { "Imiê", "Nr wewnêtrzny", "Identyfikator" };
+
+    // Inicjalizuje dane.
+    Object[][] data = {
+      { "Grzegorz", "4567", "865" },
+      { "Krzysztof", "7566", "555" },
+      { "Wanda", "5634", "587" },
+      { "Melania", "7345", "922" },
+      { "Anna", "1237", "333" },
+      { "Jan", "5656", "314" },
+      { "Mateusz", "5672", "217" },
+      { "Celina", "6741", "444" },
+      { "Edward", "9023", "519" },
+      { "El¿bieta", "1134", "532" },
+      { "Janina", "5689", "112" },
+      { "Eryk", "9030", "133" },
+      { "Hanna", "6751", "145" }
+    };
+
+    // Tworzy tabelê.
+    JTable table = new JTable(data, colHeads);
+
+    // Dodaje tabelê do panelu przewijania.
+    JScrollPane jsp = new JScrollPane(table);
+
+    // Dodaje przewijany panel do panelu treœci.
+    add(jsp);
+  }
+}
+

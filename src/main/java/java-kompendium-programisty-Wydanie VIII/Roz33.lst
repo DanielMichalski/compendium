@@ -1,0 +1,1187 @@
+Listing 1.
+// Prosty aplet obliczaj¹cy ratê po¿yczki.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.text.*;
+/*
+  <applet code="RegPay" width=320 height=200>
+  </applet>
+*/
+
+public class RegPay extends JApplet
+  implements ActionListener {
+
+  JTextField amountText, paymentText, periodText, rateText;
+  JButton doIt;
+
+  double principal; // kwota po¿yczki
+  double intRate;   // oprocentowanie
+  double numYears;  // czas sp³aty w latach
+
+  /* Liczba rat w roku. Tak¿e ten parametr
+     móg³by byæ ustawiany przez u¿ytkownika. */
+  final int payPerYear = 12;
+
+  NumberFormat nf;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(new Runnable () {
+        public void run() {
+          makeGUI(); // Inicjalizuje graficzny interfejs u¿ytkownika.
+        }
+      });
+    } catch(Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  // Konfiguruje i inicjalizuje graficzny interfejs u¿ytkownika.
+  private void makeGUI() {
+
+    // U¿ywa mened¿era uk³adu GridBagLayout.
+    GridBagLayout gbag = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    setLayout(gbag);
+
+    JLabel heading = new
+          JLabel("Obliczanie miesiêcznej raty po¿yczki");
+
+    JLabel amountLab = new JLabel("Kwota po¿yczki ");
+    JLabel periodLab = new JLabel("Lata ");
+    JLabel rateLab = new JLabel("Oprocentowanie ");
+    JLabel paymentLab = new JLabel("Miesiêczna rata ");
+
+    amountText = new JTextField(10);
+    periodText = new JTextField(10);
+    paymentText = new JTextField(10);
+    rateText = new JTextField(10);
+
+    // Pole raty s³u¿y tylko do wyœwietlania danych.
+    paymentText.setEditable(false);
+
+    doIt = new JButton("Oblicz");
+
+    // Definiuje uk³ad komponentów.
+    gbc.weighty = 1.0; // stosuje wagê wiersza równ¹ 1
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbc.anchor = GridBagConstraints.NORTH;
+    gbag.setConstraints(heading, gbc);
+
+    // Wyrównuje wiêkszoœæ komponentów do prawej strony.
+    gbc.anchor = GridBagConstraints.EAST;
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(amountLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(amountText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(periodLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(periodText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(rateLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(rateText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(paymentLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(paymentText, gbc);
+
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbag.setConstraints(doIt, gbc);
+
+    // Dodaje wszystkie przygotowane komponenty.
+    add(heading);
+    add(amountLab);
+    add(amountText);
+    add(periodLab);
+    add(periodText);
+    add(rateLab);
+    add(rateText);
+    add(paymentLab);
+    add(paymentText);
+    add(doIt);
+
+    // Rejestruje siê jako odbiorca zdarzeñ akcji.
+    amountText.addActionListener(this);
+    periodText.addActionListener(this);
+    rateText.addActionListener(this);
+    doIt.addActionListener(this);
+
+    // Tworzy format liczb.
+    nf = NumberFormat.getInstance();
+    nf.setMinimumFractionDigits(2);
+    nf.setMaximumFractionDigits(2);
+  }
+
+  /* U¿ytkownik nacisn¹³ klawisz Enter w polu tekstowym
+     lub klikn¹³ przycisk Oblicz. Wyœwietla wynik, jeœli u¿ytkownik wype³ni³
+     wszystkie pola. */
+  public void actionPerformed(ActionEvent ae) {
+    double result = 0.0;
+
+    String amountStr = amountText.getText();
+    String periodStr = periodText.getText();
+    String rateStr = rateText.getText();
+
+    try {
+      if(amountStr.length() != 0 &&
+         periodStr.length() != 0 &&
+         rateStr.length() != 0) {
+
+        principal = Double.parseDouble(amountStr);
+        numYears = Double.parseDouble(periodStr);
+        intRate = Double.parseDouble(rateStr) / 100;
+        result = compute();
+
+        paymentText.setText(nf.format(result));
+      }
+      showStatus(""); // usuwa ewentualny wczeœniejszy komunikat o b³êdzie
+    } catch (NumberFormatException exc) {
+      showStatus("Nieprawid³owe dane");
+      paymentText.setText("");
+    }
+  }
+
+  // Oblicza ratê po¿yczki.
+  double compute() {
+    double numer;
+    double denom;
+    double b, e;
+
+    numer = intRate * principal / payPerYear;
+
+    e = -(payPerYear * numYears);
+    b = (intRate / payPerYear) + 1.0;
+
+    denom = 1.0 - Math.pow(b, e);
+
+    return numer / denom;
+  }
+}
+
+Listing 2.
+// Oblicza przysz³¹ wartoœæ inwestycji.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.text.*;
+/*
+  <applet code="FutVal" width=380 height=240>
+  </applet>
+*/
+
+  public class FutVal extends JApplet
+    implements ActionListener {
+
+    JTextField amountText, futvalText, periodText,
+               rateText, compText;
+    JButton doIt;
+
+    double principal; // inwestowana kwota
+    double rateOfRet; // stopa zwrotu
+    double numYears;  // czas trwania inwestycji w latach
+    int compPerYear;  // liczba kapitalizacji odsetek w ci¹gu roku
+
+    NumberFormat nf;
+
+    public void init() {
+      try {
+        SwingUtilities.invokeAndWait(new Runnable () {
+          public void run() {
+            makeGUI(); // Inicjalizuje graficzny interfejs u¿ytkownika.
+          }
+        });
+      } catch(Exception exc) {
+        System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+      }
+    }
+
+    // Konfiguruje i inicjalizuje graficzny interfejs u¿ytkownika.
+    private void makeGUI() {
+
+    // U¿ywa mened¿era uk³adu GridBagLayout.
+    GridBagLayout gbag = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    setLayout(gbag);
+
+    JLabel heading = new
+           JLabel("Przysz³a wartoœæ inwestycji");
+
+    JLabel amountLab = new JLabel("Inwestowana kwota ");
+    JLabel periodLab = new JLabel("Lata ");
+    JLabel rateLab = new JLabel("Stopa zwrotu ");
+    JLabel futvalLab =
+           new JLabel("Przysz³a wartoœæ inwestycji ");
+    JLabel compLab =
+           new JLabel("Liczba kapitalizacji odsetek w ci¹gu roku ");
+
+    amountText = new JTextField(10);
+    periodText = new JTextField(10);
+    futvalText = new JTextField(10);
+    rateText = new JTextField(10);
+    compText = new JTextField(10);
+
+    // Pole przysz³ej wartoœci s³u¿y tylko do wyœwietlania danych.
+    futvalText.setEditable(false);
+    doIt = new JButton("Oblicz");
+
+    // Definiuje uk³ad komponentów.
+    gbc.weighty = 1.0; // stosuje wagê wiersza równ¹ 1
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbc.anchor = GridBagConstraints.NORTH;
+    gbag.setConstraints(heading, gbc);
+
+    // Wyrównuje wiêkszoœæ komponentów do prawej strony.
+    gbc.anchor = GridBagConstraints.EAST;
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(amountLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(amountText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(periodLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(periodText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(rateLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(rateText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(compLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(compText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(futvalLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(futvalText, gbc);
+
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbag.setConstraints(doIt, gbc);
+
+    add(heading);
+    add(amountLab);
+    add(amountText);
+    add(periodLab);
+    add(periodText);
+    add(rateLab);
+    add(rateText);
+    add(compLab);
+    add(compText);
+    add(futvalLab);
+    add(futvalText);
+    add(doIt);
+
+    // Rejestruje siê jako odbiorca zdarzeñ akcji.
+    amountText.addActionListener(this);
+    periodText.addActionListener(this);
+    rateText.addActionListener(this);
+    compText.addActionListener(this);
+    doIt.addActionListener(this);
+
+    // Tworzy format liczb.
+    nf = NumberFormat.getInstance();
+    nf.setMinimumFractionDigits(2);
+    nf.setMaximumFractionDigits(2);
+  }
+
+  /* U¿ytkownik nacisn¹³ klawisz Enter w polu tekstowym
+     lub klikn¹³ przycisk Oblicz. Wyœwietla wynik, jeœli u¿ytkownik wype³ni³
+     wszystkie pola. */
+  public void actionPerformed(ActionEvent ae) {
+    double result = 0.0;
+
+    String amountStr = amountText.getText();
+    String periodStr = periodText.getText();
+    String rateStr = rateText.getText();
+    String compStr = compText.getText();
+
+    try {
+      if(amountStr.length() != 0 &&
+         periodStr.length() != 0 &&
+         rateStr.length() != 0 &&
+         compStr.length() != 0) {
+
+        principal = Double.parseDouble(amountStr);
+        numYears = Double.parseDouble(periodStr);
+        rateOfRet = Double.parseDouble(rateStr) / 100;
+        compPerYear = Integer.parseInt(compStr);
+
+        result = compute();
+
+        futvalText.setText(nf.format(result));
+      }
+      showStatus(""); // usuwa ewentualny wczeœniejszy komunikat o b³êdzie
+    } catch (NumberFormatException exc) {
+      showStatus("Nieprawid³owe dane");
+      futvalText.setText("");
+    }
+  }
+
+  // Oblicza przysz³¹ wartoœæ inwestycji.
+  double compute() {
+    double b, e;
+
+    b = (1 + rateOfRet/compPerYear);
+    e = compPerYear * numYears;
+
+    return principal * Math.pow(b, e);
+  }
+}
+
+Listing 3.
+/* Oblicza kwotê, jak¹ trzeba zainwestowaæ, aby uzyskaæ
+   po okreœlonym czasie dan¹ wartoœæ. */
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.text.*;
+/*
+  <applet code="InitInv" width=380 height=240>
+  </applet>
+*/
+
+public class InitInv extends JApplet
+  implements ActionListener {
+
+  JTextField targetText, initialText, periodText,
+             rateText, compText;
+  JButton doIt;
+
+  double targetValue; // docelowa wartoœæ inwestycji
+  double rateOfRet;   // stopa zwrotu
+  double numYears;    // czas trwania inwestycji w latach
+  int compPerYear;    // liczba kapitalizacji odsetek w ci¹gu roku
+
+  NumberFormat nf;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(new Runnable () {
+        public void run() {
+          makeGUI(); // Inicjalizuje graficzny interfejs u¿ytkownika.
+        }
+      });
+    } catch(Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  // Konfiguruje i inicjalizuje graficzny interfejs u¿ytkownika.
+  private void makeGUI() {
+
+    // U¿ywa mened¿era uk³adu GridBagLayout.
+    GridBagLayout gbag = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    setLayout(gbag);
+    JLabel heading = new
+           JLabel("Inwestycja potrzebna do " +
+                  "uzyskania wartoœci w przysz³oœci");
+
+    JLabel targetLab = new JLabel("Oczekiwana przysz³a wartoœæ inwestycji ");
+    JLabel periodLab = new JLabel("Lata ");
+    JLabel rateLab = new JLabel("Stopa zwrotu ");
+    JLabel compLab =
+            new JLabel("Liczba kapitalizacji odsetek w ci¹gu roku ");
+    JLabel initialLab =
+            new JLabel("Wymagana pocz¹tkowa wartoœæ inwestycji ");
+
+    targetText = new JTextField(10);
+    periodText = new JTextField(10);
+    initialText = new JTextField(10);
+    rateText = new JTextField(10);
+    compText = new JTextField(10);
+
+    // Pole pocz¹tkowej wartoœci inwestycji s³u¿y tylko do wyœwietlania danych.
+    initialText.setEditable(false);
+
+    doIt = new JButton("Oblicz");
+
+    // Definiuje uk³ad komponentów.
+    gbc.weighty = 1.0; // stosuje wagê wiersza równ¹ 1
+
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbc.anchor = GridBagConstraints.NORTH;
+    gbag.setConstraints(heading, gbc);
+
+    // Wyrównuje wiêkszoœæ komponentów do prawej strony.
+    gbc.anchor = GridBagConstraints.EAST;
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(targetLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(targetText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(periodLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(periodText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(rateLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(rateText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(compLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(compText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(initialLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(initialText, gbc);
+
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbag.setConstraints(doIt, gbc);
+
+    // Dodaje wszystkie przygotowane komponenty.
+    add(heading);
+    add(targetLab);
+    add(targetText);
+    add(periodLab);
+    add(periodText);
+    add(rateLab);
+    add(rateText);
+    add(compLab);
+    add(compText);
+    add(initialLab);
+    add(initialText);
+    add(doIt);
+
+    // Rejestruje siê jako odbiorca zdarzeñ akcji.
+    targetText.addActionListener(this);
+    periodText.addActionListener(this);
+    rateText.addActionListener(this);
+    compText.addActionListener(this);
+    doIt.addActionListener(this);
+
+    // Tworzy format liczb.
+    nf = NumberFormat.getInstance();
+    nf.setMinimumFractionDigits(2);
+    nf.setMaximumFractionDigits(2);
+  }
+
+  /* U¿ytkownik nacisn¹³ klawisz Enter w polu tekstowym
+     lub klikn¹³ przycisk Oblicz. Wyœwietla wynik, jeœli u¿ytkownik wype³ni³
+     wszystkie pola. */
+  public void actionPerformed(ActionEvent ae) {
+    double result = 0.0;
+
+    String targetStr = targetText.getText();
+    String periodStr = periodText.getText();
+    String rateStr = rateText.getText();
+    String compStr = compText.getText();
+
+    try {
+      if(targetStr.length() != 0 &&
+         periodStr.length() != 0 &&
+         rateStr.length() != 0 &&
+         compStr.length() != 0) {
+
+        targetValue = Double.parseDouble(targetStr);
+        numYears = Double.parseDouble(periodStr);
+        rateOfRet = Double.parseDouble(rateStr) / 100;
+        compPerYear = Integer.parseInt(compStr);
+
+        result = compute();
+
+        initialText.setText(nf.format(result));
+      }
+      showStatus(""); // usuwa ewentualny wczeœniejszy komunikat o b³êdzie
+    } catch (NumberFormatException exc) {
+      showStatus("Nieprawid³owe dane");
+      initialText.setText("");
+    }
+  }
+
+  // Oblicza wymagan¹ wartoœæ pocz¹tkow¹ inwestycji.
+  double compute() {
+    double b, e;
+
+    b = (1 + rateOfRet/compPerYear);
+    e = compPerYear * numYears;
+
+    return targetValue / Math.pow(b, e);
+  }
+}
+
+Listing 4.
+/* Obliczenie pocz¹tkowej inwestycji w celu
+   uzyskiwania danej emerytury. Innymi s³owy, znajdujemy
+   pocz¹tkow¹ kwotê inwestycji pozwalaj¹c¹ wyp³acaæ
+   dan¹ kwotê emerytury przez okreœlony czas. */
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.text.*;
+/*
+  <applet code="Annuity" width=380 height=260>
+  </applet>
+*/
+
+public class Annuity extends JApplet
+  implements ActionListener {
+
+  JTextField regWDText, initialText, periodText,
+             rateText, numWDText;
+  JButton doIt;
+
+  double regWDAmount; // oczekiwana wysokoœæ miesiêcznej emerytury
+  double rateOfRet;   // stopa zwrotu
+  double numYears;    // czas wyp³acania emerytury w latach
+  int numPerYear;     // liczba wyp³at w roku
+
+  NumberFormat nf;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(new Runnable () {
+        public void run() {
+          makeGUI(); // Inicjalizuje graficzny interfejs u¿ytkownika.
+        }
+      });
+    } catch(Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  // Konfiguruje i inicjalizuje graficzny interfejs u¿ytkownika.
+  private void makeGUI() {
+
+    // U¿ywa mened¿era uk³adu GridBagLayout.
+    GridBagLayout gbag = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    setLayout(gbag);
+
+    JLabel heading = new
+          JLabel("Wartoœæ inwestycji potrzebna do " +
+                 "osi¹gniêcia ¿¹danej emerytury");
+
+    JLabel regWDLab = new JLabel("Oczekiwana wysokoœæ emerytury ");
+    JLabel periodLab = new JLabel("Lata ");
+    JLabel rateLab = new JLabel("Stopa zwrotu ");
+    JLabel numWDLab =
+            new JLabel("Liczba wyp³at w roku ");
+    JLabel initialLab =
+            new JLabel("Wymagana pocz¹tkowa wartoœæ inwestycji ");
+
+    regWDText = new JTextField(10);
+    periodText = new JTextField(10);
+    initialText = new JTextField(10);
+    rateText = new JTextField(10);
+    numWDText = new JTextField(10);
+
+    // Pole inwestycji s³u¿y tylko do wyœwietlania danych.
+    initialText.setEditable(false);
+
+    doIt = new JButton("Oblicz");
+
+    // Definiuje uk³ad komponentów.
+    gbc.weighty = 1.0; // stosuje wagê wiersza równ¹ 1
+
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbc.anchor = GridBagConstraints.NORTH;
+    gbag.setConstraints(heading, gbc);
+
+    // Wyrównuje wiêkszoœæ komponentów do prawej strony.
+    gbc.anchor = GridBagConstraints.EAST;
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(regWDLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(regWDText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(periodLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(periodText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(rateLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(rateText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(numWDLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(numWDText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(initialLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(initialText, gbc);
+
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbag.setConstraints(doIt, gbc);
+
+    // Dodaje wszystkie przygotowane komponenty.
+    add(heading);
+    add(regWDLab);
+    add(regWDText);
+    add(periodLab);
+    add(periodText);
+    add(rateLab);
+    add(rateText);
+    add(numWDLab);
+    add(numWDText);
+    add(initialLab);
+    add(initialText);
+    add(doIt);
+
+    // Rejestruje siê jako odbiorca zdarzeñ akcji pola tekstowego.
+    regWDText.addActionListener(this);
+    periodText.addActionListener(this);
+    rateText.addActionListener(this);
+    numWDText.addActionListener(this);
+    doIt.addActionListener(this);
+
+    // Tworzy format liczb.
+    nf = NumberFormat.getInstance();
+    nf.setMinimumFractionDigits(2);
+    nf.setMaximumFractionDigits(2);
+  }
+
+  /* U¿ytkownik nacisn¹³ klawisz Enter w polu tekstowym
+     lub klikn¹³ przycisk Oblicz. Wyœwietla wynik, jeœli u¿ytkownik wype³ni³
+     wszystkie pola. */
+  public void actionPerformed(ActionEvent ae) {
+    double result = 0.0;
+
+    String regWDStr = regWDText.getText();
+    String periodStr = periodText.getText();
+    String rateStr = rateText.getText();
+    String numWDStr = numWDText.getText();
+
+    try {
+      if(regWDStr.length() != 0 &&
+         periodStr.length() != 0 &&
+         rateStr.length() != 0 &&
+         numWDStr.length() != 0) {
+
+        regWDAmount = Double.parseDouble(regWDStr);
+        numYears = Double.parseDouble(periodStr);
+        rateOfRet = Double.parseDouble(rateStr) / 100;
+        numPerYear = Integer.parseInt(numWDStr);
+
+        result = compute();
+
+        initialText.setText(nf.format(result));
+      }
+      showStatus(""); // usuwa ewentualny wczeœniejszy komunikat o b³êdzie
+    } catch (NumberFormatException exc) {
+      showStatus("Nieprawid³owe dane");
+      initialText.setText("");
+    }
+  }
+
+  // Oblicza wymagan¹ wartoœæ pocz¹tkow¹ inwestycji.
+  double compute() {
+    double b, e;
+    double t1, t2;
+
+    t1 = (regWDAmount * numPerYear) / rateOfRet;
+
+    b = (1 + rateOfRet/numPerYear);
+    e = numPerYear * numYears;
+
+    t2 = 1 - (1 / Math.pow(b, e));
+
+    return t1 * t2;
+  }
+}
+
+Listing 5.
+/* Obliczenie maksymalnych wyp³at emerytury
+   dla okreœlonego czasu i kwoty. */
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.text.*;
+/*
+  <applet code="MaxWD" width=340 height=260>
+  </applet>
+*/
+
+public class MaxWD extends JApplet
+  implements ActionListener {
+
+  JTextField maxWDText, orgPText, periodText,
+             rateText, numWDText;
+  JButton doIt;
+
+  double principal; // pocz¹tkowa kwota inwestycji
+  double rateOfRet; // roczna stopa zwrotu
+  double numYears;  // czas wyp³acania emerytury w latach
+  int numPerYear;   // liczba wyp³at w roku
+
+  NumberFormat nf;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(new Runnable () {
+        public void run() {
+          makeGUI(); // Inicjalizuje graficzny interfejs u¿ytkownika.
+        }
+      });
+    } catch(Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  // Konfiguruje i inicjalizuje graficzny interfejs u¿ytkownika.
+  private void makeGUI() {
+
+    // U¿ywa mened¿era uk³adu GridBagLayout.
+    GridBagLayout gbag = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    setLayout(gbag);
+
+    JLabel heading = new
+            JLabel("Maksymalna emerytura");
+
+    JLabel orgPLab = new JLabel("Inwestowana kwota ");
+    JLabel periodLab = new JLabel("Lata ");
+    JLabel rateLab = new JLabel("Stopa zwrotu ");
+    JLabel numWDLab =
+            new JLabel("Liczba wyp³at w roku ");
+    JLabel maxWDLab = new JLabel("Maksymalna emerytura ");
+
+    maxWDText = new JTextField(10);
+    periodText = new JTextField(10);
+    orgPText = new JTextField(10);
+    rateText = new JTextField(10);
+    numWDText = new JTextField(10);
+
+    // Pole maksymalnej emerytury s³u¿y tylko do wyœwietlania danych.
+    maxWDText.setEditable(false);
+
+    doIt = new JButton("Oblicz");
+
+    // Definiuje uk³ad komponentów.
+    gbc.weighty = 1.0; // stosuje wagê wiersza równ¹ 1
+
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbc.anchor = GridBagConstraints.NORTH;
+    gbag.setConstraints(heading, gbc);
+
+    // Wyrównuje wiêkszoœæ komponentów do prawej strony.
+    gbc.anchor = GridBagConstraints.EAST;
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(orgPLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(orgPText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(periodLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(periodText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(rateLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(rateText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(numWDLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(numWDText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(maxWDLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(maxWDText, gbc);
+
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbag.setConstraints(doIt, gbc);
+
+    // Dodaje wszystkie przygotowane komponenty.
+    add(heading);
+    add(orgPLab);
+    add(orgPText);
+    add(periodLab);
+    add(periodText);
+    add(rateLab);
+    add(rateText);
+    add(numWDLab);
+    add(numWDText);
+    add(maxWDLab);
+    add(maxWDText);
+    add(doIt);
+
+    // Rejestruje siê jako odbiorca zdarzeñ akcji.
+    orgPText.addActionListener(this);
+    periodText.addActionListener(this);
+    rateText.addActionListener(this);
+    numWDText.addActionListener(this);
+    doIt.addActionListener(this);
+
+    // Tworzy format liczb.
+    nf = NumberFormat.getInstance();
+    nf.setMinimumFractionDigits(2);
+    nf.setMaximumFractionDigits(2);
+  }
+
+  /* U¿ytkownik nacisn¹³ klawisz Enter w polu tekstowym
+     lub klikn¹³ przycisk Oblicz. Wyœwietla wynik, jeœli u¿ytkownik wype³ni³
+     wszystkie pola. */
+  public void actionPerformed(ActionEvent ae) {
+    double result = 0.0;
+
+    String orgPStr = orgPText.getText();
+    String periodStr = periodText.getText();
+    String rateStr = rateText.getText();
+    String numWDStr = numWDText.getText();
+
+    try {
+      if(orgPStr.length() != 0 &&
+         periodStr.length() != 0 &&
+         rateStr.length() != 0 &&
+         numWDStr.length() != 0) {
+
+        principal = Double.parseDouble(orgPStr);
+        numYears = Double.parseDouble(periodStr);
+        rateOfRet = Double.parseDouble(rateStr) / 100;
+        numPerYear = Integer.parseInt(numWDStr);
+
+        result = compute();
+
+        maxWDText.setText(nf.format(result));
+      }
+
+      showStatus(""); // usuwa ewentualny wczeœniejszy komunikat o b³êdzie
+    } catch (NumberFormatException exc) {
+      showStatus("Nieprawid³owe dane");
+      maxWDText.setText("");
+    }
+  }
+
+  // Oblicza maksymaln¹ wysokoœæ emerytury.
+  double compute() {
+    double b, e;
+    double t1, t2;
+
+    t1 = rateOfRet / numPerYear;
+
+    b = (1 + t1);
+    e = numPerYear * numYears;
+
+    t2 = Math.pow(b, e) - 1;
+
+    return principal * (t1/t2 + t1);
+  }
+}
+
+Listing 6.
+// Oblicza kwotê pozosta³¹ do sp³aty.
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.text.*;
+/*
+  <applet code="RemBal" width=340 height=260>
+  </applet>
+*/
+
+public class RemBal extends JApplet
+  implements ActionListener {
+
+  JTextField orgPText, paymentText, remBalText,
+             rateText, numPayText;
+
+  JButton doIt;
+
+  double orgPrincipal; // pocz¹tkowa kwota po¿yczki
+  double intRate;      // oprocentowanie
+  double payment;      // wysokoœæ jednej raty
+  double numPayments;  // liczba zap³aconych rat
+
+  /* Liczba rat w roku. Tak¿e ten parametr
+     móg³by byæ ustawiany przez u¿ytkownika. */
+  final int payPerYear = 12;
+
+  NumberFormat nf;
+
+  public void init() {
+    try {
+      SwingUtilities.invokeAndWait(new Runnable () {
+        public void run() {
+          makeGUI(); // Inicjalizuje graficzny interfejs u¿ytkownika.
+        }
+      });
+    } catch(Exception exc) {
+      System.out.println("Nie mo¿na utworzyæ GUI z powodu wyj¹tku " + exc);
+    }
+  }
+
+  // Konfiguruje i inicjalizuje graficzny interfejs u¿ytkownika.
+  private void makeGUI() {
+
+    // U¿ywa mened¿era uk³adu GridBagLayout.
+    GridBagLayout gbag = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    setLayout(gbag);
+
+    JLabel heading = new
+          JLabel("Oblicza pozosta³¹ kwotê do sp³aty ");
+
+    JLabel orgPLab = new JLabel("Kwota po¿yczki ");
+    JLabel paymentLab = new JLabel("Miesiêczna rata ");
+    JLabel numPayLab = new JLabel("Liczba zap³aconych rat ");
+    JLabel rateLab = new JLabel("Oprocentowanie ");
+    JLabel remBalLab = new JLabel("Pozosta³a kwota ");
+
+    orgPText = new JTextField(10);
+    paymentText = new JTextField(10);
+    remBalText = new JTextField(10);
+    rateText = new JTextField(10);
+    numPayText = new JTextField(10);
+
+    // Pole raty s³u¿y tylko do wyœwietlania danych.
+    remBalText.setEditable(false);
+
+    doIt = new JButton("Oblicz");
+
+    // Definiuje uk³ad komponentów.
+    gbc.weighty = 1.0; // stosuje wagê wiersza równ¹ 1
+
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbc.anchor = GridBagConstraints.NORTH;
+    gbag.setConstraints(heading, gbc);
+
+    // Wyrównuje wiêkszoœæ komponentów do prawej strony.
+    gbc.anchor = GridBagConstraints.EAST;
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(orgPLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(orgPText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(paymentLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(paymentText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(rateLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(rateText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(numPayLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(numPayText, gbc);
+
+    gbc.gridwidth = GridBagConstraints.RELATIVE;
+    gbag.setConstraints(remBalLab, gbc);
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbag.setConstraints(remBalText, gbc);
+
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbag.setConstraints(doIt, gbc);
+
+    // Dodaje wszystkie przygotowane komponenty.
+    add(heading);
+    add(orgPLab);
+    add(orgPText);
+    add(paymentLab);
+    add(paymentText);
+    add(numPayLab);
+    add(numPayText);
+    add(rateLab);
+    add(rateText);
+    add(remBalLab);
+    add(remBalText);
+    add(doIt);
+
+    // Rejestruje siê jako odbiorca zdarzeñ akcji.
+    orgPText.addActionListener(this);
+    numPayText.addActionListener(this);
+    rateText.addActionListener(this);
+    paymentText.addActionListener(this);
+    doIt.addActionListener(this);
+
+    // Tworzy format liczb.
+    nf = NumberFormat.getInstance();
+    nf.setMinimumFractionDigits(2);
+    nf.setMaximumFractionDigits(2);
+  }
+
+  /* U¿ytkownik nacisn¹³ klawisz Enter w polu tekstowym
+     lub klikn¹³ przycisk Oblicz. Wyœwietla wynik, jeœli u¿ytkownik wype³ni³
+     wszystkie pola. */
+  public void actionPerformed(ActionEvent ae) {
+    double result = 0.0;
+
+    String orgPStr = orgPText.getText();
+    String numPayStr = numPayText.getText();
+    String rateStr = rateText.getText();
+    String payStr = paymentText.getText();
+
+    try {
+      if(orgPStr.length() != 0 &&
+         numPayStr.length() != 0 &&
+         rateStr.length() != 0 &&
+         payStr.length() != 0) {
+
+        orgPrincipal = Double.parseDouble(orgPStr);
+        numPayments = Double.parseDouble(numPayStr);
+        intRate = Double.parseDouble(rateStr) / 100;
+        payment = Double.parseDouble(payStr);
+
+        result = compute();
+
+        remBalText.setText(nf.format(result));
+      }
+      showStatus(""); // usuwa ewentualny wczeœniejszy komunikat o b³êdzie
+    } catch (NumberFormatException exc) {
+      showStatus("Nieprawid³owe dane");
+      remBalText.setText("");
+    }
+  }
+
+  // Oblicza saldo po¿yczki.
+  double compute() {
+    double bal = orgPrincipal;
+    double rate = intRate / payPerYear;
+
+    for(int i = 0; i < numPayments; i++)
+      bal -= payment - (bal * rate);
+
+    return bal;
+  }
+}
+
+Listing 7.
+// Prosty serwlet s³u¿¹cy do obliczania rat kredytu.
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
+import java.text.*;
+
+public class RegPayS extends HttpServlet {
+  double principal; // kwota kredytu
+  double intRate;   // oprocentowanie w skali roku
+  double numYears;  // d³ugoœæ sp³aty rat w latach
+
+  /* Liczba rat w ci¹gu roku. Mo¿na
+     umo¿liwiæ ustalenie tej wartoœci przez u¿ytkownika. */
+  final int payPerYear = 12;
+
+  NumberFormat nf;
+
+  public void doGet(HttpServletRequest request,
+                    HttpServletResponse response)
+    throws ServletException, IOException {
+    String payStr = "";
+
+    // Tworzy format liczb.
+    nf = NumberFormat.getInstance();
+    nf.setMinimumFractionDigits(2);
+    nf.setMaximumFractionDigits(2);
+
+    // Pobranie parametrów.
+    String amountStr = request.getParameter("amount");
+    String periodStr = request.getParameter("period");
+    String rateStr = request.getParameter("rate");
+
+    try {
+      if(amountStr != null && periodStr != null &&
+         rateStr != null) {
+        principal = Double.parseDouble(amountStr);
+
+        numYears = Double.parseDouble(periodStr);
+        intRate = Double.parseDouble(rateStr) / 100;
+
+        payStr = nf.format(compute());
+      }
+      else { // brakuje jednego lub kilku parametrów
+        amountStr = "";
+        periodStr = "";
+        rateStr = "";
+      }
+    } catch (NumberFormatException exc) {
+      // Dla tego wyj¹tku nie s¹ wymagane ¿adne akcje.
+    }
+
+    // Ustawienie rodzaju zawartoœci.
+    response.setContentType("text/html");
+
+    // Pobranie strumienia wyjœciowego.
+    PrintWriter pw = response.getWriter();
+
+    // Utworzenie odpowiedniego kodu HTML.
+    pw.print("<html><body> <left>" +
+             "<form name=\"Form1\"" +
+             " action=\"http://localhost:8080/" +
+             "examples/servlets/servlet/RegPayS\">" +
+             "<B>Enter amount to finance:</B>" +
+             " <input type=textbox name=\"amount\"" +
+             " size=12 value=\"");
+    pw.print(amountStr + "\">");
+    pw.print("<BR><B>Wpisz liczbê lat:</B>" +
+             " <input type=textbox name=\"period\""+
+             " size=12 value=\"");
+    pw.println(periodStr + "\">");
+    pw.print("<BR><B>Wpisz oprocentowanie:</B>" +
+             " <input type=textbox name=\"rate\"" +
+             " size=12 value=\"");
+    pw.print(rateStr + "\">");
+    pw.print("<BR><B>Miesiêczna rata:</B>" +
+             " <input READONLY type=textbox" +
+             " name=\"payment\" size=12 value=\"");
+    pw.print(payStr + "\">");
+    pw.print("<BR><P><input type=submit value=\"Oblicz\">");
+    pw.println("</form> </body> </html>");
+  }
+
+  // Obliczanie raty.
+  double compute() {
+    double numer;
+    double denom;
+    double b, e;
+
+    numer = intRate * principal / payPerYear;
+
+    e = -(payPerYear * numYears);
+    b = (intRate / payPerYear) + 1.0;
+
+    denom = 1.0 - Math.pow(b, e);
+
+    return numer / denom;
+  }
+}
+
+Listing 8.
+<html>
+<body>
+<form name="Form1"
+  action="http://localhost:8080/examples/servlets/servlet/RegPayS">
+<B>Wpisz kwotê po¿yczki:</B>
+<input type=textbox name="amount" size=12 value="">
+<BR>
+<B>Wpisz liczbê lat:</B>
+<input type=textbox name="period" size=12 value="">
+<BR>
+<B>Wpisz oprocentowanie:</B>
+<input type=textbox name="rate" size=12 value="">
+<BR>
+<B>Miesiêczna rata:</B>
+<input READONLY type=textbox name="payment"
+  size=12 value="">
+<BR><P>
+<input type=submit value="Oblicz">
+</form>
+</body>
+</html>
+

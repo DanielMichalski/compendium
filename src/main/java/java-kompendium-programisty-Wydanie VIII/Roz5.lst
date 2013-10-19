@@ -1,0 +1,563 @@
+Listing 1.
+// Przyk³ad u¿ycia ci¹gu konstrukcji if-else-if.
+class IfElse {
+  public static void main(String args[]) {
+    int month = 4; // Kwiecieñ
+    String season;
+
+    if(month == 12 || month == 1 || month == 2) 
+      season = "zima";
+    else if(month == 3 || month == 4 || month == 5)
+      season = "wiosna";
+    else if(month == 6 || month == 7 || month == 8)
+      season = "lato";
+    else if(month == 9 || month == 10 || month == 11)
+      season = "jesieñ";
+    else 
+      season = "B³êdny miesi¹c";
+
+    System.out.println("Miesi¹c kwiecieñ nale¿y do pory roku " + season + ".");
+  }
+}
+
+Listing 2.
+// Prosty przyk³ad u¿ycia konstrukcji switch.
+class SampleSwitch {
+  public static void main(String args[]) {
+    for(int i=0; i<6; i++)
+      switch(i) {
+        case 0:
+          System.out.println("i wynosi zero.");
+          break;
+        case 1:
+          System.out.println("i wynosi jeden.");
+          break;
+        case 2:
+          System.out.println("i wynosi dwa.");
+          break;
+        case 3:
+          System.out.println("i wynosi trzy.");
+          break;
+        default:
+          System.out.println("i jest wiêksze od 3.");
+      }
+  }
+}
+
+Listing 3.
+// W konstrukcji switch instrukcje break s¹ opcjonalne.
+class MissingBreak {
+  public static void main(String args[]) {
+    for(int i=0; i<12; i++)
+      switch(i) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+          System.out.println("i jest mniejsze od 5");
+          break;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+          System.out.println("i jest mniejsze od 10");
+          break;
+        default:
+          System.out.println("i wynosi 10 lub wiêcej");
+      }
+  }
+}
+
+Listing 4.
+// Ulepszona wersja przyk³adu z porami roku.
+class Switch {
+    public static void main(String args[]) {
+        int month = 4;
+        String season;
+        switch (month) {
+          case 12: 
+          case 1: 
+          case 2:
+            season = "zima";
+            break;
+          case 3: 
+          case 4: 
+          case 5:
+            season = "wiosna";
+            break;
+          case 6: 
+          case 7: 
+          case 8:
+            season = "lato";
+            break;
+          case 9: 
+          case 10: 
+          case 11:
+            season = "jesieñ";
+            break;
+          default:
+            season = "B³êdny miesi¹c";
+        }
+        System.out.println("Miesi¹c kwiecieñ nale¿y do pory roku " + season + ".");
+    }
+}
+
+Listing 5.
+// Przyk³ad u¿ycia ³añcucha do sterowania wyra¿eniem switch.
+
+class StringSwitch {
+  public static void main(String args[]) {
+
+    String str = "dwa";
+
+    switch(str) {
+      case "jeden":
+        System.out.println("jeden");
+        break;
+      case "dwa":
+        System.out.println("dwa");
+        break;
+      case "trzy":
+        System.out.println("trzy");
+        break;
+      default:
+        System.out.println("brak dopasowania");
+        break;
+    }
+  }
+}
+
+
+Listing 6.
+// Przyk³ad u¿ycia pêtli while.
+class While {
+  public static void main(String args[]) {
+    int n = 10;
+
+    while(n > 0) {
+      System.out.println("takt " + n);
+      n--;
+    }
+  }
+}
+
+Listing 7.
+// Cia³o pêtli mo¿e byæ puste. 
+class NoBody {
+  public static void main(String args[]) {
+    int i, j;
+
+    i = 100;
+    j = 200;
+
+    // znajduje œrodek miêdzy i oraz j
+    while(++i < --j) ; // brak cia³a pêtli
+
+    System.out.println("Œrodek to wartoœæ " + i);
+  }
+}
+
+Listing 8.
+// Przyk³ad dzia³ania pêtli do-while.
+class DoWhile {
+  public static void main(String args[]) {
+    int n = 10;
+
+    do {
+      System.out.println("takt " + n);
+      n--;
+    } while(n > 0);
+  }
+}
+
+Listing 9.
+// Wykorzystanie pêtli do-while do przetwarzania menu -- prosty system pomocy.
+class Menu {
+  public static void main(String args[]) 
+    throws java.io.IOException {
+    char choice;
+
+    do {
+      System.out.println("Pomoc na temat:");
+      System.out.println("  1. if");
+      System.out.println("  2. switch");
+      System.out.println("  3. while");
+      System.out.println("  4. do-while");
+      System.out.println("  5. for\n");
+      System.out.println("Wybierz jedn¹ opcjê:");
+      choice = (char) System.in.read();
+    } while( choice < '1' || choice > '5');
+
+    System.out.println("\n");
+ 
+    switch(choice) {
+      case '1':
+        System.out.println("Konstrukcja if:\n");
+        System.out.println("if(warunek) instrukcja;");
+        System.out.println("else instrukcja;");
+        break;
+      case '2':
+        System.out.println("Konstrukcja switch:\n");
+        System.out.println("switch(wyra¿enie) {");
+        System.out.println("  case sta³a:");
+        System.out.println("    ci¹g instrukcji");
+        System.out.println("  break;");
+        System.out.println("  // ...");
+        System.out.println("}");
+        break;
+      case '3':
+        System.out.println("Pêtla while:\n");
+        System.out.println("while(warunek) instrukcja;");
+        break;
+      case '4':
+        System.out.println("Pêtla do-while:\n");
+        System.out.println("do {");
+        System.out.println("  instrukcja;");
+        System.out.println("} while (warunek);");
+        break;
+      case '5':
+        System.out.println("Pêtla for:\n");
+        System.out.print("for(inicjalizacja; warunek; iteracja)");
+        System.out.println(" instrukcja;");
+        break;
+    }
+  }
+}
+
+Listing 10.
+// Przyk³ad pêtli for.
+class ForTick {
+  public static void main(String args[]) {
+    int n;
+
+    for(n=10; n>0; n--)
+      System.out.println("takt " + n);
+  }
+}
+
+Listing 11.
+// Deklaracja zmiennej steruj¹cej wewn¹trz pêtli.
+class ForTick {
+  public static void main(String args[]) {
+
+    // tutaj n jest deklarowane wewn¹trz pêtli for
+    for(int n=10; n>0; n--)
+      System.out.println("takt " + n);
+  }
+}
+
+Listing 12.
+// Poszukiwanie liczb pierwszych.
+class FindPrime {
+  public static void main(String args[]) {
+    int num;
+    boolean isPrime = true;
+
+    num = 14;
+    for(int i=2; i <= num/i; i++) {
+      if((num % i) == 0) {
+        isPrime = false;
+        break;
+      }
+    }
+    if(isPrime) System.out.println("Jest to liczba pierwsza");
+    else System.out.println("Nie jest to liczba pierwsza");
+  }
+}
+
+Listing 13.
+class Sample {
+  public static void main(String args[]) {
+    int a, b;
+
+    b = 4;
+    for(a=1; a<b; a++) {
+      System.out.println("a = " + a);
+      System.out.println("b = " + b);
+      b--;
+    }
+  }
+}
+
+Listing 14.
+// Wykorzystanie przecinka.
+class Comma {
+  public static void main(String args[]) {
+    int a, b;
+
+    for(a=1, b=4; a<b; a++, b--) {
+      System.out.println("a = " + a);
+      System.out.println("b = " + b);
+    }
+  }
+}
+
+Listing 15.
+// Czêœci pêtli for mog¹ byæ puste.
+class ForVar {
+  public static void main(String args[]) {
+    int i;
+    boolean done = false;
+
+    i = 0;
+    for( ; !done; ) {
+      System.out.println("i wynosi " + i);
+      if(i == 10) done = true;
+      i++;
+    }
+  }
+}
+
+Listing 16.
+// U¿ycie pêtli typu for-each.
+class ForEach {
+  public static void main(String args[]) {
+    int nums[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    int sum = 0;
+
+    // u¿ycie pêtli typu for-each do wyœwietlenia i zsumowania wartoœci
+    for(int x : nums) {
+      System.out.println("Wartoœæ - " + x);
+      sum += x;
+    }
+
+    System.out.println("Suma wartoœci: " + sum);
+  }
+}
+
+Listing 17.
+// U¿ycie instrukcji break w pêtli typu for-each.
+class ForEach2 {
+  public static void main(String args[]) {
+    int sum = 0;
+    int nums[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+    // u¿ycie pêtli typu for-each do wyœwietlenia i zsumowania wartoœci
+    for(int x : nums) {
+      System.out.println("Wartoœæ - " + x);
+      sum += x;
+      if(x == 5) break; // zatrzymaj przy wartoœci 5
+    }
+    System.out.println("Suma pierwszych piêciu elementów: " + sum);
+  }
+}
+
+Listing 18.
+// Pêtla for-each jest tak naprawdê pêtl¹ tylko do odczytu.
+class NoChange {
+  public static void main(String args[]) {
+    int nums[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+    for(int x : nums) {
+      System.out.print(x + " ");
+      x = x * 10; // brak jakiegokolwiek efektu
+    }
+
+    System.out.println();
+
+    for(int x : nums)
+      System.out.print(x + " ");
+
+    System.out.println();
+  }
+}
+
+Listing 19.
+// Pêtla typu for-each dla tablicy dwuwymiarowej.
+class ForEach3 {
+  public static void main(String args[]) {
+    int sum = 0;
+    int nums[][] = new int[3][5];
+
+    // wype³nienie tablicy wartoœciami
+    for(int i = 0; i < 3; i++)
+      for(int j=0; j < 5; j++)
+        nums[i][j] = (i+1)*(j+1);
+
+    // u¿ycie pêtli typu for-each do wyœwietlenia i zsumowania wartoœci
+    for(int x[] : nums) {
+      for(int y : x) {
+        System.out.println("Wartoœæ - " + y);
+        sum += y;
+      }
+    }
+    System.out.println("Suma wartoœci: " + sum);
+  }
+}
+
+Listing 20.
+// Przeszukiwanie z wykorzystaniem pêtli typu for-each.
+class Search {
+  public static void main(String args[]) {
+    int nums[] = { 6, 8, 3, 7, 5, 6, 1, 4 };
+    int val = 5;
+    boolean found = false;
+
+    // u¿ycie pêtli for-each do przeszukania wartoœci tablicy
+    for(int x : nums) {
+      if(x == val) {
+        found = true;
+        break;
+      }
+    }
+
+    if(found)
+      System.out.println("Wartoœæ zosta³a odnaleziona!");
+  }
+}
+
+Listing 21.
+// Pêtle mo¿na zagnie¿d¿aæ.
+class Nested {
+  public static void main(String args[]) {
+    int i, j;
+
+    for(i=0; i<10; i++) {
+      for(j=i; j<10; j++)
+        System.out.print(".");
+      System.out.println();
+    }
+  }
+}
+
+Listing 22.
+// Wykorzystanie instrukcji break do opuszczenia pêtli for.
+class BreakLoop {
+  public static void main(String args[]) {
+    for(int i=0; i<100; i++) {
+      if(i == 10) break; // opuszczenie pêtli, jeœli i równe 10
+      System.out.println("i: " + i);
+    }
+    System.out.println("Koniec pêtli.");
+  }
+}
+
+Listing 23.
+// Wykorzystanie instrukcji break do opuszczenia pêtli while.
+class BreakLoop2 {
+  public static void main(String args[]) {
+    int i = 0;
+
+    while(i < 100) {
+      if(i == 10) break; // opuszczenie pêtli, jeœli i równe 10
+      System.out.println("i: " + i);
+      i++;
+    }
+    System.out.println("Koniec pêtli.");
+  }
+}
+
+Listing 24.
+// U¿ycie pêtli break w pêtlach zagnie¿d¿onych.
+class BreakLoop3 {
+  public static void main(String args[]) {
+    for(int i=0; i<3; i++) {
+      System.out.print("Przebieg " + i + ": ");
+      for(int j=0; j<100; j++) {
+        if(j == 10) break; // opuszczenie pêtli, jeœli j równe 10
+        System.out.print(j + " ");
+      }
+      System.out.println();
+    }
+    System.out.println("Koniec pêtli.");
+  }
+}
+
+Listing 25.
+// Instrukcja break jako ucywilizowana wersja instrukcji goto.
+class Break {
+  public static void main(String args[]) {
+    boolean t = true;
+
+    first: {
+      second: {
+        third: {
+          System.out.println("Przed break.");
+          if(t) break second; // Wyjœcie poza drugi blok.
+          System.out.println("To siê nie wykona");
+        }
+        System.out.println("To siê nie wykona");
+      }
+      System.out.println("Po drugim bloku.");
+    }
+  }
+}
+
+Listing 26.
+// U¿ycie instrukcji break w pêtli zagnie¿d¿onej.
+class BreakLoop4 {
+  public static void main(String args[]) {
+    outer: for(int i=0; i<3; i++) {
+      System.out.print("Przebieg " + i + ": ");
+      for(int j=0; j<100; j++) {
+        if(j == 10) break outer; // wyjœcie z obu pêtli
+        System.out.print(j + " ");
+      }
+      System.out.println("To siê nie wyœwietli.");
+    }
+    System.out.println("Koniec obu pêtli.");
+  }
+}
+
+Listing 27.
+// Ten program zawiera b³¹d.
+class BreakErr {
+  public static void main(String args[]) {
+
+    one: for(int i=0; i<3; i++) {
+      System.out.print("Przebieg " + i + ": ");
+    }
+
+    for(int j=0; j<100; j++) {
+      if(j == 10) break one; // B£¥D
+      System.out.print(j + " ");
+    }
+  }
+}
+
+Listing 28.
+// Przyk³ad u¿ycia instrukcji continue.
+class Continue {
+  public static void main(String args[]) {
+    for(int i=0; i<10; i++) {
+      System.out.print(i + " ");
+      if (i%2 == 0) continue;
+      System.out.println("");
+    }
+  }
+}
+
+Listing 29.
+// Przyk³ad instrukcji continue z etykiet¹.
+class ContinueLabel {
+  public static void main(String args[]) {
+outer: for (int i=0; i<10; i++) {
+         for(int j=0; j<10; j++) {
+           if(j > i) {
+             System.out.println();
+             continue outer;
+           }
+           System.out.print(" " + (i * j));
+         }
+       }
+       System.out.println();
+  }
+}
+
+Listing 30.
+// Przyk³ad u¿ycia instrukcji return.
+class Return {
+  public static void main(String args[]) {
+    boolean t = true;
+
+    System.out.println("Przed return.");
+
+    if(t) return; // powrót do kodu wywo³uj¹cego metodê
+
+    System.out.println("To siê nie wykona.");
+  }
+}
+
+

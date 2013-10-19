@@ -1,0 +1,652 @@
+Listing 1.
+// Sterowanie w¹tkiem g³ównym.
+class CurrentThreadDemo {
+  public static void main(String args[]) {
+    Thread t = Thread.currentThread();
+
+    System.out.println("Aktualny w¹tek: " + t);
+
+    // zmiana nazwy w¹tku
+    t.setName("Mój w¹tek");
+    System.out.println("Po zmianie nazwy: " + t);
+
+    try {
+      for(int n = 5; n > 0; n--) {
+        System.out.println(n);
+        Thread.sleep(1000);
+      }
+    } catch (InterruptedException e) {
+      System.out.println("Przerwanie w¹tku g³ównego");
+    }
+  }
+}
+
+Listing 2.
+// Utworzenie drugiego w¹tku.
+class NewThread implements Runnable {
+  Thread t;
+
+  NewThread() {
+    // utworzenie nowego, drugiego w¹tku
+    t = new Thread(this, "Przyk³adowy w¹tek");
+    System.out.println("W¹tek potomny: " + t);
+    t.start(); // uruchomienie w¹tku
+  }
+
+  // To jest metoda, od której zaczyna siê wykonywanie drugiego w¹tku.
+  public void run() {
+    try {
+      for(int i = 5; i > 0; i--) {
+        System.out.println("W¹tek potomny: " + i);
+        Thread.sleep(500);
+      }
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano dzia³anie potomka.");
+    }
+    System.out.println("Wyjœcie z w¹tku potomka.");
+  }
+}
+
+class ThreadDemo {
+  public static void main(String args[]) {
+    new NewThread(); // utworzenie nowego w¹tku
+
+    try {
+      for(int i = 5; i > 0; i--) {
+        System.out.println("W¹tek g³ówny: " + i);
+        Thread.sleep(1000);
+      }
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano dzia³anie g³ównego w¹tku.");
+    }
+    System.out.println("Wyjœcie z w¹tku g³ównego.");
+  }
+}
+
+Listing 3.
+// Utworzenie nowego w¹tku przez rozszerzenie klasy Thread.
+class NewThread extends Thread {
+
+  NewThread() {
+    // utworzenie nowego, drugiego w¹tku
+    super("Przyk³adowy w¹tek");
+    System.out.println("W¹tek potomny: " + this);
+    start(); // uruchomienie w¹tku
+  }
+
+  // To jest metoda, od której zaczyna siê wykonywanie drugiego w¹tku.
+  public void run() {
+    try {
+      for(int i = 5; i > 0; i--) {
+        System.out.println("W¹tek potomny: " + i);
+        Thread.sleep(500);
+      }
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano dzia³anie potomka.");
+    }
+    System.out.println("Wyjœcie z w¹tku potomka.");
+  }
+}
+class ExtendThread {
+  public static void main(String args[]) {
+    new NewThread(); // utworzenie nowego w¹tku
+
+    try {
+      for(int i = 5; i > 0; i--) {
+        System.out.println("W¹tek g³ówny: " + i);
+        Thread.sleep(1000);
+      }
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano dzia³anie g³ównego w¹tku.");
+    }
+    System.out.println("Wyjœcie z w¹tku g³ównego.");
+  }
+}
+
+Listing 4.
+// Tworzenie wielu w¹tków.
+class NewThread implements Runnable {
+  String name; // nazwa w¹tku
+  Thread t;
+
+  NewThread(String threadname) {
+    name = threadname;
+    t = new Thread(this, name);
+    System.out.println("Nowy w¹tek: " + t);
+    t.start(); // uruchomienie w¹tku
+  }
+
+  // To jest metoda, od której zaczyna siê wykonywanie drugiego w¹tku.
+  public void run() {
+    try {
+      for(int i = 5; i > 0; i--) {
+        System.out.println(name + ": " + i);
+        Thread.sleep(1000);
+      }
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano " + name);
+    }
+    System.out.println("Zakoñczenie " + name);
+  }
+}
+
+class MultiThreadDemo {
+  public static void main(String args[]) {
+    new NewThread("Jeden"); // uruchomienie w¹tków
+    new NewThread("Dwa");
+    new NewThread("Trzy");
+
+    try {
+      // oczekiwanie na zakoñczenie pozosta³ych w¹tków
+      Thread.sleep(10000);
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano w¹tek g³ówny");
+    }
+
+    System.out.println("Koniec w¹tku g³ównego.");
+  }
+}
+
+Listing 5.
+// U¿ycie metody join() do oczekiwania na zakoñczenie w¹tku.
+class NewThread implements Runnable {
+  String name; // nazwa w¹tku
+  Thread t;
+
+  NewThread(String threadname) {
+    name = threadname;
+    t = new Thread(this, name);
+    System.out.println("Nowy w¹tek: " + t);
+    t.start(); // uruchomienie w¹tku
+  }
+
+  // To jest metoda, od której zaczyna siê wykonywanie drugiego w¹tku.
+  public void run() {
+    try {
+      for(int i = 5; i > 0; i--) {
+        System.out.println(name + ": " + i);
+        Thread.sleep(1000);
+      }
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano " + name);
+    }
+    System.out.println("Zakoñczenie " + name);
+  }
+}
+
+class DemoJoin {
+  public static void main(String args[]) {
+    NewThread ob1 = new NewThread("Jeden");
+    NewThread ob2 = new NewThread("Dwa");
+    NewThread ob3 = new NewThread("Trzy");
+
+    System.out.println("W¹tek Jeden ¿yje: "
+                        + ob1.t.isAlive());
+    System.out.println("W¹tek Dwa ¿yje: "
+                        + ob2.t.isAlive());
+    System.out.println("W¹tek Trzy ¿yje: "
+                        + ob3.t.isAlive());
+    // oczekiwanie na zakoñczenie w¹tków
+    try {
+      System.out.println("Oczekiwanie na zakoñczenie w¹tków.");
+      ob1.t.join();
+      ob2.t.join();
+      ob3.t.join();
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano w¹tek g³ówny");
+    }
+
+    System.out.println("W¹tek Jeden ¿yje: "
+                        + ob1.t.isAlive());
+    System.out.println("W¹tek Dwa ¿yje: "
+                        + ob2.t.isAlive());
+    System.out.println("W¹tek Trzy ¿yje: "
+                        + ob3.t.isAlive());
+
+    System.out.println("Koniec w¹tku g³ównego.");
+  }
+}
+
+Listing 6.
+// Ten program nie korzysta z synchronizacji.
+class Callme {
+  void call(String msg) {
+    System.out.print("[" + msg);
+    try {
+      Thread.sleep(1000);
+    } catch(InterruptedException e) {
+      System.out.println("Przerwano");
+    }
+    System.out.println("]");
+  }
+}
+
+class Caller implements Runnable {
+  String msg;
+  Callme target;
+  Thread t;
+
+  public Caller(Callme targ, String s) {
+    target = targ;
+    msg = s;
+    t = new Thread(this);
+    t.start();
+  }
+
+  public void run() {
+    target.call(msg);
+  }
+}
+
+class Synch {
+  public static void main(String args[]) {
+    Callme target = new Callme();
+    Caller ob1 = new Caller(target, "Witaj");
+    Caller ob2 = new Caller(target, "Zsynchronizowany");
+   Caller ob3 = new Caller(target, "Œwiecie");
+
+    // czeka na zakoñczenie siê w¹tków
+    try {
+      ob1.t.join();
+      ob2.t.join();
+      ob3.t.join();
+    } catch(InterruptedException e) {
+      System.out.println("Przerwano");
+    }
+  }
+}
+
+Listing 7.
+// Program u¿ywa zsynchronizowanego bloku.
+class Callme {
+  void call(String msg) {
+    System.out.print("[" + msg);
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      System.out.println("Przerwano");
+    }
+    System.out.println("]");
+  }
+}
+
+class Caller implements Runnable {
+  String msg;
+  Callme target;
+  Thread t;
+
+  public Caller(Callme targ, String s) {
+    target = targ;
+    msg = s;
+    t = new Thread(this);
+    t.start();
+  }
+
+  // synchronizacja wywo³añ metody call()
+  public void run() {
+    synchronized(target) { // synchronizowany blok
+      target.call(msg);
+    }
+  }
+}
+
+class Synch1 {
+  public static void main(String args[]) {
+    Callme target = new Callme();
+    Caller ob1 = new Caller(target, "Witaj");
+    Caller ob2 = new Caller(target, "Zsynchronizowany");
+    Caller ob3 = new Caller(target, "Œwiecie");
+
+    // czeka na zakoñczenie w¹tków
+    try {
+      ob1.t.join();
+      ob2.t.join();
+      ob3.t.join();
+    } catch(InterruptedException e) {
+      System.out.println("Przerwano");
+    }
+  }
+}
+
+Listing 8.
+// B³êdna implementacja problemu producenta i konsumenta.
+class Q {
+  int n;
+
+  synchronized int get() {
+    System.out.println("Pobrano: " + n);
+    return n;
+  }
+
+  synchronized void put(int n) {
+    this.n = n;
+    System.out.println("W³o¿ono: " + n);
+  }
+}
+
+class Producer implements Runnable {
+  Q q;
+
+  Producer(Q q) {
+    this.q = q;
+    new Thread(this, "Producent").start();
+  }
+
+  public void run() {
+    int i = 0;
+
+    while(true) {
+      q.put(i++);
+    }
+  }
+}
+
+class Consumer implements Runnable {
+  Q q;
+
+  Consumer(Q q) {
+    this.q = q;
+    new Thread(this, "Konsument").start();
+  }
+
+  public void run() {
+    while(true) {
+      q.get();
+    }
+  }
+}
+
+class PC {
+  public static void main(String args[]) {
+    Q q = new Q();
+    new Producer(q);
+    new Consumer(q);
+
+    System.out.println("Naciœnij Ctrl+C, aby zakoñczyæ.");
+  }
+}
+
+Listing 9.
+// Poprawna implementacja producenta i konsumenta.
+class Q {
+  int n;
+  boolean valueSet = false;
+
+  synchronized int get() {
+    if(!valueSet)
+      try {
+        wait();
+
+      } catch(InterruptedException e) {
+        System.out.println("Z³apano InterruptedException");
+      }
+
+      System.out.println("Pobrano: " + n);
+      valueSet = false;
+      notify();
+      return n;
+  }
+
+  synchronized void put(int n) {
+    if(valueSet)
+      try {
+        wait();
+      } catch(InterruptedException e) {
+        System.out.println("Z³apano InterruptedException");
+      }
+
+      this.n = n;
+      valueSet = true;
+      System.out.println("W³o¿ono: " + n);
+      notify();
+  }
+}
+
+class Producer implements Runnable {
+  Q q;
+
+  Producer(Q q) {
+    this.q = q;
+    new Thread(this, "Producent").start();
+  }
+
+  public void run() {
+    int i = 0;
+
+    while(true) {
+      q.put(i++);
+    }
+  }
+}
+
+class Consumer implements Runnable {
+  Q q;
+
+  Consumer(Q q) {
+    this.q = q;
+    new Thread(this, "Konsument").start();
+  }
+
+  public void run() {
+    while(true) {
+      q.get();
+    }
+  }
+}
+
+class PCFixed {
+  public static void main(String args[]) {
+    Q q = new Q();
+    new Producer(q);
+    new Consumer(q);
+
+    System.out.println("Naciœnij Ctrl+C, aby zakoñczyæ.");
+  }
+}
+
+Listing 10.
+// Przyk³ad zakleszczenia.
+class A {
+  synchronized void foo(B b) {
+    String name = Thread.currentThread().getName();
+
+    System.out.println(name + " wszed³ do A.foo");
+
+    try {
+      Thread.sleep(1000);
+    } catch(Exception e) {
+      System.out.println("Przerwano A");
+    }
+
+    System.out.println(name + " próbuje wywo³aæ B.last()");
+    b.last();
+  }
+
+  synchronized void last() {
+    System.out.println("Wewn¹trz A.last");
+  }
+}
+
+class B {
+  synchronized void bar(A a) {
+    String name = Thread.currentThread().getName();
+    System.out.println(name + " wszed³ do B.bar");
+
+    try {
+      Thread.sleep(1000);
+    } catch(Exception e) {
+      System.out.println("Przerwano B");
+    }
+
+    System.out.println(name + " próbuje wywo³aæ A.last()");
+    a.last();
+  }
+
+  synchronized void last() {
+    System.out.println("Wewn¹trz B.last");
+  }
+}
+
+class Deadlock implements Runnable {
+  A a = new A();
+  B b = new B();
+
+  Deadlock() {
+    Thread.currentThread().setName("W¹tek g³ówny");
+    Thread t = new Thread(this, "W¹tek wyœcigu");
+    t.start();
+
+    a.foo(b); // uzyskanie blokady na a w tym w¹tku
+    System.out.println("Powrót do w¹tku g³ównego");
+  }
+
+  public void run() {
+    b.bar(a); // uzyskanie blokady na b w drugim w¹tku
+    System.out.println("Powrót do w¹tku g³ównego");
+  }
+
+  public static void main(String args[]) {
+    new Deadlock();
+  }
+}
+
+Listing 11.
+// Przyk³ad u¿ycia metod suspend() i resume() wy³¹cznie w celach
+// demonstracyjnych. Nie nale¿y ich stosowaæ w nowym kodzie.
+class NewThread implements Runnable {
+  String name; // nazwa w¹tku
+  Thread t;
+
+  NewThread(String threadname) {
+    name = threadname;
+    t = new Thread(this, name);
+    System.out.println("Nowy w¹tek: " + t);
+    t.start(); // uruchomienie w¹tku
+  }
+
+  // Pocz¹tek kodu wykonywanego w w¹tku.
+  public void run() {
+    try {
+      for(int i = 15; i > 0; i--) {
+        System.out.println(name + ": " + i);
+        Thread.sleep(200);
+      }
+    } catch (InterruptedException e) {
+      System.out.println(name + " zosta³ przerwany");
+    }
+    System.out.println("Wyjœcie z " + name);
+  }
+}
+
+class SuspendResume {
+  public static void main(String args[]) {
+    NewThread ob1 = new NewThread("Jeden");
+    NewThread ob2 = new NewThread("Dwa");
+
+    try {
+      Thread.sleep(1000);
+      ob1.t.suspend();
+      System.out.println("Zawieszenie w¹tku Jeden");
+      Thread.sleep(1000);
+      ob1.t.resume();
+      System.out.println("Wznowienie w¹tku Jeden");
+      ob2.t.suspend();
+      System.out.println("Zawieszenie w¹tku Dwa");
+      Thread.sleep(1000);
+      ob2.t.resume();
+      System.out.println("Wznowienie w¹tku Dwa");
+    } catch (InterruptedException e) {
+      System.out.println("Przerwanie w¹tku g³ównego");
+    }
+
+    // oczekiwanie na zakoñczenie w¹tków
+    try {
+      System.out.println("Oczekiwanie na zakoñczenie w¹tków.");
+      ob1.t.join();
+      ob2.t.join();
+    } catch (InterruptedException e) {
+      System.out.println("Przerwanie w¹tku g³ównego");
+    }
+    System.out.println("Koniec w¹tku g³ównego.");
+  }
+}
+
+Listing 12.
+// Wstrzymywanie i wznawianie w¹tku w nowoczesny sposób.
+class NewThread implements Runnable {
+  String name; // nazwa w¹tku
+  Thread t;
+  boolean suspendFlag;
+
+  NewThread(String threadname) {
+    name = threadname;
+    t = new Thread(this, name);
+    System.out.println("Nowy w¹tek: " + t);
+    suspendFlag = false;
+    t.start(); // Uruchamia w¹tek
+  }
+
+  // To jest punkt startowy w¹tku.
+  public void run() {
+    try {
+      for(int i = 15; i > 0; i--) {
+        System.out.println(name + ": " + i);
+        Thread.sleep(200);
+        synchronized(this) {
+          while(suspendFlag) {
+            wait();
+          }
+        }
+      }
+    } catch (InterruptedException e) {
+      System.out.println(name + " zosta³ przerwany");
+    }
+
+    System.out.println("Wyjœcie z w¹tku " + name);
+  }
+
+  synchronized void mysuspend() {
+    suspendFlag = true;
+  }
+
+  synchronized void myresume() {
+    suspendFlag = false;
+    notify();
+  }
+}
+
+class SuspendResume {
+  public static void main(String args[]) {
+    NewThread ob1 = new NewThread("Jeden");
+    NewThread ob2 = new NewThread("Dwa");
+
+    try {
+      Thread.sleep(1000);
+      ob1.mysuspend();
+      System.out.println("Zawieszenie w¹tku Jeden");
+      Thread.sleep(1000);
+      ob1.myresume();
+      System.out.println("Wznowienie w¹tku Jeden");
+      ob2.mysuspend();
+      System.out.println("Zawieszenie w¹tku Dwa");
+      Thread.sleep(1000);
+      ob2.myresume();
+      System.out.println("Wznowienie w¹tku Dwa");
+    } catch (InterruptedException e) {
+      System.out.println("Przerwanie w¹tku g³ównego");
+    }
+
+    // oczekuje na zakoñczenie w¹tków
+    try {
+      System.out.println("Oczekiwanie na zakoñczenie w¹tków.");
+      ob1.t.join();
+      ob2.t.join();
+    } catch (InterruptedException e) {
+      System.out.println("Przerwanie w¹tku g³ównego");
+    }
+
+    System.out.println("Koniec w¹tku g³ównego.");
+  }
+}
+
+

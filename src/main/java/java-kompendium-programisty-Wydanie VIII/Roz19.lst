@@ -1,0 +1,835 @@
+Listing 1.
+// Demonstruje u¿ycie klasy File.
+import java.io.File;
+
+class FileDemo {
+  static void p(String s) {
+    System.out.println(s);
+  }
+
+  public static void main(String args[]) {
+    File f1 = new File("/java/COPYRIGHT");
+    p("Nazwa pliku: " + f1.getName());
+    p("Œcie¿ka: " + f1.getPath());
+    p("Œcie¿ka bezwzglêdna: " + f1.getAbsolutePath());
+    p("Katalog macierzysty: " + f1.getParent());
+    p(f1.exists() ? "istnieje" : "nie istnieje");
+    p(f1.canWrite() ? "jest dostêpny do zapisu" : "nie jest dostêpny do zapisu");
+    p(f1.canRead() ? "jest dostêpny do odczytu" : "nie jest dostêpny do odczytu");
+    p(f1.isDirectory() ? "jest katalogiem" : "nie jest katalogiem");
+    p(f1.isFile() ? "jest normalnym plikiem" : "mo¿e byæ nazwanym potokiem");
+    p(f1.isAbsolute() ? "jest bezwzglêdny" : "jest wzglêdny");
+    p("Ostatnia modyfikacja pliku: " + f1.lastModified());
+    p("Rozmiar pliku: " + f1.length() + " bajtów");
+  }
+}
+
+Listing 2.
+// Demonstruje pracê z katalogami.
+import java.io.File;
+
+class DirList {
+  public static void main(String args[]) {
+    String dirname = "/java";
+    File f1 = new File(dirname);
+
+    if (f1.isDirectory()) {
+      System.out.println("Katalog: " + dirname);
+      String s[] = f1.list();
+
+      for (int i=0; i < s.length; i++) {
+        File f = new File(dirname + "/" + s[i]);
+        if (f.isDirectory()) {
+          System.out.println(s[i] + " jest katalogiem");
+        } else {
+          System.out.println(s[i] + " jest plikiem");
+        }
+      }
+    } else {
+      System.out.println(dirname + " nie jest katalogiem");
+    }
+  }
+}
+
+Listing 3.
+import java.io.*;
+
+public class OnlyExt implements FilenameFilter {
+  String ext;
+
+  public OnlyExt(String ext) {
+    this.ext = "." + ext;
+  }
+
+  public boolean accept(File dir, String name) {
+    return name.endsWith(ext);
+  }
+}
+
+Listing 4.
+// Katalog plików .HTML.
+import java.io.*;
+
+class DirListOnly {
+  public static void main(String args[]) {
+    String dirname = "/java";
+    File f1 = new File(dirname);
+    FilenameFilter only = new OnlyExt("html");
+    String s[] = f1.list(only);
+
+    for (int i=0; i < s.length; i++) {
+      System.out.println(s[i]);
+    }
+  }
+}
+
+Listing 5.
+// Demonstruje u¿ycie klasy FileInputStream.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+import java.io.*;
+
+class FileInputStreamDemo {
+  public static void main(String args[]) {
+    int size;
+
+    // Konstrukcja try-with-resources automatycznie zamyka strumieñ.
+    try ( FileInputStream f =
+           new FileInputStream("FileInputStreamDemo.java") ) {
+
+      System.out.println("£¹czna liczba dostêpnych bajtów: " +
+                         (size = f.available()));
+
+      int n = size/40;
+      System.out.println("Metoda read() odczyta³a w jednym kroku" +
+                         " pierwsze " + n + " bajtów pliku ");
+      for (int i=0; i < n; i++) {
+        System.out.print((char) f.read());
+      }
+
+      System.out.println("\nWci¹¿ jest dostêpnych: " +
+                         f.available() + " bajtów");
+
+      System.out.println("Odczytywanie nastêpnych " + n +
+                         " bajtów za pomoc¹ metody read(b[])");
+      byte b[] = new byte[n];
+      if (f.read(b) != n) {
+        System.err.println("Nie mo¿na odczytaæ " + n + " bajtów.");
+      }
+
+      System.out.println(new String(b, 0, n));
+      System.out.println("\nWci¹¿ jest dostêpnych: " +
+                         (size = f.available()) + " bajtów");
+      System.out.println("Pomijanie po³owy pozosta³ych bajtów" +
+                         " za pomoc¹ metody skip()");
+      f.skip(size/2);
+      System.out.println("Wci¹¿ jest dostêpnych: " +
+                         f.available() + " bajtów");
+
+      System.out.println("Wczytywanie " + n/2 + " bajtów na koniec tablicy");
+      if (f.read(b, n/2, n/2) != n/2) {
+        System.err.println("Nie mo¿na odczytaæ " + n/2 + " bajtów.");
+      }
+
+      System.out.println(new String(b, 0, b.length));
+      System.out.println("\nWci¹¿ jest dostêpnych: " +
+                         f.available()+ " bajtów");
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 6.
+// Demonstruje u¿ycie klasy FileOutputStream.
+// Program stosuje tradycyjny model zamykania plików.
+import java.io.*;
+
+class FileOutputStreamDemo {
+  public static void main(String args[]) throws IOException {
+    String source = "Nadszed³ czas, aby wszyscy porz¹dni obywatele\n"
+      + " wreszcie zrozumieli potrzeby swojego kraju\n"
+      + " i zaczêli uczciwie p³aciæ podatki.";
+
+    byte buf[] = source.getBytes();
+    FileOutputStream f0 = null;
+    FileOutputStream f1 = null;
+    FileOutputStream f2 = null;
+
+    try {
+      f0 = new FileOutputStream("file1.txt");
+      f1 = new FileOutputStream("file2.txt");
+      f2 = new FileOutputStream("file3.txt");
+
+      // zapisuje w pierwszym pliku
+      for (int i=0; i < buf.length; i += 2) f0.write(buf[i]);
+
+      // zapisuje w drugim pliku
+      f1.write(buf);
+
+      // zapisuje w trzecim pliku
+      f2.write(buf, buf.length-buf.length/4, buf.length/4);
+    } catch(IOException e) {
+      System.out.println("Wyst¹pi³ b³¹d wejœcia-wyjœcia");
+    } finally {
+      try {
+        if(f0 != null) f0.close();
+      } catch(IOException e) {
+        System.out.println("B³¹d podczas zamykania pliku file1.txt");
+      }
+      try {
+        if(f1 != null) f1.close();
+      } catch(IOException e) {
+        System.out.println("B³¹d podczas zamykania pliku file2.txt");
+      }
+      try {
+        if(f2 != null) f2.close();
+      } catch(IOException e) {
+        System.out.println("B³¹d podczas zamykania pliku file3.txt");
+      }
+    }
+  }
+}
+
+
+Listing 7.
+// Demonstruje u¿ycie klasy FileOutputStream.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+import java.io.*;
+
+class FileOutputStreamDemo {
+  public static void main(String args[]) {
+    String source = "Nadszed³ czas, aby wszyscy porz¹dni obywatele\n"
+      + " wreszcie zrozumieli potrzeby swojego kraju\n"
+      + " i zaczêli uczciwie p³aciæ podatki.";
+    byte buf[] = source.getBytes();
+
+    // U¿ywa wyra¿enia try-with-resources do zarz¹dzania strumieniem plikowym.
+    try (FileOutputStream f0 = new FileOutputStream("file1.txt");
+         FileOutputStream f1 = new FileOutputStream("file2.txt");
+         FileOutputStream f2 = new FileOutputStream("file3.txt") )
+    {
+      // zapisuje w pierwszym pliku
+      for (int i=0; i < buf.length; i += 2) f0.write(buf[i]);
+
+      // zapisuje w drugim pliku
+      f1.write(buf);
+
+      // zapisuje w trzecim pliku
+      f2.write(buf, buf.length-buf.length/4, buf.length/4);
+    } catch(IOException e) {
+      System.out.println("Wyst¹pi³ b³¹d wejœcia-wyjœcia");
+    }
+  }
+}
+
+Listing 8.
+// Demonstruje u¿ycie klasy ByteArrayInputStream.
+import java.io.*;
+
+class ByteArrayInputStreamDemo {
+  public static void main(String args[]) throws IOException {
+    String tmp = "abcdefghijklmnopqrstuvwxyz";
+    byte b[] = tmp.getBytes();
+    ByteArrayInputStream input1 = new ByteArrayInputStream(b);
+    ByteArrayInputStream input2 = new ByteArrayInputStream(b, 0, 3);
+  }
+}
+
+Listing 9.
+import java.io.*;
+
+class ByteArrayInputStreamReset {
+  public static void main(String args[]) throws IOException {
+    String tmp = "abc";
+    byte b[] = tmp.getBytes();
+    ByteArrayInputStream in = new ByteArrayInputStream(b);
+
+    for (int i=0; i<2; i++) {
+      int c;
+      while ((c = in.read()) != -1) {
+        if (i == 0) {
+          System.out.print((char) c);
+        } else {
+          System.out.print(Character.toUpperCase((char) c));
+        }
+      }
+      System.out.println();
+      in.reset();
+    }
+  }
+}
+
+Listing 10.
+// Demonstruje u¿ycie klasy ByteArrayOutputStream.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+class ByteArrayOutputStreamDemo {
+  public static void main(String args[]) {
+    ByteArrayOutputStream f = new ByteArrayOutputStream();
+    String s = "Ten ³añcuch powinien siê znaleŸæ w odpowiedniej tablicy";
+    byte buf[] = s.getBytes();
+
+    try {
+      f.write(buf);
+    } catch(IOException e) {
+      System.out.println("B³¹d zapisu w buforze");
+      return;
+    }
+
+    System.out.println("Bufor z nastêpuj¹cej postaci ³añcuchowej:");
+    System.out.println(f.toString());
+    System.out.println("jest przekszta³cany w odpowiedni¹ tablicê:");
+    byte b[] = f.toByteArray();
+
+    for (int i=0; i<b.length; i++) System.out.print((char) b[i]);
+
+    System.out.println("\nI trafia do konstruktora OutputStream()");
+
+    // U¿ywa wyra¿enia try-with-resources do zarz¹dzania strumieniem plikowym.
+    try ( FileOutputStream f2 = new FileOutputStream("test.txt") )
+    {
+      f.writeTo(f2);
+    } catch(IOException e) {
+      System.out.println("B³ad wejœcia-wyjœcia: " + e);
+      return;
+    }
+
+    System.out.println("Resetowanie strumienia");
+    f.reset();
+
+    for (int i=0; i\<3; i++) f.write('X');
+
+    System.out.println(f.toString());
+  }
+}
+
+Listing 11.
+// Wykorzystuje buforowany strumieñ wejœciowy.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+class BufferedInputStreamDemo {
+  public static void main(String args[]) {
+    String s = "&copy; jest symbolem praw autorskich, " +
+      "natomiast &copy takim symbolem nie jest.\n";
+    byte buf[] = s.getBytes();
+
+    ByteArrayInputStream in = new ByteArrayInputStream(buf);
+    int c;
+    boolean marked = false;
+
+    // U¿ywa wyra¿enia try-with-resources do zarz¹dzania plikiem.
+    try ( BufferedInputStream f = new BufferedInputStream(in) )
+    {
+      while ((c = f.read()) != -1) {
+        switch(c) {
+          case '&':
+            if (!marked) {
+              f.mark(32);
+              marked = true;
+            } else {
+              marked = false;
+            }
+            break;
+          case ‘;’:
+            if (marked) {
+              marked = false;
+              System.out.print("(c)");
+            } else
+            System.out.print((char) c);
+              break;
+          case ' ':
+            if (marked) {
+              marked = false;
+              f.reset();
+              System.out.print("&");
+            } else
+              System.out.print((char) c);
+            break;
+          default:
+            if (!marked)
+              System.out.print((char) c);
+            break;
+        }
+      }
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 12.
+// Demonstruje u¿ycie metody unread().
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+class PushbackInputStreamDemo {
+  public static void main(String args[]) {
+    String s = "if (a == 4) a = 0;\n";
+    byte buf[] = s.getBytes();
+    ByteArrayInputStream in = new ByteArrayInputStream(buf);
+    int c;
+
+    try ( PushbackInputStream f = new PushbackInputStream(in) ) {
+      while ((c = f.read()) != -1) {
+        switch(c) {
+          case '=':
+            if ((c = f.read()) == '=')
+              System.out.print(".eq.");
+            else {
+              System.out.print("<-");
+              f.unread(c);
+            }
+            break;
+          default:
+            System.out.print((char) c);
+            break;
+        }
+      }
+    } catch(IOException e) {
+      System.out.println("I/O Error: " + e);
+    }
+  }
+}
+
+Listing 13.
+// Demonstruje przetwarzanie sekwencyjnych danych wejœciowych.
+// Program stosuje tradycyjny model zamykania plików.
+
+import java.io.*;
+import java.util.*;
+
+class InputStreamEnumerator implements Enumeration<FileInputStream> {
+  private Enumeration<String> files;
+
+  public InputStreamEnumerator(Vector<String> files) {
+    this.files = files.elements();
+  }
+
+  public boolean hasMoreElements() {
+    return files.hasMoreElements();
+  }
+
+  public FileInputStream nextElement() {
+    try {
+      return new FileInputStream(files.nextElement().toString());
+    } catch (IOException e) {
+      return null;
+    }
+  }
+}
+
+class SequenceInputStreamDemo {
+  public static void main(String args[]) {
+    int c;
+    Vector<String> files = new Vector<String>();
+
+    files.addElement("file1.txt");
+    files.addElement("file2.txt");
+    files.addElement("file3.txt");
+    InputStreamEnumerator ise = new InputStreamEnumerator(files);
+    InputStream input = new SequenceInputStream(ise);
+
+    try {
+      while ((c = input.read()) != -1)
+        System.out.print((char) c);
+    } catch(NullPointerException e) {
+      System.out.println("B³¹d podczas otwierania pliku.");
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    } finally {
+      try {
+        input.close();
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania SequenceInputStream");
+      }
+    }
+  }
+}
+
+Listing 14.
+// Demonstruje u¿ycie metody printf().
+
+class PrintfDemo {
+  public static void main(String args[]) {
+    System.out.println("Poni¿ej przedstawiono kilka wartoœci liczbowych " +
+                      "w ró¿nych formatach.\n");
+
+    System.out.printf("Ró¿ne formaty liczb ca³kowitych: ");
+    System.out.printf("%d %(d %+d %05d\n", 3, -3, 3, 3);
+
+    System.out.println();
+
+    System.out.printf("Domyœlny format liczb zmiennoprzecinkowych: %f\n",
+                      1234567.123);
+    System.out.printf("Liczba zmiennoprzecinkowa z dodatkowymi przecinkami: %,f\n",
+                      1234567.123);
+    System.out.printf("Domyœlny format ujemnych liczb zmiennoprzecinkowych: %,f\n",
+                      -1234567.123);
+    System.out.printf("Inna opcja formatowania ujemnych liczb zmiennoprzecinkowych: 
+    ?%,(f\n",
+                      -1234567.123);
+
+    System.out.println();
+
+    System.out.printf("Wyrównywanie wartoœci dodatnich i ujemnych:\n");
+    System.out.printf("% ,.2f\n% ,.2f\n",
+                      1234567.123, -1234567.123);
+
+  }
+}
+
+Listing 15.
+// Przyk³ad u¿ycia klas DataInputStream i DataOutputStream.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+class DataIODemo {
+  public static void main(String args[]) throws IOException {
+
+    // Najpierw zapisuje dane.
+    try ( DataOutputStream dout =
+            new DataOutputStream(new FileOutputStream("Test.dat")) )
+    {
+      dout.writeDouble(98.6);
+      dout.writeInt(1000);
+      dout.writeBoolean(true);
+    } catch(FileNotFoundException e) {
+      System.out.println("Nie mo¿na otworzyæ pliku wyjœciowego");
+      return;
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+
+    // Teraz ponownie odczytuje te dane.
+    try ( DataInputStream din =
+            new DataInputStream(new FileInputStream("Test.dat")) )
+    {
+      double d = din.readDouble();
+      int i = din.readInt();
+      boolean b = din.readBoolean();
+
+      System.out.println("Oto nasze wartoœci: " +
+                         d + " " + i + " " + b);
+    } catch(FileNotFoundException e) {
+      System.out.println("Nie mo¿na otworzyæ pliku wejœciowego");
+      return;
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 16.
+// Demonstruje u¿ycie klasy FileReader.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+class FileReaderDemo {
+  public static void main(String args[]) {
+    try ( FileReader fr = new FileReader("FileReaderDemo.java") )
+    {
+      int c;
+      // Odczytuje i wyœwietla zawartoœæ pliku.
+      while((c = fr.read()) != -1) System.out.print((char) c);
+    } catch(IOException e) {
+      System.out.println("I/O Error: " + e);
+    }
+  }
+}
+
+Listing 17.
+// Demonstruje u¿ycie klasy FileWriter.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+class FileWriterDemo {
+  public static void main(String args[]) throws IOException {
+    String source = "Nadszed³ czas, aby wszyscy porz¹dni obywatele\n"
+      + " wreszcie zrozumieli potrzeby swojego kraju\n"
+      + " i zaczêli uczciwie p³aciæ podatki.";
+    char buffer[] = new char[source.length()];
+    source.getChars(0, source.length(), buffer, 0);
+
+    try ( FileWriter f0 = new FileWriter("file1.txt");
+          FileWriter f1 = new FileWriter("file2.txt");
+          FileWriter f2 = new FileWriter("file3.txt") )
+    {
+      // zapisuje w pierwszym pliku
+      for (int i=0; i < buffer.length; i += 2) {
+        f0.write(buffer[i]);
+      }
+
+      // zapisuje w drugim pliku
+      f1.write(buffer);
+
+      // zapisuje w trzecim pliku
+      f2.write(buffer,buffer.length-buffer.length/4,buffer.length/4);
+    } catch(IOException e) {
+      System.out.println("Wyst¹pi³ b³¹d wejœcia-wyjœcia");
+    }
+  }
+}
+
+Listing 18.
+// Demonstruje u¿ycie klasy CharArrayReader.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+public class CharArrayReaderDemo {
+  public static void main(String args[]) {
+    String tmp = "abcdefghijklmnopqrstuvwxyz";
+    int length = tmp.length();
+    char c[] = new char[length];
+
+    tmp.getChars(0, length, c, 0);
+    int i;
+
+    try (CharArrayReader input1 = new CharArrayReader(c) )
+    {
+      System.out.println("input1:");
+      while((i = input1.read()) != -1) {
+        System.out.print((char)i);
+      }
+      System.out.println();
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+
+    try ( CharArrayReader input2 = new CharArrayReader(c, 0, 5) )
+    {
+      System.out.println("input2:");
+      while((i = input2.read()) != -1) {
+        System.out.print((char)i);
+      }
+      System.out.println();
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 19.
+// Demonstruje u¿ycie klasy CharArrayWriter.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+
+class CharArrayWriterDemo {
+  public static void main(String args[]) throws IOException {
+    CharArrayWriter f = new CharArrayWriter();
+    String s = " Ten ³añcuch powinien siê znaleŸæ w odpowiedniej tablicy";
+    char buf[] = new char[s.length()];
+
+    s.getChars(0, s.length(), buf, 0);
+
+    try {
+      f.write(buf);
+    } catch(IOException e) {
+      System.out.println("B³ad zapisu w buforze ");
+      return;
+    }
+
+    System.out.println("Bufor z nastêpuj¹cej postaci ³añcuchowej");
+    System.out.println(f.toString());
+    System.out.println("jest przekszta³cany w odpowiedni¹ tablicê");
+
+    char c[] = f.toCharArray();
+    for (int i=0; i<c.length; i++) {
+      System.out.print(c[i]);
+    }
+
+    System.out.println("\nI trafia do konstruktora FileWriter()");
+
+    // Wyra¿enie try-with-resources zarz¹dzaj¹ce strumieniem plikowym.
+    try ( FileWriter f2 = new FileWriter("test.txt") )
+    {
+      f.writeTo(f2);
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+
+    System.out.println("Resetowanie strumienia");
+    f.reset();
+
+    for (int i=0; i<3; i++) f.write('X');
+
+    System.out.println(f.toString());
+  }
+}
+
+Listing 20.
+// Demonstruje przetwarzanie buforowanych danych wejœciowych.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+class BufferedReaderDemo {
+  public static void main(String args[]) throws IOException {
+    String s = "&copy; jest symbolem praw autorskich, " +
+      "natomiast &copy takim symbolem nie jest.\n";
+    char buf[] = new char[s.length()];
+    s.getChars(0, s.length(), buf, 0);
+
+    CharArrayReader in = new CharArrayReader(buf);
+    int c;
+    boolean marked = false;
+
+    try ( BufferedReader f = new BufferedReader(in) )
+    {
+      while ((c = f.read()) != -1) {
+        switch(c) {
+          case '&':
+            if (!marked) {
+              f.mark(32);
+              marked = true;
+            } else {
+              marked = false;
+            }
+            break;
+          case ';':
+            if (marked) {
+              marked = false;
+              System.out.print("(c)");
+            } else
+              System.out.print((char) c);
+            break;
+          case ' ':
+            if (marked) {
+              marked = false;
+              f.reset();
+              System.out.print("&");
+            } else
+              System.out.print((char) c);
+            break;
+          default:
+            if (!marked)
+              System.out.print((char) c);
+            break;
+        }
+      }
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 21.
+// Demonstruje u¿ycie metody unread().
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+class PushbackReaderDemo {
+  public static void main(String args[]) {
+    String s = "if (a == 4) a = 0;\n";
+    char buf[] = new char[s.length()];
+    s.getChars(0, s.length(), buf, 0);
+    CharArrayReader in = new CharArrayReader(buf);
+
+    int c;
+
+    try ( PushbackReader f = new PushbackReader(in) )
+    {
+      while ((c = f.read()) != -1) {
+        switch(c) {
+          case '=':
+            if ((c = f.read()) == '=')
+              System.out.print(".eq.");
+            else {
+              System.out.print("<-");
+              f.unread(c);
+            }
+            break;
+          default:
+            System.out.print((char) c);
+            break;
+        }
+      }
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 22.
+// Przyk³ad demonstruj¹cy dzia³anie klasy Console.
+import java.io.*;
+
+class ConsoleDemo {
+  public static void main(String args[]) {
+    String str;
+    Console con;
+
+    // Uzyskuje referencjê do konsoli.
+    con = System.console();
+    // Jeœli konsola nie jest dostêpna, program koñczy dzia³anie.
+    if(con == null) return;
+
+    // Odczytuje i wyœwietla ³añcuch.
+    str = con.readLine("Wpisz jakiœ tekst: ");
+    con.printf("Oto wpisany tekst: %s\n", str);
+  }
+}
+
+Listing 23.
+// Przyk³ad serializacji.
+// Program u¿ywa wyra¿enia try-with-resources, zatem wymaga wersji JDK 7 lub nowszej.
+
+import java.io.*;
+
+public class SerializationDemo {
+  public static void main(String args[]) {
+
+    // Serializacja obiektu
+
+    try ( ObjectOutputStream objOStrm =
+            new ObjectOutputStream(new FileOutputStream("serial")) )
+    {
+      MyClass object1 = new MyClass("Witaj", -7, 2.7e10);
+      System.out.println("object1: " + object1);
+      objOStrm.writeObject(object1);
+    }
+    catch(IOException e) {
+      System.out.println("Wyj¹tek w czasie serializacji: " + e);
+    }
+
+    // Deserializacja obiektu
+
+    try ( ObjectInputStream objIStrm =
+            new ObjectInputStream(new FileInputStream("serial")) )
+    {
+      MyClass object2 = (MyClass)objIStrm.readObject();
+      System.out.println("object2: " + object2);
+    }
+    catch(Exception e) {
+      System.out.println("Wyj¹tek w czasie deserializacji: " + e);
+    }
+  }
+}
+
+class MyClass implements Serializable {
+  String s;
+  int i;
+  double d;
+
+  public MyClass(String s, int i, double d) {
+    this.s = s;
+    this.i = i;
+    this.d = d;
+  }
+
+  public String toString() {
+    return "s=" + s + "; i=" + i + "; d=" + d;
+  }
+}
+

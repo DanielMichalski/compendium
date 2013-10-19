@@ -1,0 +1,302 @@
+Listing 1.
+// Demonstruje technikê obs³ugi zdarzeñ zwi¹zanych z mysz¹.
+import java.awt.*;
+import java.awt.event.*;
+import java.applet.*;
+/*
+  <applet code="MouseEvents" width=300 height=100>
+  </applet>
+*/
+
+public class MouseEvents extends Applet
+  implements MouseListener, MouseMotionListener {
+
+  String msg = "";
+  int mouseX = 0, mouseY = 0; // wspó³rzêdne kursora myszy
+
+  public void init() {
+     addMouseListener(this);
+     addMouseMotionListener(this);
+  }
+
+  // Obs³uguje klikniêcie myszy.
+  public void mouseClicked(MouseEvent me) {
+    // zapisuje wspó³rzêdne
+    mouseX = 0;
+    mouseY = 10;
+    msg = "Klikniêto przycisk myszy.";
+    repaint();
+  }
+
+  // Obs³uguje wejœcie kursora myszy w obszar komponentu.
+  public void mouseEntered(MouseEvent me) {
+    // zapisuje wspó³rzêdne
+    mouseX = 0;
+    mouseY = 10;
+    msg = "Kursor myszy w obszarze komponentu.";
+    repaint();
+  }
+
+  // Obs³uguje wyjœcie kursora myszy poza obszar komponentu.
+  public void mouseExited(MouseEvent me) {
+    // zapisuje wspó³rzêdne
+    mouseX = 0;
+    mouseY = 10;
+    msg = "Kursor myszy poza obszarem komponentu.";
+    repaint();
+  }
+
+  // Obs³uguje naciœniêcie przycisku myszy.
+  public void mousePressed(MouseEvent me) {
+    // zapisuje wspó³rzêdne
+    mouseX = me.getX();
+    mouseY = me.getY();
+    msg = "Wciœniêty";
+    repaint();
+  }
+
+  // Obs³uguje zwolnienie przycisku myszy.
+  public void mouseReleased(MouseEvent me) {
+    // zapisuje wspó³rzêdne
+    mouseX = me.getX();
+    mouseY = me.getY();
+    msg = "Zwolniony";
+    repaint();
+  }
+
+  // Obs³uguje przeci¹ganie kursora myszy.
+  public void mouseDragged(MouseEvent me) {
+    // zapisuje wspó³rzêdne
+    mouseX = me.getX();
+    mouseY = me.getY();
+    msg = "*";
+    showStatus("Przeci¹ganie kursora myszy w punkcie 
+    ?(" + mouseX + ", " + mouseY + ")");
+    repaint();
+  }
+
+  // Obs³uguje przemieszczanie siê kursora myszy.
+  public void mouseMoved(MouseEvent me) {
+    // Wyœwietla stan
+    showStatus("Przesuwanie kursora myszy w punkcie 
+    ?(" + me.getX() + ", " + me.getY() + ")");
+  }
+
+  // Wyœwietla ³añcuch msg w punkcie (x, y) okna apletu.
+  public void paint(Graphics g) {
+    g.drawString(msg, mouseX, mouseY);
+  }    
+}
+
+Listing 2.
+// Demonstruje technikê obs³ugi zdarzeñ zwi¹zanych z klawiatur¹.
+import java.awt.*;
+import java.awt.event.*;
+import java.applet.*;
+/*
+  <applet code="SimpleKey" width=300 height=100>
+  </applet>
+*/
+
+public class SimpleKey extends Applet
+  implements KeyListener {
+
+  String msg = "";
+  int X = 10, Y = 20; // wspó³rzêdne wyœwietlanego ci¹gu znaków
+
+  public void init() {
+    addKeyListener(this);
+  }
+
+  public void keyPressed(KeyEvent ke) {
+    showStatus("Klawisz wciœniêty");
+  }
+
+  public void keyReleased(KeyEvent ke) {
+    showStatus("Klawisz zwolniony");
+  }
+  public void keyTyped(KeyEvent ke) {
+    msg += ke.getKeyChar();
+    repaint();
+  }
+
+  // Wyœwietla naciskane klawisze.
+  public void paint(Graphics g) {
+    g.drawString(msg, X, Y);
+  }    
+}
+
+Listing 3.
+// Demonstruje kilka wirtualnych kodów klawiszy.
+import java.awt.*;
+import java.awt.event.*;
+import java.applet.*;
+/*
+  <applet code="KeyEvents" width=300 height=100>
+  </applet>
+*/
+
+public class KeyEvents extends Applet
+  implements KeyListener {
+
+  String msg = "";
+  int X = 10, Y = 20; // wspó³rzêdne wyœwietlanego ci¹gu znaków
+
+  public void init() {
+    addKeyListener(this);
+  }
+
+  public void keyPressed(KeyEvent ke) {
+    showStatus("Klawisz wciœniêty");
+
+    int key = ke.getKeyCode(); 
+    switch(key) {
+      case KeyEvent.VK_F1:
+        msg += "<F1>";
+        break;
+      case KeyEvent.VK_F2:
+        msg += "<F2>";
+        break;
+      case KeyEvent.VK_F3:
+        msg += "<F3>";
+        break;
+      case KeyEvent.VK_PAGE_DOWN:
+        msg += "<PgDn>";
+        break;
+      case KeyEvent.VK_PAGE_UP:
+        msg += "<PgUp>";
+        break;
+      case KeyEvent.VK_LEFT:
+        msg += "<Strza³ka w lewo>";
+        break;
+      case KeyEvent.VK_RIGHT:
+        msg += "<Strza³ka w prawo>";
+        break;
+    }
+
+    repaint();
+  }
+
+  public void keyReleased(KeyEvent ke) {
+    showStatus("Klawisz zwolniony");
+  }
+
+  public void keyTyped(KeyEvent ke) {
+    msg += ke.getKeyChar();
+    repaint();
+  }
+
+  // Wyœwietla naciskane klawisze.
+  public void paint(Graphics g) {
+    g.drawString(msg, X, Y);
+  }    
+}
+
+Listing 4.
+// Demonstruje u¿ycie klasy adaptera.
+import java.awt.*;
+import java.awt.event.*;
+import java.applet.*;
+/*
+  <applet code="AdapterDemo" width=300 height=100>
+  </applet>
+*/
+
+public class AdapterDemo extends Applet {
+  public void init() {
+     addMouseListener(new MyMouseAdapter(this));
+     addMouseMotionListener(new MyMouseMotionAdapter(this));
+  }
+}
+
+class MyMouseAdapter extends MouseAdapter {
+  AdapterDemo adapterDemo;
+  public MyMouseAdapter(AdapterDemo adapterDemo) {
+    this.adapterDemo = adapterDemo;
+  }
+
+  // Obs³uguje zdarzenie klikniêcia mysz¹.
+  public void mouseClicked(MouseEvent me) {
+    adapterDemo.showStatus("Klikniêto przycisk myszy");
+  }
+}
+
+class MyMouseMotionAdapter extends MouseMotionAdapter {
+  AdapterDemo adapterDemo;
+  public MyMouseMotionAdapter(AdapterDemo adapterDemo) {
+    this.adapterDemo = adapterDemo;
+  }
+
+  // Obs³uguje przeci¹ganie kursora myszy.
+  public void mouseDragged(MouseEvent me) {
+    adapterDemo.showStatus("Przeci¹gniêto kursor myszy");
+  } 
+}
+
+Listing 5.
+// Ten aplet NIE wykorzystuje klasy wewnêtrznej.
+import java.applet.*;
+import java.awt.event.*;
+/*
+  <applet code="MousePressedDemo" width=200 height=100>
+  </applet>
+ 
+*/
+ 
+public class MousePressedDemo extends Applet {
+  public void init() {
+    addMouseListener(new MyMouseAdapter(this));
+  }
+}
+
+class MyMouseAdapter extends MouseAdapter {
+  MousePressedDemo mousePressedDemo;
+  public MyMouseAdapter(MousePressedDemo mousePressedDemo) {
+    this.mousePressedDemo = mousePressedDemo;
+  }
+  public void mousePressed(MouseEvent me) {
+    mousePressedDemo.showStatus("Naciœniêto przycisk myszy.");
+  }
+}
+
+Listing 6.
+// Przyk³ad zastosowania klasy wewnêtrznej
+import java.applet.*;
+import java.awt.event.*;
+/*
+  <applet code="InnerClassDemo" width=200 height=100>
+  </applet>
+ 
+*/
+ 
+public class InnerClassDemo extends Applet {
+  public void init() {
+    addMouseListener(new MyMouseAdapter());
+  }
+  class MyMouseAdapter extends MouseAdapter {
+    public void mousePressed(MouseEvent me) {
+      showStatus("Naciœniêto przycisk myszy");
+    }
+  }
+}
+
+Listing 7.
+// Przyk³ad zastosowania anonimowej klasy wewnêtrznej.
+import java.applet.*;
+import java.awt.event.*;
+/*
+  <applet code="AnonymousInnerClassDemo" width=200 height=100>
+  </applet>
+*/
+ 
+public class AnonymousInnerClassDemo extends Applet {
+  public void init() {
+    addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent me) {
+        showStatus("Naciœniêto przycisk myszy");
+      }
+    });
+  }
+}
+
+

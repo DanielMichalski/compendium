@@ -1,0 +1,962 @@
+Listing 1.
+// Prosta klasa sparametryzowana.
+// T jest parametrem typu, który zostanie zast¹piony 
+// rzeczywistym typem w momencie tworzenia
+// obiektu Gen. 
+class Gen<T> { 
+  T ob; // deklaracja obiektu typu T 
+   
+  // Przekazanie konstruktorowi referencji  
+  // do obiektu typu T. 
+  Gen(T o) { 
+    ob = o; 
+  } 
+  // Zwrócenie ob. 
+  T getob() { 
+    return ob; 
+  } 
+ 
+  // Wyœwietlenie typu T. 
+  void showType() { 
+    System.out.println("Typ T to " + 
+                       ob.getClass().getName()); 
+  } 
+} 
+ 
+// Przyk³ad u¿ycia klasy sparametryzowanej. 
+class GenDemo { 
+  public static void main(String args[]) { 
+    // Utworzenie referencji do Gen dla typu Integer.  
+    Gen<Integer> iOb;
+ 
+    // Utworzenie obiektu Gen<Integer> i przypisanie  
+    // referencji do niego do iOb. Zwróæ uwagê na automatyczne
+    // opakowanie wartoœci 88 w ramach obiektu typu Integer. 
+    iOb = new Gen<Integer>(88); 
+ 
+    // Poka¿ typ danych u¿ywany przez iOb. 
+    iOb.showType(); 
+ 
+    // Pobierz wartoœæ w iOb. Zauwa¿, ¿e nie jest 
+    // potrzebne ¿adne rzutowanie. 
+    int v = iOb.getob(); 
+    System.out.println("wartoœæ: " + v); 
+ 
+    System.out.println(); 
+ 
+    // Utworzenie obiektu Gen dla typu String. 
+    Gen<String> strOb = new Gen<String>("Test typów sparametryzowanych"); 
+ 
+    // Poka¿ typ danych u¿ywany przez strOb. 
+    strOb.showType(); 
+ 
+    // Pobierz wartoœæ w strOb. Tak¿e tutaj
+    // nie jest potrzebne ¿adne rzutowanie. 
+    String str = strOb.getob(); 
+    System.out.println("wartoœæ: " + str); 
+  } 
+}
+
+Listing 2.
+// NonGen jest funkcjonalnie równowa¿ne Gen, 
+// ale nie u¿ywa typów sparametryzowanych.  
+class NonGen {  
+  Object ob; // ob jest teraz typu Object 
+    
+  // Konstruktor otrzymuje referencjê 
+  // do obiektu typu Object.
+  NonGen(Object o) {  
+    ob = o;  
+  }  
+  
+  // Zwrócenie typu Object. 
+  Object getob() {  
+    return ob;  
+  }  
+ 
+  // Wyœwietlenie typu ob.  
+  void showType() {  
+    System.out.println("Typ ob to " +  
+                       ob.getClass().getName());  
+  }  
+}  
+  
+// Przyk³ad u¿ycia klasy bez typów sparametryzowanych.  
+class NonGenDemo {  
+  public static void main(String args[]) {  
+    NonGen iOb;   
+  
+    // Tworzenie obiektu NonGen i zapisanie w nim wartoœci
+    // typu Integer. Automatyczne opakowywanie nadal dzia³a. 
+    iOb = new NonGen(88);  
+  
+    // Wyœwietlenie typu danych u¿ywanego przez iOb. 
+    iOb.showType(); 
+ 
+    // Pobranie wartoœci iOb. 
+    // Tym razem konieczne jest rzutowanie. 
+    int v = (Integer) iOb.getob();  
+    System.out.println("wartoœæ: " + v);  
+  
+    System.out.println();  
+  
+    // Utworzenie innego obiektu NonGen 
+    // i zapamiêtanie w nim typu String. 
+    NonGen strOb = new NonGen("Test dla braku parametryzacji");  
+  
+    // Wyœwietlenie typu danych u¿ywanego przez strOb. 
+    strOb.showType(); 
+ 
+    // Pobranie wartoœci strOb. 
+    // Tym razem równie¿ konieczne jest rzutowanie.  
+    String str = (String) strOb.getob();  
+    System.out.println("wartoœæ: " + str);  
+ 
+    // Ten kod uda siê skompilowaæ, choæ jest b³êdny koncepcyjnie! 
+    iOb = strOb; 
+    v = (Integer) iOb.getob(); // B³¹d w trakcie dzia³ania programu! 
+  }  
+}
+
+Listing 3.
+// Przyk³adowa klasa sparametryzowana z dwoma  
+// parametrami typu: T i V. 
+class TwoGen<T, V> { 
+  T ob1; 
+  V ob2; 
+   
+  // Przekazanie do konstruktora referencji do 
+  // obiektów typu T i V. 
+  TwoGen(T o1, V o2) { 
+    ob1 = o1; 
+    ob2 = o2; 
+  } 
+ 
+  // Wyœwietlenie typów T i V. 
+  void showTypes() { 
+    System.out.println("Typ T to " + 
+                       ob1.getClass().getName()); 
+ 
+    System.out.println("Typ V to " + 
+                       ob2.getClass().getName()); 
+  } 
+ 
+  T getob1() { 
+    return ob1; 
+  } 
+ 
+  V getob2() { 
+    return ob2; 
+  } 
+} 
+ 
+// Przyk³ad u¿ycia klasy TwoGen. 
+class SimpGen { 
+  public static void main(String args[]) { 
+ 
+    TwoGen<Integer, String> tgObj = 
+      new TwoGen<Integer, String>(88, "Parametryzacja"); 
+ 
+    // Wyœwietlenie typów. 
+    tgObj.showTypes(); 
+ 
+    // Pobranie i wyœwietlenie wartoœci. 
+    int v = tgObj.getob1(); 
+    System.out.println("wartoœæ: " + v); 
+ 
+    String str = tgObj.getob2(); 
+    System.out.println("wartoœæ: " + str); 
+  } 
+}
+
+Listing 4.
+// Nieudana próba utworzenia klasy sparametryzowanej
+// obliczaj¹cej œredni¹ elementów wskazanego typu
+// znajduj¹cych siê w przekazanej tablicy.
+//
+// Klasa zawiera b³¹d!
+class Stats<T> {
+  T[] nums; // nums to tablica typu T
+
+  // Przekazanie do konstruktora referencji do
+  // tablicy typu T.
+  Stats(T[] o) {
+    nums = o;
+  }
+
+  // Zawsze zwracanie œredniej jako typu double.
+  double average() {
+    double sum = 0.0;
+
+    for(int i=0; i < nums.length; i++)
+      sum += nums[i].doubleValue(); // B³¹d!!!
+
+    return sum / nums.length;
+  }
+}
+
+Listing 5.
+// W tej wersji klasy Stats argumentem typu T
+// musi byæ klasa Number lub jedna z jej podklas.
+class Stats<T extends Number> {
+  T[] nums; // tablica Number lub jej podklasy
+
+  // Przekazanie do konstruktora referencji do
+  // tablicy typu Number lub jej podklasy.
+  Stats(T[] o) {
+    nums = o;
+  }
+
+  // Zawsze zwracanie œredniej jako typu double.
+  double average() {
+    double sum = 0.0;
+
+    for(int i=0; i < nums.length; i++)
+      sum += nums[i].doubleValue();
+
+    return sum / nums.length;
+  }
+}
+
+// Przyk³ad u¿ycia klasy Stats.
+class BoundsDemo {
+  public static void main(String args[]) {
+
+    Integer inums[] = { 1, 2, 3, 4, 5 };
+    Stats<Integer> iob = new Stats<Integer>(inums);
+    double v = iob.average();
+    System.out.println("Œrednia dla iob wynosi " + v);
+
+    Double dnums[] = { 1.1, 2.2, 3.3, 4.4, 5.5 };
+    Stats<Double> dob = new Stats<Double>(dnums);
+    double w = dob.average();
+    System.out.println("Œrednia dla dob wynosi " + w);
+
+    // Tego fragmentu nie uda siê skompilowaæ, poniewa¿ String
+    // nie jest podklas¹ klasy Number.
+//    String strs[] = { "1", "2", "3", "4", "5" };
+//    Stats<String> strob = new Stats<String>(strs);
+
+//    double x = strob.average();
+//    System.out.println("Œrednia dla strob wynosi " + v);
+
+  }
+}
+
+Listing 6.
+// Zastosowanie argumentu wieloznacznego.
+class Stats<T extends Number> {
+  T[] nums; // tablica obiektów klasy Number lub jej podklasy
+
+  // Przekazanie do konstruktora referencji do
+  // tablicy typu Number lub jej podklasy.
+  Stats(T[] o) {
+    nums = o;
+  }
+
+  // Zawsze zwracanie œredniej jako typu double.
+  double average() {
+    double sum = 0.0;
+
+    for(int i=0; i < nums.length; i++)
+      sum += nums[i].doubleValue();
+
+    return sum / nums.length;
+  }
+
+  // SprawdŸ, czy dwie œrednie s¹ identyczne.
+  // Zauwa¿ u¿ycie argumentu wieloznacznego.
+  boolean sameAvg(Stats<?> ob) {
+    if(average() == ob.average())
+      return true;
+
+    return false;
+  }
+}
+
+// Przyk³ad u¿ycia argumentu wieloznacznego.
+class WildcardDemo {
+  public static void main(String args[]) {
+    Integer inums[] = { 1, 2, 3, 4, 5 };
+    Stats<Integer> iob = new Stats<Integer>(inums);
+    double v = iob.average();
+    System.out.println("Œrednia iob wynosi " + v);
+
+    Double dnums[] = { 1.1, 2.2, 3.3, 4.4, 5.5 };
+    Stats<Double> dob = new Stats<Double>(dnums);
+    double w = dob.average();
+    System.out.println("Œrednia dob wynosi " + w);
+
+    Float fnums[] = { 1.0F, 2.0F, 3.0F, 4.0F, 5.0F };
+    Stats<Float> fob = new Stats<Float>(fnums);
+    double x = fob.average();
+    System.out.println("Œrednia fob wynosi " + x);
+
+    // SprawdŸ, które tablice maj¹ takie same œrednie.
+    System.out.print("Œrednie iob i dob s¹ ");
+    if(iob.sameAvg(dob))
+      System.out.println("takie same.");
+    else
+      System.out.println("ró¿ne.");
+
+    System.out.print("Œrednie iob i fob s¹ ");
+    if(iob.sameAvg(fob))
+      System.out.println("takie same.");
+    else
+      System.out.println("ró¿ne.");
+  }
+}
+
+Listing 7.
+// Ograniczone argumenty wieloznaczne.
+
+// Wspó³rzêdne dwuwymiarowe.
+class TwoD {
+  int x, y;
+
+  TwoD(int a, int b) {
+    x = a;
+    y = b;
+  }
+}
+// Wspó³rzêdne trójwymiarowe.
+class ThreeD extends TwoD {
+  int z;
+
+  ThreeD(int a, int b, int c) {
+    super(a, b);
+    z = c;
+  }
+}
+
+// Wspó³rzêdne czterowymiarowe.
+class FourD extends ThreeD {
+  int t;
+
+  FourD(int a, int b, int c, int d) {
+    super(a, b, c);
+    t = d;
+  }
+}
+
+// Klasa przechowuje tablicê obiektów wspó³rzêdnych.
+class Coords<T extends TwoD> {
+  T[] coords;
+
+  Coords(T[] o) { coords = o; }
+}
+
+// Przyk³ad u¿ycia ograniczonego argumentu wieloznacznego.
+class BoundedWildcard {
+  static void showXY(Coords<?> c) {
+    System.out.println("Wspó³rzêdne X Y:");
+    for(int i=0; i < c.coords.length; i++)
+      System.out.println(c.coords[i].x + " " +
+                         c.coords[i].y);
+    System.out.println();
+  }
+
+  static void showXYZ(Coords<? extends ThreeD> c) {
+    System.out.println("Wspó³rzêdne X Y Z:");
+    for(int i=0; i < c.coords.length; i++)
+      System.out.println(c.coords[i].x + " " +
+                         c.coords[i].y + " " +
+                         c.coords[i].z);
+    System.out.println();
+  }
+
+  static void showAll(Coords<? extends FourD> c) {
+    System.out.println("Wspó³rzêdne X Y Z T:");
+    for(int i=0; i < c.coords.length; i++)
+      System.out.println(c.coords[i].x + " " +
+                         c.coords[i].y + " " +
+                         c.coords[i].z + " " +
+                         c.coords[i].t);
+    System.out.println();
+  }
+
+  public static void main(String args[]) {
+    TwoD td[] = {
+      new TwoD(0, 0),
+      new TwoD(7, 9),
+      new TwoD(18, 4),
+      new TwoD(-1, -23)
+    };
+
+    Coords<TwoD> tdlocs = new Coords<TwoD>(td);
+
+    System.out.println("Zawartoœæ tdlocs.");
+    showXY(tdlocs); // Poprawne, jest typu TwoD.
+//  showXYZ(tdlocs); // B³¹d, nie jest typu ThreeD.
+//  showAll(tdlocs); // B³¹d, nie jest typu FourD.
+
+    // Utworzenie kilku obiektów FourD.
+    FourD fd[] = {
+      new FourD(1, 2, 3, 4),
+      new FourD(6, 8, 14, 8),
+      new FourD(22, 9, 4, 9),
+      new FourD(3, -2, -23, 17)
+    };
+
+    Coords<FourD> fdlocs = new Coords<FourD>(fd);
+
+    System.out.println("Zawartoœæ fdlocs.");
+    // Teraz wszystkie wywo³ania s¹ poprawne.
+    showXY(fdlocs);
+    showXYZ(fdlocs);
+    showAll(fdlocs);
+  }
+}
+
+Listing 8.
+// Przyk³ad prostej klasy sparametryzowanej.
+class GenMethDemo {
+
+  // Sprawdza, czy obiekt znajduje siê w tablicy.
+  static <T, V extends T> boolean isIn(T x, V[] y) {
+
+    for(int i=0; i < y.length; i++)
+      if(x.equals(y[i])) return true;
+    return false;
+  }
+
+  public static void main(String args[]) {
+
+    // U¿ycie isIn() dla typu Integers.
+    Integer nums[] = { 1, 2, 3, 4, 5 };
+
+    if(isIn(2, nums))
+      System.out.println("2 znajduje siê w nums");
+
+    if(!isIn(7, nums))
+      System.out.println("7 nie wystêpuje w nums");
+
+    System.out.println();
+
+    // U¿ycie isIn() dla typu Strings.
+    String strs[] = { "jeden", "dwa", "trzy",
+                      "cztery", "piêæ" };
+
+    if(isIn("dwa", strs))
+      System.out.println("dwa znajduje siê w strs");
+
+    if(!isIn("siedem", strs))
+      System.out.println("siedem nie wystêpuje w strs");
+
+    // Tego fragmentu nie uda siê skompilowaæ! typy musz¹ byæ zgodne.
+//    if(isIn("dwa", nums))
+//      System.out.println("dwa znajduje siê w nums");
+  }
+}
+
+Listing 9.
+// Klasa z konstruktorem sparametryzowanym.
+class GenCons {
+  private double val;
+
+  <T extends Number> GenCons(T arg) {
+    val = arg.doubleValue();
+  }
+
+  void showval() {
+    System.out.println("wartoœæ: " + val);
+  }
+}
+
+class GenConsDemo {
+  public static void main(String args[]) {
+
+    GenCons test = new GenCons(100);
+    GenCons test2 = new GenCons(123.5F);
+    test.showval();
+    test2.showval();
+  }
+}
+
+Listing 10.
+// Przyk³ad interfejsu sparametryzowanego.
+
+// interfejs MinMax
+interface MinMax<T extends Comparable<T>> {
+  T min();
+  T max();
+}
+
+// implementacja interfejsu MinMax
+class MyClass<T extends Comparable<T>> implements MinMax<T> {
+  T[] vals;
+
+  MyClass(T[] o) { vals = o; }
+
+  // Zwraca minimaln¹ wartoœæ z vals.
+  public T min() {
+    T v = vals[0];
+
+    for(int i=1; i < vals.length; i++)
+      if(vals[i].compareTo(v) < 0) v = vals[i];
+
+    return v;
+  }
+
+  // Zwraca maksymaln¹ wartoœæ z vals.
+  public T max() {
+    T v = vals[0];
+
+    for(int i=1; i < vals.length; i++)
+      if(vals[i].compareTo(v) > 0) v = vals[i];
+
+    return v;
+  }
+}
+
+class GenIFDemo {
+  public static void main(String args[]) {
+    Integer inums[] = {3, 6, 2, 8, 6 };
+    Character chs[] = {'b', 'r', 'p', 'w' };
+
+    MyClass<Integer> iob = new MyClass<Integer>(inums);
+    MyClass<Character> cob = new MyClass<Character>(chs);
+
+    System.out.println("Maksymalna wartoœæ w inums: " + iob.max());
+    System.out.println("Minimalna wartoœæ w inums: " + iob.min());
+
+    System.out.println("Maksymalna wartoœæ w chs: " + cob.max());
+    System.out.println("Minimalna wartoœæ w chs: " + cob.min());
+  }
+}
+
+Listing 11.
+// Przyk³ad typu surowego.
+class Gen<T> {
+  T ob; // deklaracja obiektu typu T
+
+  // Przekazanie do konstruktora referencji do
+  // obiektu typu T.
+  Gen(T o) {
+    ob = o;
+  }
+
+  // Zwrócenie ob.
+  T getob() {
+    return ob;
+  }
+}
+
+// Klasa korzystaj¹ca z typu surowego.
+class RawDemo {
+  public static void main(String args[]) {
+
+    // Utworzenie obiektu Gen dla typu Integer.
+    Gen<Integer> iOb = new Gen<Integer>(88);
+
+    // Utworzenie obiektu Gen dla typu String.
+    Gen<String> strOb = new Gen<String>("Test parametryzacji");
+
+    // Utworzenie obiektu Gen typu surowego i przekazanie mu
+    // wartoœci Double.
+    Gen raw = new Gen(new Double(98.6));
+
+    // Konieczne jest rzutowanie, poniewa¿ typ nie jest znany.
+    double d = (Double) raw.getob();
+    System.out.println("wartoœæ: " + d);
+
+    // U¿ycie typu surowego mo¿e doprowadziæ do zg³oszenia
+    // wyj¹tku wykonania. Oto kilka przyk³adów.
+
+    // Powoduje zg³oszenie b³êdu wykonania!
+//    int i = (Integer) raw.getob(); // b³¹d wykonania
+
+    // To przypisanie omija bezpieczeñstwo typów.
+    strOb = raw; // Poprawne, ale mo¿e doprowadziæ do b³êdu.
+//    String str = strOb.getob(); // b³¹d wykonania
+
+    // To przypisanie równie¿ omija bezpieczeñstwo typów.
+    raw = iOb; // Poprawne, ale mo¿e doprowadziæ do b³êdu.
+//    d = (Double) raw.getob(); // b³¹d wykonania
+  }
+}
+
+Listing 12.
+// Hierarchia klas sparametryzowanych.
+class Gen<T> {
+  T ob;
+
+  Gen(T o) {
+    ob = o;
+  }
+
+  // Zwraca ob.
+  T getob() {
+    return ob;
+  }
+}
+
+// Podklasa klasy Gen.
+class Gen2<T> extends Gen<T> {
+  Gen2(T o) {
+    super(o);
+  }
+}
+
+Listing 13.
+// Podklasa mo¿e zastosowaæ w³asny parametr typu.
+class Gen<T> {
+  T ob; // deklaracja obiektu typu T
+
+  // Przekazanie do konstruktora referencji do
+  // obiektu typu T.
+  Gen(T o) {
+    ob = o;
+  }
+
+  // Zwrócenie ob.
+  T getob() {
+    return ob;
+  }
+}
+
+// Podklasa klasy Gen, która definiuje drugi 
+// parametr typu o nazwie V.
+class Gen2<T, V> extends Gen<T> {
+  V ob2;
+
+  Gen2(T o, V o2) {
+    super(o);
+    ob2 = o2;
+  }
+
+  V getob2() {
+    return ob2;
+  }
+}
+
+// Utworzenie obiektu typu Gen2.
+class HierDemo {
+  public static void main(String args[]) {
+
+    // Utworzenie obiektu Gen2 dla typów String i Integer.
+    Gen2<String, Integer> x =
+      new Gen2<String, Integer>("Wartoœæ: ", 99);
+
+    System.out.print(x.getob());
+    System.out.println(x.getob2());
+  }
+}
+
+Listing 14.
+// Tradycyjna klasa mo¿e byæ klas¹ bazow¹ dla
+// sparametryzowanej podklasy.
+
+// Tradycyjna klasa.
+class NonGen {
+  int num;
+
+  NonGen(int i) {
+    num = i;
+  }
+
+  int getnum() {
+    return num;
+  }
+}
+
+// Podklasa sparametryzowana.
+class Gen<T> extends NonGen {
+  T ob; // deklaracja obiektu typu T
+
+  // Przekazanie do konstruktora referencji do
+  // obiektu typu T.
+  Gen(T o, int i) {
+    super(i);
+    ob = o;
+  }
+
+  // Zwrócenie ob.
+  T getob() {
+    return ob;
+  }
+}
+
+// Utworzenie obiektu Gen.
+class HierDemo2 {
+  public static void main(String args[]) {
+
+    // Utworzenie obiektu Gen dla String.
+    Gen<String> w = new Gen<String>("Witaj", 47);
+
+    System.out.print(w.getob() + " ");
+    System.out.println(w.getnum());
+  }
+}
+
+Listing 15.
+// Korzystanie z operatora instanceof dla hierarchii klas sparametryzowanych.
+class Gen<T> {
+  T ob;
+
+  Gen(T o) {
+    ob = o;
+  }
+
+  // Zwraca ob.
+  T getob() {
+    return ob;
+  }
+}
+
+// Podklasa klasy Gen.
+class Gen2<T> extends Gen<T> {
+  Gen2(T o) {
+    super(o);
+  }
+}
+
+// Analiza hierarchii klas sparametryzowanych.
+class HierDemo3 {
+  public static void main(String args[]) {
+
+    // Utworzenie obiektu Gen dla Integer.
+    Gen<Integer> iOb = new Gen<Integer>(88);
+
+    // Utworzenie obiektu Gen2 dla Integer.
+    Gen2<Integer> iOb2 = new Gen2<Integer>(99);
+
+    // Utworzenie obiektu Gen2 dla String.
+    Gen2<String> strOb2 = new Gen2<String>("Test parametryzacji");
+
+    // Sprawdzenie, czy iOb2 to pewna postaæ Gen2.
+    if(iOb2 instanceof Gen2<?>)
+      System.out.println("iOb2 to egzemplarz Gen2");
+
+    // Sprawdzenie, czy iOb2 to pewna postaæ Gen.
+    if(iOb2 instanceof Gen<?>)
+      System.out.println("iOb2 to egzemplarz Gen");
+
+    System.out.println();
+
+    // Sprawdzenie, czy strOb2 to egzemplarz Gen2.
+    if(strOb2 instanceof Gen2<?>)
+      System.out.println("strOb to egzemplarz Gen2");
+
+    // Sprawdzenie, czy strOb2 to egzemplarz Gen.
+    if(strOb2 instanceof Gen<?>)
+      System.out.println("strOb to egzemplarz Gen");
+
+    System.out.println();
+
+    // Sprawdzenie, czy iOb to pewna postaæ Gen2. Jest to fa³sz.
+    if(iOb instanceof Gen2<?>)
+      System.out.println("iOb to egzemplarz Gen2");
+
+    // Sprawdzenie, czy iOb to pewna postaæ Gen. To prawda.
+    if(iOb instanceof Gen<?>)
+      System.out.println("iOb to egzemplarz Gen");
+
+    // Poni¿szego kodu nie mo¿na skompilowaæ, poniewa¿ informacje na temat
+    // typu sparametryzowanego nie istniej¹ w trakcie pracy programu.
+//    if(iOb2 instanceof Gen2<Integer>)
+//      System.out.println("iOb2 to egzemplarz Gen2<Integer>");
+  }
+}
+
+Listing 16.
+// Przykrycie metody sparametryzowanej z klasy sparametryzowanej.
+class Gen<T> {
+  T ob; // deklaracja obiektu typu T
+
+  // Przekazanie do konstruktora referencji do
+  // obiektu typu T.
+  Gen(T o) {
+    ob = o;
+  }
+
+  // Zwrócenie ob.
+  T getob() {
+    System.out.print("Metoda getob() z Gen: " );
+    return ob;
+  }
+}
+
+// Podklasa klasy Gen przykrywaj¹ca metodê getob().
+class Gen2<T> extends Gen<T> {
+
+  Gen2(T o) {
+    super(o);
+  }
+
+  // Przykrycie metody getob().
+  T getob() {
+    System.out.print("Metoda getob() z Gen2: ");
+    return ob;
+  }
+}
+// Przyk³ad przykrycia przes³aniania metody sparametryzowanej.
+class OverrideDemo {
+  public static void main(String args[]) {
+
+    // Utworzenie obiektu Gen dla Integer.
+    Gen<Integer> iOb = new Gen<Integer>(88);
+
+    // Utworzenie obiektu Gen2 dla Integer.
+    Gen2<Integer> iOb2 = new Gen2<Integer>(99);
+
+    // Utworzenie obiektu Gen2 dla String.
+    Gen2<String> strOb2 = new Gen2<String>("Test parametryzacji");
+
+    System.out.println(iOb.getob());
+    System.out.println(iOb2.getob());
+    System.out.println(strOb2.getob());
+  }
+}
+
+Listing 17.
+// Tutaj T jest domyœlnie zamieniane na klasê Object.
+class Gen<T> {
+  T ob; // T zostanie zast¹pione przez Object
+
+  Gen(T o) {
+    ob = o;
+  }
+
+  // Zwraca ob.
+  T getob() {
+    return ob;
+  }
+}
+
+// Tutaj T zostanie zast¹pione przez klasê String.
+class GenStr<T extends String> {
+  T str; // T zostanie zast¹pione przez String
+
+  GenStr(T o) {
+    str = o;
+  }
+
+  T getstr() { return str; }
+}
+
+Listing 18.
+class GenTypeDemo {
+  public static void main(String args[]) {
+    Gen<Integer> iOb = new Gen<Integer>(99);
+    Gen<Float> fOb = new Gen<Float>(102.2F);
+
+    System.out.println(iOb.getClass().getName());
+    System.out.println(fOb.getClass().getName());
+  }
+}
+
+Listing 19.
+// Sytuacja, w której powstaje metoda mostu.
+class Gen<T> {
+  T ob; // deklaracja obiektu typu T
+
+  // Przekazanie do konstruktora referencji do
+  // obiektu typu T.
+  Gen(T o) {
+    ob = o;
+  }
+
+  // Zwróæ ob.
+  T getob() {
+    return ob;
+  }
+}
+// Podklasa klasy Gen.
+class Gen2 extends Gen<String> {
+
+  Gen2(String o) {
+    super(o);
+  }
+
+  // Przykrycie metody getob() bez konkretn¹ wersjê u¿ywaj¹c¹ String.
+  String getob() {
+    System.out.print("Wywo³anie String getob(): ");
+    return ob;
+  }
+}
+
+// Przyk³ad sytuacji wymagaj¹cej u¿ycia metody mostu.
+class BridgeDemo {
+  public static void main(String args[]) {
+
+    // Utworzenie obiektu Gen2 dla String.
+    Gen2 strOb2 = new Gen2("Test parametryzacji");
+
+    System.out.println(strOb2.getob());
+  }
+}
+
+Listing 20.
+// Niejednoznacznoœæ powodowana przez znoszenie parametryzacji
+// dla metod przeci¹¿onych.
+class MyGenClass<T, V> {
+  T ob1;
+  V ob2;
+
+  // ...
+
+  // Te dwie przeci¹¿one metody s¹ niejednoznaczne, wiêc
+  // nie uda siê skompilowaæ kodu.
+  void set(T o) {
+    ob1 = o;
+  }
+
+  void set(V o) {
+    ob2 = o;
+  }
+}
+
+Listing 21.
+// Nie mo¿na utworzyæ egzemplarza klasy T.
+class Gen<T> {
+  T ob;
+
+  Gen() {
+    ob = new T(); // B³¹d!!!
+  }
+}
+
+Listing 22.
+class Wrong<T> {
+  // B³¹d, zmienna statyczna nie mo¿e byæ typu T.
+  static T ob;
+
+  // B³¹d, metoda statyczna nie mo¿e u¿ywaæ typu T.
+  static T getob() {
+    return ob;
+  }
+}
+
+Listing 23.
+// Typy sparametryzowane i tablice.
+class Gen<T extends Number> {
+  T ob;
+
+  T vals[]; // Poprawne.
+
+  Gen(T o, T[] nums) {
+    ob = o;
+
+    // Poni¿sza instrukcja jest b³êdna.
+    // vals = new T[10]; // nie mo¿na utworzyæ tablicy typu T
+
+    // Poni¿sza instrukcja jest poprawna.
+    vals = nums; // mo¿na przypisaæ referencjê do tablicy do istniej¹cej zmiennej
+  }
+}
+
+class GenArrays {
+  public static void main(String args[]) {
+    Integer n[] = { 1, 2, 3, 4, 5 };
+
+    Gen<Integer> iOb = new Gen<Integer>(50, n);
+
+    // Nie mo¿na utworzyæ tablicy, podaj¹c jako parametr typu konkretny typ.
+    // Gen<Integer> gens[] = new Gen<Integer>[10]; // B³¹d!
+
+    // Poni¿sza instrukcja jest poprawna.
+    Gen<?> gens[] = new Gen<?>[10]; // Poprawne.
+  }
+}
+

@@ -1,0 +1,949 @@
+Listing 1.
+// Przyk³ad u¿ycia klasy ArrayList. 
+import java.util.*; 
+ 
+class ArrayListDemo { 
+  public static void main(String args[]) { 
+    // Utworzenie tablicy dynamicznej. 
+    ArrayList<String> al = new ArrayList<String>(); 
+     
+    System.out.println("Rozmiar pocz¹tkowy al: " + 
+                       al.size()); 
+ 
+    // Dodanie elementów do obiektu ArrayList. 
+    al.add("C"); 
+    al.add("A"); 
+    al.add("E"); 
+    al.add("B"); 
+    al.add("D"); 
+    al.add("F"); 
+    al.add(1, "A2"); 
+ 
+    System.out.println("Rozmiar al po dodaniu elementów: " + 
+                       al.size()); 
+ 
+    // Wyœwietlenie zawartoœci obiektu. 
+    System.out.println("Zawartoœæ al: " + al); 
+ 
+    // Usuniêcie elementów z tablicy dynamicznej. 
+    al.remove("F"); 
+    al.remove(2); 
+ 
+    System.out.println("Rozmiar al po usuniêciach: " + 
+                       al.size()); 
+    System.out.println("Zawartoœæ al: " + al); 
+  } 
+}
+
+Listing 2.
+// Konwersja obiektu ArrayList do tablicy.  
+import java.util.*;  
+  
+class ArrayListToArray {  
+  public static void main(String args[]) {  
+    // Utworzenie obiektu ArrayList. 
+    ArrayList<Integer> al = new ArrayList<Integer>();  
+      
+    // Dodanie elementów do tablicy dynamicznej. 
+    al.add(1);  
+    al.add(2);  
+    al.add(3);  
+    al.add(4);  
+  
+    System.out.println("Zawartoœæ al: " + al);  
+  
+    // Pobranie tablicy. 
+    Integer ia[] = new Integer[al.size()];  
+    ia = al.toArray(ia);  
+  
+    int sum = 0;  
+  
+    // Suma tablicy. 
+    for(int i : ia) sum += i;  
+  
+    System.out.println("Suma: " + sum);  
+  }  
+}
+
+Listing 3.
+// Przyk³ad u¿ycia klasy LinkedList. 
+import java.util.*; 
+ 
+class LinkedListDemo { 
+  public static void main(String args[]) { 
+    // Utworzenie listy. 
+    LinkedList<String> ll = new LinkedList<String>(); 
+     
+    // Dodanie elementów do listy. 
+    ll.add("F"); 
+    ll.add("B"); 
+    ll.add("D"); 
+    ll.add("E"); 
+    ll.add("C"); 
+    ll.addLast("Z"); 
+    ll.addFirst("A"); 
+ 
+    ll.add(1, "A2"); 
+ 
+    System.out.println("Oryginalna zawartoœæ ll: " + ll); 
+ 
+    // Usuniêcie elementów z listy. 
+    ll.remove("F"); 
+    ll.remove(2); 
+ 
+    System.out.println("Zawartoœæ ll po usuniêciu: " 
+                       + ll); 
+ 
+    // Usuniêcie pierwszego i ostatniego elementu. 
+    ll.removeFirst(); 
+    ll.removeLast(); 
+ 
+    System.out.println("Zawartoœæ ll po usuniêciu pierwszego i ostatniego elementu:  " 
+                       + ll); 
+ 
+    // Pobranie i ustawienie wartoœci. 
+    String val = ll.get(2); 
+    ll.set(2, val + " zmienione"); 
+ 
+    System.out.println("Zawartoœæ ll po zmianie: " + ll); 
+  } 
+}
+
+Listing 4.
+// Przyk³ad u¿ycia klasy HashSet. 
+import java.util.*; 
+ 
+class HashSetDemo { 
+  public static void main(String args[]) { 
+    // Utworzenie tablicy mieszaj¹cej. 
+    HashSet<String> hs = new HashSet<String>(); 
+     
+    // Dodanie elementów do tablicy mieszaj¹cej. 
+    hs.add("B"); 
+    hs.add("A"); 
+    hs.add("D"); 
+    hs.add("E"); 
+    hs.add("C"); 
+    hs.add("F"); 
+ 
+    System.out.println(hs); 
+  } 
+}
+
+Listing 5.
+// Przyk³ad u¿ycia klasy TreeSet. 
+import java.util.*; 
+ 
+class TreeSetDemo { 
+  public static void main(String args[]) { 
+    // Utworzenie drzewa. 
+    TreeSet<String> ts = new TreeSet<String>(); 
+     
+    // Dodanie elementów do drzewa. 
+    ts.add("C"); 
+    ts.add("A"); 
+    ts.add("B"); 
+    ts.add("E"); 
+    ts.add("F"); 
+    ts.add("D"); 
+ 
+    System.out.println(ts); 
+  } 
+}
+
+Listing 6.
+// Przyk³ad u¿ycia klasy ArrayDeque.
+import java.util.*;
+
+class ArrayDequeDemo {
+    public static void main(String args[]) {
+        // Tworzy tablicê typu ArrayDeque.
+        ArrayDeque<String> adq = new ArrayDeque<String>();
+
+        // Przyk³ad wykorzystania kolekcji typu ArrayDeque w roli stosu.
+        adq.push("A");
+        adq.push("B");
+        adq.push("D");
+        adq.push("E");
+        adq.push("F");
+
+        System.out.print("Kolejne elementy zdejmowane ze stosu: "); 
+
+        while(adq.peek() != null)
+            System.out.print(adq.pop() + " ");
+
+        System.out.println();
+    }
+}
+
+Listing 7.
+// Przyk³ad u¿ycia iteratorów.
+import java.util.*;
+
+class IteratorDemo {
+  public static void main(String args[]) {
+    // Utworzenie tablicy dynamicznej.
+    ArrayList<String> al = new ArrayList<String>();
+
+    // Dodanie elementów do tablicy.
+    al.add("C");
+    al.add("A");
+    al.add("E");
+    al.add("B");
+    al.add("D");
+    al.add("F");
+
+    // U¿ycie iteratora do wyœwietlenia zawartoœci al.
+    System.out.print("Oryginalna zawartoœæ al: ");
+    Iterator<String> itr = al.iterator();
+    while(itr.hasNext()) {
+      String element = itr.next();
+      System.out.print(element + " ");
+    }
+    System.out.println();
+
+    // Modyfikacja iterowanych elementów.
+    ListIterator<String> litr = al.listIterator();
+    while(litr.hasNext()) {
+      String element = litr.next();
+      litr.set(element + "+");
+    }
+
+    System.out.print("Zmodyfikowana zawartoœæ al: ");
+    itr = al.iterator();
+    while(itr.hasNext()) {
+      String element = itr.next();
+      System.out.print(element + " ");
+    }
+    System.out.println();
+
+    // Wyœwietlenie tablicy od koñca.
+    System.out.print("Zawartoœæ al od koñca: ");
+    while(litr.hasPrevious()) {
+      String element = litr.previous();
+      System.out.print(element + " ");
+    }
+    System.out.println();
+  }
+}
+
+Listing 8.
+// U¿ycie pêtli for typu for-each w celu przejœcia przez kolekcjê.
+import java.util.*;
+
+class ForEachDemo {
+  public static void main(String args[]) {
+    // Utworzenie tablicy dynamicznej liczb ca³kowitych.
+    ArrayList<Integer> vals = new ArrayList<Integer>();
+
+    // Dodanie wartoœci do tablicy.
+    vals.add(1);
+    vals.add(2);
+    vals.add(3);
+    vals.add(4);
+    vals.add(5);
+
+    // Wykorzystanie pêtli for do wyœwietlenia wartoœci.
+    System.out.print("Oryginalna zawartoœæ vals: ");
+    for(int v : vals)
+      System.out.print(v + " ");
+
+    System.out.println();
+
+    // Zsumowanie wartoœci przy u¿yciu pêtli for.
+    int sum = 0;
+    for(int v : vals)
+      sum += v;
+
+    System.out.println("Suma wartoœci: " + sum);
+  }
+}
+
+Listing 9.
+// Prosty przyk³ad listy adresów pocztowych.
+import java.util.*;
+
+class Address {
+  private String name;
+  private String street;
+  private String city;
+  private String state;
+  private String code;
+
+  Address(String n, String s, String c,
+          String st, String cd) {
+    name = n;
+    street = s;
+    city = c;
+    state = st;
+    code = cd;
+  }
+
+  public String toString() {
+    return name + "\n" + street + "\n" +
+           code + " " + city + ", " +state;
+  }
+}
+
+class MailList {
+  public static void main(String args[]) {
+    LinkedList<Address> ml = new LinkedList<Address>();
+
+    // Dodanie elementów do listy.
+    ml.add(new Address("Jan Kowalski", "Klonowa 11",
+                       "Warszawa", "mazowieckie", "00-591"));
+    ml.add(new Address("Danuta Sroka", "Fojkisa 43/2",
+                       "Ruda Œl¹ska", "œl¹skie", "41-700"));
+    ml.add(new Address("Piotr Nowak", "Zwyciêstwa 345",
+                       "Kraków", "ma³opolskie", "31-563"));
+
+    // Wyœwietlenie zawartoœci listy.
+    for(Address element : ml)
+      System.out.println(element + "\n");
+
+    System.out.println();
+  }
+}
+
+Listing 10.
+import java.util.*;
+
+class HashMapDemo {
+  public static void main(String args[]) {
+
+    // Tworzy mapê jako tablicê mieszaj¹c¹.
+    HashMap<String, Double> hm = new HashMap<String, Double>();
+
+    // umieszcza elementy w mapie
+    hm.put("Jan Kowalski", new Double(3434.34));
+    hm.put("Piotr Nowak", new Double(123.22));
+    hm.put("Joanna B¹k", new Double(1378.00));
+    hm.put("Rafa³ Brzêczyszczykiewicz", new Double(99.22));
+    hm.put("Tomek Nosek", new Double(-19.08));
+
+    // Pobiera wpisy jako zbiór.
+    Set<Map.Entry<String, Double>> set = hm.entrySet();
+
+    // Wyœwietla zbiór.
+    for(Map.Entry<String, Double> me : set) {
+      System.out.print(me.getKey() + ": ");
+      System.out.println(me.getValue());
+    }
+
+    System.out.println();
+
+    // Zwiêksza stan konta Jana Kowalskiego o 1000 z³.
+    double balance = hm.get("Jan Kowalski");
+    hm.put("Jan Kowalski", balance + 1000);
+
+    System.out.println("Nowy stan konta Jana Kowalskiego: " +
+      hm.get("Jan Kowalski"));
+  }
+}
+
+Listing 11.
+import java.util.*;
+
+class TreeMapDemo {
+  public static void main(String args[]) {
+
+    // Tworzy mapê jako drzewo.
+    TreeMap<String, Double> tm = new TreeMap<String, Double>();
+
+    // Umieszcza elementy w mapie.
+    tm.put("Jan Kowalski", new Double(3434.34));
+    tm.put("Piotr Nowak", new Double(123.22));
+    tm.put("Joanna B¹k", new Double(1378.00));
+    tm.put("Rafa³ Brzêczyszczykiewicz", new Double(99.22));
+    tm.put("Tomek Nosek", new Double(-19.08));
+
+    // Pobiera wpisy jako zbiór.
+    Set<Map.Entry<String, Double>> set = tm.entrySet();
+
+    // Wyœwietla zbiór.
+    for(Map.Entry<String, Double> me : set) {
+      System.out.print(me.getKey() + ": ");
+      System.out.println(me.getValue());
+    }
+    System.out.println();
+
+    // Zwiêksza stan konta Jana Kowalskiego o 1000 z³.
+    double balance = tm.get("Jan Kowalski");
+    tm.put("Jan Kowalski", balance + 1000);
+
+    System.out.println("Nowy stan konta Jana Kowalskiego: " +
+      tm.get("Jan Kowalski"));
+  }
+}
+
+Listing 12.
+// U¿ycie w³asnego komparatora.
+import java.util.*;
+
+// Odwrotne porównywanie ³añcuchów.
+class MyComp implements Comparator<String> {
+  public int compare(String a, String b) {
+    String aStr, bStr;
+
+    aStr = a;
+    bStr = b;
+
+    // Odwrócenie porównania.
+    return bStr.compareTo(aStr);
+  }
+
+  // Nie ma potrzeby przeci¹¿ania metody equals().
+}
+
+class CompDemo {
+  public static void main(String args[]) {
+    // Utworzenie zbioru drzewiastego.
+    TreeSet<String> ts = new TreeSet<String>(new MyComp());
+
+    // Dodanie elementów do zbioru.
+    ts.add("C");
+    ts.add("A");
+    ts.add("B");
+    ts.add("E");
+    ts.add("F");
+    ts.add("D");
+
+    // Wyœwietlenie elementów.
+    for(String element : ts)
+      System.out.print(element + " ");
+
+    System.out.println();
+  }
+}
+
+
+Listing 13.
+// Wykorzystanie komparatora do porównywania nazwisk.
+import java.util.*;
+
+// Porównywanie ostatnich s³ów dwóch ³añcuchów.
+class TComp implements Comparator<String> {
+  public int compare(String a, String b) {
+    int i, j, k;
+    String aStr, bStr;
+    aStr = a;
+    bStr = b;
+
+    // Znalezienie indeksu pocz¹tku nazwiska.
+    i = aStr.lastIndexOf(' ');
+    j = bStr.lastIndexOf(' ');
+
+    k = aStr.substring(i).compareTo(bStr.substring(j));
+    if(k==0) // Nazwiska s¹ takie same, sprawdŸ imiona.
+      return aStr.compareTo(bStr);
+    else
+      return k;
+  }
+
+  // Nie ma potrzeby przeci¹¿ania metody equals().
+}
+
+class TreeMapDemo2 {
+  public static void main(String args[]) {
+    // Utworzenie mapy.
+    TreeMap<String, Double> tm = new TreeMap<String, Double>(new TComp());
+
+    // Umieszczenie elementów w mapie.
+    tm.put("Jan Kowalski", new Double(3434.34));
+    tm.put("Piotr Nowak", new Double(123.22));
+    tm.put("Joanna Bocian", new Double(1378.00));
+    tm.put("Rafa³ Brzêczyszczykiewicz", new Double(99.22));
+    tm.put("Tomek Nowak", new Double(-19.08));
+
+    // Pobranie zbioru wpisów.
+    Set<Map.Entry<String, Double>> set = tm.entrySet();
+
+    // Wyœwietlenie elementów.
+    for(Map.Entry<String, Double> me : set) {
+      System.out.print(me.getKey() + ": ");
+      System.out.println(me.getValue());
+    }
+    System.out.println();
+
+    // Zwiêksza stan konta Jana Kowalskiego o 1000 z³.
+    double balance = tm.get("Jan Kowalski");
+    tm.put("Jan Kowalski", balance + 1000);
+
+    System.out.println("Nowy stan konta Jana Kowalskiego: " +
+      tm.get("Jan Kowalski"));
+  }
+}
+
+Listing 14.
+// Przyk³ad u¿ycia kilku algorytmów.
+import java.util.*;
+
+class AlgorithmsDemo {
+  public static void main(String args[]) {
+
+    // Utworzenie i inicjalizacja listy.
+    LinkedList<Integer> ll = new LinkedList<Integer>();
+    ll.add(-8);
+    ll.add(20);
+    ll.add(-20);
+    ll.add(8);
+
+    // Utworzenie komparatora odwrotnego.
+    Comparator<Integer> r = Collections.reverseOrder();
+
+    // Posortowanie listy za pomoc¹ komparatora.
+    Collections.sort(ll, r);
+
+    System.out.print("Lista posortowania od wartoœci najwiêkszej: ");
+    for(int i : ll)
+      System.out.print(i+ " ");
+
+    System.out.println();
+
+    // Przemieszanie listy.
+    Collections.shuffle(ll);
+
+    // Wyœwietlenie listy w nowej postaci.
+    System.out.print("Przemieszana lista: ");
+    for(int i : ll)
+      System.out.print(i + " ");
+
+    System.out.println();
+
+    System.out.println("Minimum: " + Collections.min(ll));
+    System.out.println("Maksimum: " + Collections.max(ll));
+  }
+}
+
+
+Listing 15.
+// Przyk³ad u¿ycia klasy Arrays.
+import java.util.*;
+
+class ArraysDemo {
+  public static void main(String args[]) {
+
+    // Alokacja i inicjalizacja tablicy.
+    int array[] = new int[10];
+    for(int i = 0; i < 10; i++)
+      array[i] = -3 * i;
+
+    // Wyœwietlenie, posortowanie i ponowne wyœwietlenie tablicy.
+    System.out.print("Oryginalna zawartoœæ: ");
+    display(array);
+    Arrays.sort(array);
+    System.out.print("Po sortowaniu: ");
+    display(array);
+
+    // Wype³nienie i wyœwietlenie tablicy.
+    Arrays.fill(array, 2, 6, -1);
+    System.out.print("Po fill(): ");
+    display(array);
+
+    // Posortowanie i wyœwietlenie tablicy.
+    Arrays.sort(array);
+    System.out.print("Po kolejnym sortowaniu: ");
+    display(array);
+
+    // Wyszukiwanie binarne dla wartoœci -9.
+    System.out.print("Wartoœæ -9 znajduje siê pod indeksem ");
+    int index =
+      Arrays.binarySearch(array, -9);
+
+    System.out.println(index);
+  }
+
+  static void display(int array[]) {
+    for(int i: array)
+      System.out.print(i + " ");
+
+    System.out.println();
+  }
+}
+
+Listing 16.
+// Przyk³ad korzystania z kolekcji przed wprowadzeniem typów sparametryzowanych.
+import java.util.*;
+
+class OldStyle {
+  public static void main(String args[]) {
+    ArrayList list = new ArrayList();
+
+    // Te wiersze zapisuj¹ ³añcuchy (obiekty klasy String), ale równie
+    // dobrze mo¿na by zapisaæ obiekty dowolnych typów. W starszym kodzie
+    // nie istnieje ¿aden sposób ograniczenia rodzaju obiektów
+    // wpisywanych do kolekcji.
+    list.add("jeden");
+    list.add("dwa");
+    list.add("trzy");
+    list.add("cztery");
+
+    Iterator itr = list.iterator();
+    while(itr.hasNext()) {
+
+      // W celu pobrania elementu potrzebne jest jawne rzutowanie,
+      // poniewa¿ kolekcje przechowuj¹ jedynie obiekty typu Object.
+      String str = (String) itr.next(); // wymaga jawnego rzutowania
+
+      System.out.println(str + " ma " + str.length() + " znaków.");
+    }
+  }
+}
+
+Listing 17.
+// Nowoczesna wersja korzystaj¹ca z parametryzacji typów.
+import java.util.*;
+
+class NewStyle {
+  public static void main(String args[]) {
+
+    // Teraz list przechowuje referencje do typu String.
+    ArrayList<String> list = new ArrayList<String>();
+
+    list.add("jeden");
+    list.add("dwa");
+    list.add("trzy");
+    list.add("cztery");
+
+    // Zauwa¿, i¿ iterator tak¿e jest sparametryzowany.
+    Iterator<String> itr = list.iterator();
+
+    // Poni¿szy wiersz spowodowa³by zg³oszenie b³êdu w trakcie kompilacji.
+//    Iterator<Integer> itr = list.iterator(); // B³¹d!
+
+    while(itr.hasNext()) {
+      String str = itr.next(); // nie trzeba dokonywaæ jawnego rzutowania
+
+      // Poni¿szy wiersz zg³osi b³¹d kompilacji zamiast, jak wczeœniej,
+      // b³êdu wykonania.
+//    Integer i = itr.next(); // tego wiersza nie uda siê skompilowaæ
+
+      System.out.println(str + " ma " + str.length() + " znaków.");
+    }
+  }
+}
+
+Listing 18.
+// Przyk³ad u¿ycia metod klasy Vector.
+import java.util.*;
+
+class VectorDemo {
+  public static void main(String args[]) {
+
+    // pocz¹tkowa pojemnoœæ 3, inkrementacja o 2
+    Vector<Integer> v = new Vector<Integer>(3, 2);
+
+    System.out.println("Pocz¹tkowy rozmiar: " + v.size());
+    System.out.println("Pocz¹tkowa pojemnoœæ: " +
+                       v.capacity());
+
+    v.addElement(1);
+    v.addElement(2);
+    v.addElement(3);
+    v.addElement(4);
+
+    System.out.println("Pojemnoœæ po czterech dodawaniach: " +
+                       v.capacity());
+    v.addElement(5);
+    System.out.println("Aktualna pojemnoœæ: " +
+                       v.capacity());
+    v.addElement(6);
+    v.addElement(7);
+
+    System.out.println("Aktualna pojemnoœæ: " +
+                       v.capacity());
+    v.addElement(9);
+    v.addElement(10);
+
+    System.out.println("Aktualna pojemnoœæ: " +
+                       v.capacity());
+    v.addElement(11);
+    v.addElement(12);
+
+
+    System.out.println("Pierwszy element: " + v.firstElement());
+    System.out.println("Ostatni element: " + v.lastElement());
+
+    if(v.contains(3))
+      System.out.println("Wektor zawiera wartoœæ 3.");
+
+    // Wyliczenie elementów wektora.
+    Enumeration vEnum = v.elements();
+
+    System.out.println("\nElementy wektora:");
+    while(vEnum.hasMoreElements())
+      System.out.print(vEnum.nextElement() + " ");
+    System.out.println();
+  }
+}
+
+Listing 19.
+// Wykorzystanie iteratora do wyœwietlenia zawartoœci.
+Iterator<Integer> vItr = v.iterator();
+
+System.out.println("\nElementy wektora:");
+while(vItr.hasNext())
+  System.out.print(vItr.next() + " ");
+System.out.println();
+
+Listing 20.
+// Wykorzystanie rozszerzonej pêtli for do wyœwietlenia zawartoœci.
+System.out.println("\nElementy wektora:");
+for(int i : v)
+  System.out.print(i + " ");
+
+System.out.println();
+
+Listing 21.
+// Przyk³ad u¿ycia klasy Stack.
+import java.util.*;
+
+class StackDemo {
+  static void showpush(Stack<Integer> st, int a) {
+    st.push(a);
+    System.out.println("push(" + a + ")");
+    System.out.println("stos: " + st);
+  }
+
+  static void showpop(Stack<Integer> st) {
+    System.out.print("pop -> ");
+    Integer a = st.pop();
+    System.out.println(a);
+    System.out.println("stos: " + st);
+  }
+
+  public static void main(String args[]) {
+    Stack<Integer> st = new Stack<Integer>();
+
+    System.out.println("stos: " + st);
+    showpush(st, 42);
+    showpush(st, 66);
+    showpush(st, 99);
+    showpop(st);
+    showpop(st);
+    showpop(st);
+
+    try {
+      showpop(st);
+    } catch (EmptyStackException e) {
+      System.out.println("pusty stos");
+    }
+  }
+}
+
+Listing 22.
+// Przyk³ad u¿ycia klasy Hashtable.
+import java.util.*;
+
+class HTDemo {
+  public static void main(String args[]) {
+    Hashtable<String, Double> balance =
+      new Hashtable<String, Double>();
+
+    Enumeration<String> names;
+    String str;
+    double bal;
+
+    balance.put("Jan Kowalski", 3434.34);
+    balance.put("Piotr Nowak", 123.22);
+    balance.put("Joanna B¹k", 1378.00);
+    balance.put("Rafa³ Brzêczyszczykiewicz", 99.22);
+    balance.put("Tomek Nosek", -19.08);
+
+    // Wyœwietl wszystkie konta z tablicy mieszaj¹cej.
+    names = balance.keys();
+    while(names.hasMoreElements()) {
+      str = names.nextElement();
+      System.out.println(str + ": " +
+                         balance.get(str));
+    }
+
+    System.out.println();
+
+    // Zwiêksza stan konta Jana Kowalskiego o 1000 z³.
+    bal = balance.get("Jan Kowalski");
+    balance.put("Jan Kowalski", bal+1000);
+    System.out.println("Nowy stan konta Jana Kowalskiego: " +
+                       balance.get("Jan Kowalski"));
+  }
+}
+
+Listing 23.
+// U¿ycie iteratora dla obiektu Hashtable.
+import java.util.*;
+
+class HTDemo2 {
+  public static void main(String args[]) {
+    Hashtable<String, Double> balance =
+      new Hashtable<String, Double>();
+
+    String str;
+    double bal;
+
+    balance.put("Jan Kowalski", 3434.34);
+    balance.put("Piotr Nowak", 123.22);
+    balance.put("Joanna B¹k", 1378.00);
+    balance.put("Rafa³ Brzêczyszczykiewicz", 99.22);
+    balance.put("Tomek Nosek", -19.08);
+
+    // Wyœwietlenie wszystkich kont.
+    // Pobranie widoku kluczy.
+    Set<String> set = balance.keySet();
+
+    // Pobranie iteratora.
+    Iterator<String> itr = set.iterator();
+    while(itr.hasNext()) {
+      str = itr.next();
+      System.out.println(str + ": " +
+                         balance.get(str));
+    }
+
+    System.out.println();
+
+    // Zwiêksza stan konta Jana Kowalskiego o 1000 z³.
+    bal = balance.get("Jan Kowalski");
+    balance.put("Jan Kowalski", bal+1000);
+    System.out.println("Nowy stan konta Jana Kowalskiego: " +
+                       balance.get("Jan Kowalski"));
+  }
+}
+
+Listing 24.
+// Przyk³ad u¿ycia listy w³aœciwoœci.
+import java.util.*;
+
+class PropDemo {
+  public static void main(String args[]) {
+    Properties capitals = new Properties();
+
+    capitals.put("œl¹skiego", "Katowice");
+    capitals.put("ma³opolskiego", "Kraków");
+    capitals.put("mazowieckiego", "Warszawa");
+    capitals.put("opolskiego", "Opole");
+    capitals.put("wielkopolskiego", "Poznañ");
+
+    // Pobranie widoku kluczy.
+    Set states = capitals.keySet();
+
+    // Wyœwietlenie województw i miast.
+    for(Object name : states)
+      System.out.println("Miastem wojewódzkim województwa " +
+                         name + " jest " +
+                         capitals.getProperty((String)name)
+                         + ".");
+
+    System.out.println();
+
+    // Poszukiwanie województwa spoza listy - skorzystanie z wartoœci domyœlnej.
+    String str = capitals.getProperty("œwiêtokrzyskie", "nie znaleziono");
+    System.out.println("Miastem wojewódzkim województwa œwiêtokrzyskiego jest "
+                       + str + ".");
+  }
+}
+
+Listing 25.
+// Wykorzystanie domyœlnej listy w³aœciwoœci.
+import java.util.*;
+
+class PropDemoDef {
+  public static void main(String args[]) {
+    Properties defList = new Properties();
+    defList.put("œwiêtokrzyskie", "Kielce");
+    defList.put("podlaskie", "Bia³ystok");
+
+    Properties capitals = new Properties(defList);
+
+    capitals.put("œl¹skiego", "Katowice");
+    capitals.put("ma³opolskiego", "Kraków");
+    capitals.put("mazowieckiego", "Warszawa");
+    capitals.put("opolskiego", "Opole");
+    capitals.put("wielkopolskiego", "Poznañ");
+
+    // Pobranie widoku kluczy.
+    Set states = capitals.keySet();
+
+    // Wyœwietlenie województw i miast.
+    for(Object name : states)
+      System.out.println("Miastem wojewódzkim województwa " +
+                         name + " jest " +
+                         capitals.getProperty((String)name)
+                         + ".");
+
+    System.out.println();
+
+    // Teraz województwo œwiêtokrzyskie zostanie znalezione na domyœlnej liœcie.
+    String str = capitals.getProperty("œwiêtokrzyskie");
+    System.out.println("Miastem wojewódzkim województwa œwiêtokrzyskiego jest "
+                       + str + ".");
+  }
+}
+
+Listing 26.
+/* Prosta baza danych numerów telefonów korzystaj¹ca
+   z listy w³aœciwoœci. */
+import java.io.*;
+import java.util.*;
+
+class Phonebook {
+  public static void main(String args[])
+    throws IOException
+  {
+    Properties ht = new Properties();
+    BufferedReader br =
+      new BufferedReader(new InputStreamReader(System.in));
+    String name, number;
+    FileInputStream fin = null;
+    boolean changed = false;
+
+    // Próba otwarcia pliku ksiazkatel.dat.
+    try {
+      fin = new FileInputStream("ksiazkatel.dat");
+    } catch(FileNotFoundException e) {
+      // zignorowanie, jeœli plik nie istnieje
+    }
+
+    /* Jeœli plik bazy danych istnieje,
+       za³adowanie istniej¹cych numerów telefonów. */
+    try {
+      if(fin != null) {
+        ht.load(fin);
+        fin.close();
+      }
+    } catch(IOException e) {
+      System.out.println("B³¹d odczytu pliku.");
+    }
+
+    // Niech u¿ytkownik wpisze nowe dane.
+    do {
+      System.out.println("Wpisz nowe imiê i nazwisko" +
+                         " (wpisz 'koniec', aby zakoñczyæ): ");
+      name = br.readLine();
+      if(name.equals("koniec")) continue;
+
+      System.out.println("Wpisz numer telefonu: ");
+      number = br.readLine();
+
+      ht.put(name, number);
+      changed = true;
+    } while(!name.equals("koniec"));
+
+    // Jeœli ksi¹¿ka zosta³a zmieniona, zapisz dane.
+    if(changed) {
+      FileOutputStream fout = new FileOutputStream("ksiazkatel.dat");
+
+      ht.store(fout, "Ksi¹¿ka telefoniczna");
+      fout.close();
+    }
+
+    // Wyszukaj numer po podaniu imienia i nazwiska.
+    do {
+      System.out.println("Wpisz imiê i nazwisko do wyszukania" +
+                         " (wpisz 'koniec', aby zakoñczyæ): ");
+      name = br.readLine();
+      if(name.equals("koniec")) continue;
+
+      number = (String) ht.get(name);
+      System.out.println(number);
+    } while(!name.equals("koniec"));
+  }
+}

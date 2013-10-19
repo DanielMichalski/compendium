@@ -1,0 +1,563 @@
+ Listing 1.
+// Prosty pakiet
+package MyPack;
+
+
+
+class Balance {
+
+    String name;
+    double bal;
+
+    Balance(String n, double b) {
+        name = n;
+        bal = b;
+    }
+
+    void show() {
+        if (bal < 0) {
+            System.out.print("-->> ");
+        }
+        System.out.println(name + ": " + bal + " PLN");
+    }
+}
+
+class AccountBalance {
+
+    public static void main(String args[]) {
+        Balance current[] = new Balance[3];
+        current[0] = new Balance("K. J. Fielding", 123.23);
+        current[1] = new Balance("Will Tell", 157.02);
+        current[2] = new Balance("Tom Jackson", -12.33);
+        for (int i = 0; i < 3; i++) {
+            current[i].show();
+        }
+    }
+}
+Listing 
+
+2.
+package p1;
+public class Protection {
+
+    int n = 1;
+    private int n_pri = 2;
+    protected int n_pro = 3;
+    public int n_pub = 4;
+
+    public Protection() {
+        System.out.println("konstruktor klasy bazowej");
+        System.out.println("n = " + n);
+        System.out.println("n_pri = " + n_pri);
+        System.out.println("n_pro = " + n_pro);
+        System.out.println("n_pub = " + n_pub);
+    }
+}
+
+class Derived extends Protection {
+
+    Derived() {
+        System.out.println("konstruktor klasy potomnej");
+        System.out.println("n = " + n);
+// tylko ta sama klasa
+// System.out.println("n_pri = " + n_pri);
+        System.out.println("n_pro = " + n_pro);
+        System.out.println("n_pub = " + n_pub);
+    }
+}
+
+class SamePackage {
+
+    SamePackage() {
+        Protection p = new Protection();
+        System.out.println("konstruktor klasy w tym samym pakiecie");
+        System.out.println("n = " + p.n);
+// tylko ta sama klasa
+// System.out.println("n_pri = " + p.n_pri);
+        System.out.println("n_pro = " + p.n_pro);
+        System.out.println("n_pub = " + p.n_pub);
+    }
+}
+Listing 
+
+3.
+package p2;
+class Protection2 extends p1.Protection {
+
+    Protection2() {
+        System.out.println("konstruktor klasy potomnej w innym pakiecie");
+// tylko ta sama klasa lub ten sam pakiet
+// System.out.println("n = " + n);
+// tylko ta sama klasa
+// System.out.println("n_pri = " + n_pri);
+        System.out.println("n_pro = " + n_pro);
+        System.out.println("n_pub = " + n_pub);
+    }
+}
+
+class OtherPackage {
+
+    OtherPackage() {
+        p1.Protection p = new p1.Protection();
+        System.out.println("konstruktor klasy w innym pakiecie");
+// tylko ta sama klasa lub ten sam pakiet
+// System.out.println("n = " + p.n);
+// tylko ta sama klasa
+// System.out.println("n_pri = " + p.n_pri);
+// tylko ta sama klasa lub podklasa b¹dŸ ten sam pakiet
+// System.out.println("n_pro = " + p.n_pro);
+        System.out.println("n_pub = " + p.n_pub);
+    }
+}
+Listing 
+
+4.
+// Demonstracja pakietu p1.
+package p1;
+// Tworzy obiekty ró¿nych klas pakietu p1.
+public class Demo {
+
+    public static void main(String args[]) {
+        Protection ob1 = new Protection();
+        Derived ob2 = new Derived();
+        SamePackage ob3 = new SamePackage();
+    }
+}
+Listing 
+
+5.
+// Demonstracja pakietu p2.
+package p2;
+// Tworzy obiekty ró¿nych klas pakietu p2.
+public class Demo {
+
+    public static void main(String args[]) {
+        Protection2 ob1 = new Protection2();
+        OtherPackage ob2 = new OtherPackage();
+    }
+}
+Listing 
+
+6.
+import java.util.*;
+class MyDate extends Date {
+}
+Listing 
+
+7.
+class MyDate extends java.util.Date {
+}
+Listing 
+
+8.
+package MyPack;
+/* Klasa Balance, jej konstruktor i jej metoda
+show() s¹ teraz publiczne. Oznacza to, ¿e mog¹
+byæ u¿ywane przez kod spoza swojego pakietu (i spoza podklas tej klasy). 
+*/
+public class Balance {
+
+    String name;
+    double bal;
+
+    public Balance(String n, double b) {
+        name = n;
+        bal = b;
+    }
+
+    public void show() {
+        if (bal < 0) {
+            System.out.print("-->> ");
+        }
+        System.out.println(name + ": " + bal + " PLN");
+    }
+}
+Listing 
+
+9.
+import MyPack.*;
+
+class TestBalance {
+
+    public static void main(String args[]) {
+
+        /* Poniewa¿ klasa Balance jest publiczna, mo¿na jej u¿yæ 
+        i wywo³aæ jej konstruktor. */
+        Balance test = new Balance("J. J. Jaspers", 99.88);
+        test.show(); // mo¿na te¿ wywo³aæ metodê show() 
+    }
+}
+Listing 
+
+10.
+interface Callback {
+
+    void callback(int param);
+}
+Listing 
+
+11.
+class Client implements Callback {
+// implementuje interfejs wywo³añ zwrotnych (Callback) 
+    public void callback(int p) {
+        System.out.println("wywo³ano metodê callback z parametrem " + p);
+    }
+}
+Listing 
+
+12.
+class Client implements Callback {
+// implementuje interfejs wywo³añ zwrotnych (Callback) 
+    public void callback(int p) {
+        System.out.println("wywo³ano metodê callback z parametrem " + p);
+    }
+
+    void nonIfaceMeth() {
+        System.out.println("Klasy implementuj¹ce interfejsy "
+                + "mog¹ definiowaæ tak¿e inne sk³adowe.");
+    }
+}
+Listing 
+
+13.
+class TestIface {
+
+    public static void main(String args[]) {
+        Callback c = new Client();
+        c.callback(42);
+    }
+}
+Listing 
+
+14.
+// Inna implementacja interfejsu Callback.
+class AnotherClient implements Callback {
+// implementuje interfejs wywo³añ zwrotnych (Callback) 
+    public void callback(int p) {
+        System.out.println("Inna wersja metody callback()");
+        System.out.println("Wartoœæ p podniesiona do kwadratu wynosi " + (p * p));
+    }
+}
+Listing 
+
+15.
+class TestIface2 {
+
+    public static void main(String args[]) {
+        Callback c = new Client();
+        AnotherClient ob = new AnotherClient();
+        c.callback(42);
+        c = ob; // zmienna c reprezentuje teraz obiekt klasy AnotherClient 
+        c.callback(42);
+    }
+}
+Listing 
+
+16.
+abstract class Incomplete implements Callback {
+
+    int a, b;
+
+    void show() {
+        System.out.println(a + " " + b);
+    }
+// ... 
+}
+Listing 
+
+17.
+// Przyk³ad zagnie¿d¿onego interfejsu.
+// Klasa zawiera interfejs sk³adowy.
+class A {
+// to jest zagnie¿d¿ony interfejs 
+    public interface NestedIF {
+
+        boolean isNotNegative(int x);
+    }
+}
+// Klasa B implementuje zagnie¿d¿ony interfejs.
+class B implements A.NestedIF {
+
+    public boolean isNotNegative(int x) {
+        return x < 0 ? false : true;
+    }
+}
+
+class NestedIFDemo {
+
+    public static void main(String args[]) {
+// u¿ywa referencji do zagnie¿d¿onego interfejsu 
+        A.NestedIF nif = new B();
+        if (nif.isNotNegative(10)) {
+            System.out.println("Liczba 10 nie jest ujemna");
+        }
+        if (nif.isNotNegative(-12)) {
+            System.out.println("Ten komunikat nie zostanie wyœwietlony");
+        }
+    }
+}
+Listing 
+
+18.
+// Definiuje interfejs stosu liczb ca³kowitych.
+interface IntStack {
+
+    void push(int item); // umieszcza element na stosie 
+    int pop(); // zdejmuje element ze stosu 
+}
+Listing 
+
+19.
+// Implementacja interfejsu IntStack na bazie sta³ej pamiêci.
+class FixedStack implements IntStack {
+
+    private int stck[];
+    private int tos;
+// alokuje i inicjalizuje stos 
+    FixedStack(int size) {
+        stck = new int[size];
+        tos = -1;
+    }
+// Umieszcza element na stosie 
+    public void push(int item) {
+        if (tos == stck.length - 1) // wykorzystuje sk³adow¹ length 
+        {
+            System.out.println("Stos jest pe³ny.");
+        } else {
+            stck[++tos] = item;
+        }
+    }
+// Zdejmuje element ze stosu 
+    public int pop() {
+        if (tos < 0) {
+            System.out.println("Stos zawiera za ma³o elementów.");
+            return 0;
+        } else {
+            return stck[tos--];
+        }
+    }
+}
+
+class IFTest {
+
+    public static void main(String args[]) {
+        FixedStack mystack1 = new FixedStack(5);
+        FixedStack mystack2 = new FixedStack(8);
+// umieszcza kilka liczb na stosie 
+        for (int i = 0; i < 5; i++) {
+            mystack1.push(i);
+        }
+        for (int i = 0; i < 8; i++) {
+            mystack2.push(i);
+        }
+// zdejmuje te liczby ze stosu 
+        System.out.println("Stos reprezentowany przez zmienn¹ mystack1:");
+        for (int i = 0; i < 5; i++) {
+            System.out.println(mystack1.pop());
+        }
+        System.out.println("Stos reprezentowany przez zmienn¹ mystack2:");
+        for (int i = 0; i < 8; i++) {
+            System.out.println(mystack2.pop());
+        }
+    }
+}
+Listing 
+
+20.
+// Implementuje stos z mo¿liwoœci¹ rozbudowy.
+class DynStack implements IntStack {
+
+    private int stck[];
+    private int tos;
+// alokuje i inicjalizuje stos 
+    DynStack(int size) {
+        stck = new int[size];
+        tos = -1;
+    }
+// Umieszcza element na stosie 
+    public void push(int item) {
+// Stos jest pe³ny, alokuje wiêkszy stos 
+        if (tos == stck.length - 1) {
+            int temp[] = new int[stck.length * 2]; // dwukrotnie wiêkszy rozmiar 
+            for (int i = 0; i < stck.length; i++) {
+                temp[i] = stck[i];
+            }
+            stck = temp;
+            stck[++tos] = item;
+        } else {
+            stck[++tos] = item;
+        }
+    }
+// Zdejmuje element ze stosu 
+    public int pop() {
+        if (tos < 0) {
+            System.out.println("Stos zawiera za ma³o elementów.");
+            return 0;
+        } else {
+            return stck[tos--];
+        }
+    }
+}
+
+class IFTest2 {
+
+    public static void main(String args[]) {
+        DynStack mystack1 = new DynStack(5);
+        DynStack mystack2 = new DynStack(8);
+// poni¿sze pêtle powoduj¹ zwiêkszenie rozmiaru obu stosów 
+        for (int i = 0; i < 12; i++) {
+            mystack1.push(i);
+        }
+        for (int i = 0; i < 20; i++) {
+            mystack2.push(i);
+        }
+        System.out.println("Stos reprezentowany przez zmienn¹ mystack1:");
+        for (int i = 0; i < 12; i++) {
+            System.out.println(mystack1.pop());
+        }
+        System.out.println("Stos reprezentowany przez zmienn¹ mystack2:");
+        for (int i = 0; i < 20; i++) {
+            System.out.println(mystack2.pop());
+        }
+    }
+}
+Listing 
+
+21.
+/* Tworzy zmienn¹ interfejsu, po czym
+uzyskuje dostêp do stosów za jej poœrednictwem. 
+*/
+class IFTest3 {
+
+    public static void main(String args[]) {
+        IntStack mystack; // tworzy zmienn¹ zawieraj¹c¹ referencjê do interfejsu 
+        DynStack ds = new DynStack(5);
+        FixedStack fs = new FixedStack(8);
+        mystack = ds; // ³aduje dynamiczny stos 
+// umieszcza kilka liczb na stosie 
+        for (int i = 0; i < 12; i++) {
+            mystack.push(i);
+        }
+        mystack = fs; // ³aduje sta³y stos 
+        for (int i = 0; i < 8; i++) {
+            mystack.push(i);
+        }
+        mystack = ds;
+        System.out.println("Wartoœci na dynamicznym stosie:");
+        for (int i = 0; i < 12; i++) {
+            System.out.println(mystack.pop());
+        }
+        mystack = fs;
+        System.out.println("Wartoœci na sta³ym stosie:");
+        for (int i = 0; i < 8; i++) {
+            System.out.println(mystack.pop());
+        }
+    }
+}
+Listing 
+
+22.
+import java.util.Random;
+interface SharedConstants {
+
+    int NO = 0;
+    int YES = 1;
+    int MAYBE = 2;
+    int LATER = 3;
+    int SOON = 4;
+    int NEVER = 5;
+}
+
+class Question implements SharedConstants {
+
+    Random rand = new Random();
+
+    int ask() {
+        int prob = (int) (100 * rand.nextDouble());
+        if (prob < 30) {
+            return NO; // 30% 
+        } else if (prob < 60) {
+            return YES; // 30% 
+        } else if (prob < 75) {
+            return LATER; // 15% 
+        } else if (prob < 98) {
+            return SOON; // 13% 
+        } else {
+            return NEVER; // 2% 
+        }
+    }
+}
+
+class AskMe implements SharedConstants {
+
+    static void answer(int result) {
+        switch (result) {
+            case NO:
+                System.out.println("Nie");
+                break;
+            case YES:
+                System.out.println("Tak");
+                break;
+            case MAYBE:
+                System.out.println("Byæ mo¿e");
+                break;
+            case LATER:
+                System.out.println("PóŸniej");
+                break;
+            case SOON:
+                System.out.println("Wkrótce");
+                break;
+            case NEVER:
+                System.out.println("Nigdy");
+                break;
+        }
+    }
+
+    public static void main(String args[]) {
+        Question q = new Question();
+        answer(q.ask());
+        answer(q.ask());
+        answer(q.ask());
+        answer(q.ask());
+    }
+}
+Listing 
+
+23.
+// Interfejs rozszerzaj¹cy inny interfejs.
+interface A {
+
+    void meth1();
+
+    void meth2();
+}
+// Interfejs B zawiera metody meth1() i meth2() oraz dodaje metodê meth3().
+interface B extends A {
+
+    void meth3();
+}
+// Ta klasa musi implementowaæ metody A i B
+class MyClass implements B {
+
+    public void meth1() {
+        System.out.println("Implementuje metodê meth1().");
+    }
+
+    public void meth2() {
+        System.out.println("Implementuje metodê meth2().");
+    }
+
+    public void meth3() {
+        System.out.println("Implementuje metodê meth3().");
+    }
+}
+
+class IFExtend {
+
+    public static void main(String arg[]) {
+        MyClass ob = new MyClass();
+        ob.meth1();
+        ob.meth2();
+        ob.meth3();
+    }
+}

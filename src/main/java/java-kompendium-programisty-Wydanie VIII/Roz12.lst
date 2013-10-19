@@ -1,0 +1,594 @@
+Listing 1.
+// Wyliczenie odmian jab³ek. 
+enum Apple {  
+  Jonathan, GoldenDel, RedDel, Winesap, Cortland 
+} 
+ 
+class EnumDemo { 
+  public static void main(String args[])  
+  { 
+    Apple ap; 
+ 
+    ap = Apple.RedDel; 
+ 
+    // Wyœwietlenie wartoœci wyliczenia. 
+    System.out.println("Wartoœæ ap: " + ap); 
+    System.out.println(); 
+ 
+    ap = Apple.GoldenDel; 
+ 
+    // Porównanie wartoœci dwóch wyliczeñ. 
+    if(ap == Apple.GoldenDel)  
+      System.out.println("ap zawiera GoldenDel.\n"); 
+ 
+    // Wykorzystanie wyliczenia do sterowania konstrukcj¹ switch. 
+    switch(ap) { 
+      case Jonathan: 
+        System.out.println("Jonathan jest czerwone."); 
+        break; 
+      case GoldenDel: 
+        System.out.println("Golden Delicious jest ¿ó³te."); 
+        break; 
+      case RedDel:  
+        System.out.println("Red Delicious jest czerwone."); 
+        break; 
+      case Winesap: 
+        System.out.println("Winesap jest czerwone."); 
+        break; 
+      case Cortland: 
+        System.out.println("Cortland jest czerwone."); 
+        break; 
+    } 
+  } 
+}
+
+Listing 2.
+// Wykorzystanie wbudowanych metod typów wyliczeniowych. 
+ 
+// Wyliczenie odmian jab³ek. 
+enum Apple {  
+  Jonathan, GoldenDel, RedDel, Winesap, Cortland 
+} 
+ 
+class EnumDemo2 { 
+  public static void main(String args[])  
+  { 
+    Apple ap; 
+ 
+    System.out.println("Oto wszystkie sta³e wyliczenia Apple:"); 
+ 
+    // u¿ycie values() 
+    Apple allapples[] = Apple.values(); 
+    for(Apple a : allapples) 
+      System.out.println(a); 
+ 
+    System.out.println(); 
+    
+    // u¿ycie valueOf() 
+    ap = Apple.valueOf("Winesap"); 
+    System.out.println("ap zawiera " + ap); 
+ 
+  } 
+}
+
+Listing 3.
+// U¿ycie konstruktora, zmiennej sk³adowej i metody dla wyliczenia.
+enum Apple {
+  Jonathan(10), GoldenDel(9), RedDel(12), Winesap(15), Cortland(8);
+
+  private int price; // cena ka¿dego z jab³ek
+
+  // konstruktor
+  Apple(int p) { price = p; }
+
+  int getPrice() { return price; }
+}
+
+class EnumDemo3 {
+  public static void main(String args[])
+  {
+    Apple ap;
+
+    // Wyœwietl cenê odmiany Winesap.
+    System.out.println("Winesap kosztuje " +
+                       Apple.Winesap.getPrice() +
+                       " z³otych.\n");
+
+    // Wyœwietl wszystkie jab³ka i ich ceny.
+    System.out.println("Ceny wszystkich jab³ek:");
+    for(Apple a : Apple.values())
+      System.out.println(a + " kosztuje " + a.getPrice() +
+                         " z³otych.");
+  }
+}
+
+
+Listing 4.
+// U¿ycie domyœlnego konstruktora wyliczenia.
+enum Apple {
+  Jonathan(10), GoldenDel(9), RedDel, Winesap(15), Cortland(8);
+  private int price; // cena ka¿dego z jab³ek
+
+  // konstruktor
+  Apple(int p) { price = p; }
+
+  // przeci¹¿ony konstruktor
+  Apple() { price = -1; }
+
+  int getPrice() { return price; }
+}
+
+Listing 5.
+// Przyk³ad u¿ycia metod ordinal(), compareTo() i equals().
+
+// Wyliczenie odmian jab³ek.
+enum Apple {
+  Jonathan, GoldenDel, RedDel, Winesap, Cortland
+}
+
+class EnumDemo4 {
+  public static void main(String args[])
+  {
+    Apple ap, ap2, ap3;
+
+    // Pobranie wartoœci przypisanych do sta³ych - metoda ordinal().
+    System.out.println("Oto wszystkie sta³e wyliczenia" +
+                       " oraz ich wartoœci liczbowe: ");
+    for(Apple a : Apple.values())
+      System.out.println(a + " " + a.ordinal());
+
+    ap =  Apple.RedDel;
+    ap2 = Apple.GoldenDel;
+    ap3 = Apple.RedDel;
+
+    System.out.println();
+
+    // Przyk³ad zastosowania metod compareTo() i equals().
+    if(ap.compareTo(ap2) < 0)
+      System.out.println(ap + " znajduje siê przed " + ap2);
+
+    if(ap.compareTo(ap2) > 0)
+      System.out.println(ap2 + " znajduje siê przed " + ap);
+
+    if(ap.compareTo(ap3) == 0)
+      System.out.println(ap + " jest równe " + ap3);
+
+    System.out.println();
+
+    if(ap.equals(ap2))
+      System.out.println("B³¹d!");
+
+    if(ap.equals(ap3))
+      System.out.println(ap + " jest równe " + ap3);
+    if(ap == ap3)
+      System.out.println(ap + " == " + ap3);
+
+  }
+}
+
+Listing 6.
+// Ulepszona wersja programu podejmowania decyzji
+// z rozdzia³u 9. Ta wersja u¿ywa wyliczenia
+// zamiast zmiennych interfejsu do reprezentacji
+// mo¿liwych odpowiedzi.
+
+import java.util.Random;
+
+// Wyliczenie ze wszystkimi mo¿liwymi odpowiedziami.
+enum Answers {
+  NO, YES, MAYBE, LATER, SOON, NEVER
+}
+
+class Question {
+  Random rand = new Random();
+  Answers ask() {
+    int prob = (int) (100 * rand.nextDouble());
+
+    if (prob < 15)
+      return Answers.MAYBE; // 15%
+    else if (prob < 30)
+      return Answers.NO;    // 15%
+    else if (prob < 60)
+      return Answers.YES;   // 30%
+    else if (prob < 75)
+      return Answers.LATER; // 15%
+    else if (prob < 98)
+      return Answers.SOON;  // 13%
+    else
+      return Answers.NEVER; // 2%
+  }
+}
+
+class AskMe {
+  static void answer(Answers result) {
+    switch(result) {
+      case NO:
+        System.out.println("Nie");
+        break;
+      case YES:
+        System.out.println("Tak");
+        break;
+      case MAYBE:
+        System.out.println("Mo¿e");
+        break;
+      case LATER:
+        System.out.println("Pó¿niej");
+        break;
+      case SOON:
+        System.out.println("Wkrótce");
+        break;
+      case NEVER:
+        System.out.println("Nigdy");
+        break;
+    }
+  }
+
+  public static void main(String args[]) {
+    Question q = new Question();
+    answer(q.ask());
+    answer(q.ask());
+    answer(q.ask());
+    answer(q.ask());
+  }
+}
+
+Listing 7.
+// Przyk³ad u¿ycia opakowania.
+class Wrap {
+  public static void main(String args[]) {
+
+    Integer iOb = new Integer(100);
+
+    int i = iOb.intValue();
+
+    System.out.println(i + " " + iOb); // wyœwietla 100 100
+  }
+}
+
+Listing 8.
+// Przyk³ad automatycznego opakowywania.
+class AutoBox {
+  public static void main(String args[]) {
+
+    Integer iOb = 100; // automatyczne opakowanie typu int
+
+    int i = iOb; // automatyczne rozpakowanie
+
+    System.out.println(i + " " + iOb);  // wyœwietla 100 100
+  }
+}
+
+Listing 9.
+// Automatyczne opakowanie i rozpakowanie dotyczy
+// tak¿e argumentów metod i zwracanych wartoœci.
+
+class AutoBox2 {
+  // Pobierz parametr Integer
+  // i zwróæ wartoœæ typu int.
+  static int m(Integer v) {
+    return v ; // automatyczne rozpakowanie do int
+  }
+
+  public static void main(String args[]) {
+    // Przekazanie wartoœci typu int do m() i przypisanie zwróconej wartoœci
+    // obiektowi typu Integer. Argument 100 jest automatycznie opakowany typem
+    // Integer. Zwracana wartoœæ jest ponownie automatycznie opakowywana
+    // typem Integer.
+    Integer iOb = m(100);
+
+    System.out.println(iOb);
+  }
+}
+
+
+Listing 10.
+// Automatyczne opakowywanie w wyra¿eniach.
+
+class AutoBox3 {
+  public static void main(String args[]) {
+    Integer iOb, iOb2;
+    int i;
+
+    iOb = 100;
+    System.out.println("Oryginalna wartoœæ iOb: " + iOb);
+
+    // Poni¿szy kod powoduje automatyczne rozpakowanie iOb,
+    // inkrementowanie wartoœci i ponownie opakowanie
+    // wyniku w obiekcie iOb.
+    ++iOb;
+    System.out.println("Po ++iOb: " + iOb);
+
+    // Tutaj iOb jest rozpakowywane, obliczana jest wartoœæ
+    // wyra¿enia i wynik jest ponownie pakowany do iOb2.
+    iOb2 = iOb + (iOb / 3);
+    System.out.println("iOb2 po wyra¿eniu: " + iOb2);
+    // Obliczenie tego samego wyra¿enia,
+    // ale bez automatycznego opakowywania.
+    i = iOb + (iOb / 3);
+    System.out.println("i po wyra¿eniu: " + i);
+
+  }
+}
+
+Listing 11.
+class AutoBox4 {
+  public static void main(String args[]) {
+
+    Integer iOb = 100;
+    Double dOb = 98.6;
+
+
+    dOb = dOb + iOb;
+    System.out.println("dOb po wyra¿eniu: " + dOb);
+  }
+}
+
+Listing 12.
+// Automatyczne opakowywanie i rozpakowywanie obiektów klas Boolean i Character.
+
+class AutoBox5 {
+  public static void main(String args[]) {
+
+    // automatyczne opakowanie/rozpakowanie wartoœci typu boolean
+    Boolean b = true;
+
+    // Zastosowanie b w wyra¿eniu warunkowym powoduje
+    // jego automatyczne rozpakowanie.
+    if(b) System.out.println("b wynosi true");
+
+    // automatyczne opakowanie/rozpakowanie wartoœci typu char
+    Character ch = 'x'; // opakowanie typu char
+    char ch2 = ch; // rozpakowanie char
+    System.out.println("ch2 wynosi " + ch2);
+  }
+}
+
+Listing 13.
+// B³¹d przy rêcznym rozpakowywaniu.
+class UnboxingError {
+  public static void main(String args[]) {
+
+    Integer iOb = 1000; // automatyczne opakowanie wartoœci 1000
+
+    int i = iOb.byteValue(); // rêczne wydobycie wartoœci!!!
+
+    System.out.println(i);  // nie spowoduje wyœwietlenia wartoœci 1000!
+  }
+}
+
+Listing 14.
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+// Deklaracja typu adnotacji.
+@Retention(RetentionPolicy.RUNTIME)
+@interface MyAnno {
+  String str();
+  int val();
+}
+
+class Meta {
+
+  // Adnotacja metody.
+  @MyAnno(str = "Przyk³adowa adnotacja", val = 100)
+  public static void myMeth() {
+    Meta ob = new Meta();
+
+    // Pobranie adnotacji dla tej metody i
+    // wyœwietlenie wartoœci jej sk³adowych.
+    try {
+      // Najpierw pobierz obiekt Class reprezentuj¹cy
+      // aktualn¹ klasê.
+      Class c = ob.getClass();
+
+      // Pobierz obiekt Method reprezentuj¹cy
+      // aktualn¹ metodê.
+      Method m = c.getMethod("myMeth");
+
+      // Nastêpnie pobierz adnotacjê dla tej metody.
+      MyAnno anno = m.getAnnotation(MyAnno.class);
+
+      // Wyœwietl wartoœci adnotacji.
+      System.out.println(anno.str() + " " + anno.val());
+    } catch (NoSuchMethodException exc) {
+       System.out.println("Nie znaleziono metody.");
+    }
+  }
+
+  public static void main(String args[]) {
+    myMeth();
+  }
+}
+
+Listing 15.
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface MyAnno {
+  String str();
+  int val();
+}
+class Meta {
+
+  // Metoda myMeth ma teraz dwa parametry.
+  @MyAnno(str = "Dwa parametry", val = 19)
+  public static void myMeth(String str, int i)
+  {
+    Meta ob = new Meta();
+
+    try {
+      Class c = ob.getClass();
+
+      // Tutaj pojawia siê okreœlenie typów parametrów.
+      Method m = c.getMethod("myMeth", String.class, int.class);
+
+      MyAnno anno = m.getAnnotation(MyAnno.class);
+
+      System.out.println(anno.str() + " " + anno.val());
+    } catch (NoSuchMethodException exc) {
+       System.out.println("Nie znaleziono metody.");
+    }
+  }
+
+  public static void main(String args[]) {
+    myMeth("test", 10);
+  }
+}
+
+Listing 16.
+// Wyœwietlanie wszystkich adnotacji klasy i metody.
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface MyAnno {
+  String str();
+  int val();
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface What {
+  String description();
+}
+
+@What(description = "Klasa testowa adnotacji")
+@MyAnno(str = "Meta2", val = 99)
+class Meta2 {
+
+  @What(description = "Metoda testowa adnotacji")
+  @MyAnno(str = "Testowanie", val = 100)
+  public static void myMeth() {
+    Meta2 ob = new Meta2();
+
+    try {
+      Annotation annos[] = ob.getClass().getAnnotations();
+
+      // Wyœwietlenie wszystkich adnotacji dla klasy Meta2.
+      System.out.println("Wszystkie adnotacje Meta2:");
+      for(Annotation a : annos)
+        System.out.println(a);
+
+      System.out.println();
+
+      // Wyœwietlenie wszystkich adnotacji dla metody myMeth.
+      Method m = ob.getClass( ).getMethod("myMeth");
+      annos = m.getAnnotations();
+
+      System.out.println("Wszystkie adnotacje myMeth:");
+      for(Annotation a : annos)
+        System.out.println(a);
+
+    } catch (NoSuchMethodException exc) {
+       System.out.println("Nie znaleziono metody.");
+    }
+  }
+
+  public static void main(String args[]) {
+    myMeth();
+  }
+}
+
+Listing 17.
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+// Deklaracja typu adnotacji zawieraj¹cego wartoœci domyœlne.
+@Retention(RetentionPolicy.RUNTIME)
+@interface MyAnno {
+  String str() default "Testowanie";
+  int val() default 9000;
+}
+
+class Meta3 {
+
+  // Adnotacja dla metody u¿ywa wartoœci domyœlnych.
+  @MyAnno()
+  public static void myMeth() {
+    Meta3 ob = new Meta3();
+
+    // Pobranie adnotacji dla metody
+    // i wyœwietlenie wartoœci jej sk³adowych.
+    try {
+      Class c = ob.getClass();
+
+      Method m = c.getMethod("myMeth");
+
+      MyAnno anno = m.getAnnotation(MyAnno.class);
+
+      System.out.println(anno.str() + " " + anno.val());
+    } catch (NoSuchMethodException exc) {
+       System.out.println("Nie znaleziono metody.");
+    }
+  }
+
+  public static void main(String args[]) {
+    myMeth();
+  }
+}
+
+Listing 18.
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+// Adnotacja  znacznikowa.
+@Retention(RetentionPolicy.RUNTIME)
+@interface MyMarker { }
+class Marker {
+
+  // U¿ycie znacznika dla metody.
+  // Zauwa¿, i¿ nie s¹ wymagane nawiasy.
+  @MyMarker
+  public static void myMeth() {
+    Marker ob = new Marker();
+
+    try {
+      Method m = ob.getClass().getMethod("myMeth");
+
+      // Sprawdzenie istnienia adnotacji znacznikowej.
+      if(m.isAnnotationPresent(MyMarker.class))
+        System.out.println("Adnotacja MyMarker istnieje.");
+
+    } catch (NoSuchMethodException exc) {
+       System.out.println("Nie znaleziono metody.");
+    }
+  }
+
+  public static void main(String args[]) {
+    myMeth();
+  }
+}
+
+Listing 19.
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+// Adnotacja jednoelementowa.
+@Retention(RetentionPolicy.RUNTIME)
+@interface MySingle {
+  int value(); // sk³adowa musi mieæ nazwê value
+}
+
+class Single {
+
+  // Oznaczenie metody adnotacj¹ jednoelementow¹.
+  @MySingle(100)
+  public static void myMeth() {
+    Single ob = new Single();
+
+    try {
+      Method m = ob.getClass().getMethod("myMeth");
+
+      MySingle anno = m.getAnnotation(MySingle.class);
+
+      System.out.println(anno.value()); // wyœwietla 100
+
+    } catch (NoSuchMethodException exc) {
+       System.out.println("Nie znaleziono metody.");
+    }
+  }
+
+  public static void main(String args[]) {
+    myMeth();
+  }
+}

@@ -1,0 +1,790 @@
+Listing 1.
+// Prosty przyk³ad dziedziczenia.
+
+// Klasa bazowa.
+class A {
+  int i, j;
+
+  void showij() {
+    System.out.println("i oraz j: " + i + " " + j);
+  }
+}
+
+// Tworzenie klasy potomnej przez dziedziczenie po klasie A.
+class B extends A {
+  int k;
+
+  void showk() {
+    System.out.println("k: " + k);
+  }
+  void sum() {
+    System.out.println("i+j+k: " + (i+j+k));
+  }
+}
+  
+class SimpleInheritance {
+  public static void main(String args[]) {
+    A superOb = new A();
+    B subOb = new B();
+
+    // Klasê bazow¹ mo¿na stosowaæ samodzielnie.
+    superOb.i = 10;
+    superOb.j = 20;
+    System.out.println("Zawartoœæ superOb: ");
+    superOb.showij();
+    System.out.println();
+
+    /* Podklasa ma dostêp do wszystkich publicznych 
+       sk³adowych swojej klasy bazowej. */
+    subOb.i = 7;
+    subOb.j = 8;
+    subOb.k = 9; 
+    System.out.println("Zawartoœæ subOb: ");
+    subOb.showij();
+    subOb.showk();
+    System.out.println();
+
+    System.out.println("Suma i, j oraz k w subOb:");
+    subOb.sum();
+  }
+}
+
+
+Listing 2.
+/* W hierarchii klas sk³adowe prywatne pozostaj¹
+   ukryte nawet przed klasami potomnymi.
+
+   Program zawiera b³¹d, wiêc nie zostanie poprawnie skompilowany.
+*/
+
+// Definicja klasy bazowej.
+class A {
+  int i; // domyœlnie publiczna
+  private int j; // prywatna - dostêpna tylko w A
+
+  void setij(int x, int y) {
+    i = x;
+    j = y;
+  }
+}
+
+// Tutaj sk³adowa j z klasy A nie jest dostêpna.
+class B extends A {
+  int total;
+
+  void sum() {
+    total = i + j; // B£¥D, j nie jest dostêpne
+  }
+}
+  
+class Access {
+  public static void main(String args[]) {
+    B subOb = new B();
+
+    subOb.setij(10, 12);
+
+    subOb.sum();
+    System.out.println("Suma: " + subOb.total);
+  }
+}
+
+
+Listing 3.
+// Program u¿ywa dziedziczenia dla rozszerzenia klasy Box.
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // tworzenie klonu obiektu
+  Box(Box ob) { // konstruktor otrzymuje obiekt
+    width = ob.width;
+    height = ob.height;
+    depth = ob.depth;
+  }
+
+  // konstruktor u¿ywany, gdy podano wszystkie wymiary
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // konstruktor u¿ywany przy braku wymiarów
+  Box() {
+    width = -1;  // wartoœæ -1
+    height = -1; // wskazuje
+    depth = -1;  // niezainicjalizowane pude³ko
+  }
+
+  // konstruktor u¿ywany do tworzenia szeœcianów
+  Box(double len) {
+    width = height = depth = len;
+  }
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+// Oto wersja klasy Box rozszerzona o zmienn¹ weight.
+class BoxWeight extends Box {
+  double weight; // ciê¿ar pude³ka
+
+  // konstruktor dla BoxWeight
+  BoxWeight(double w, double h, double d, double m) {
+    width = w;
+    height = h;
+    depth = d;
+    weight = m;
+  }    
+}
+  
+class DemoBoxWeight {
+  public static void main(String args[]) {
+    BoxWeight mybox1 = new BoxWeight(10, 20, 15, 34.3);
+    BoxWeight mybox2 = new BoxWeight(2, 3, 4, 0.076);
+    double vol;
+
+    vol = mybox1.volume();
+    System.out.println("Objêtoœæ mybox1: " + vol);
+    System.out.println("Ciê¿ar mybox1: " + mybox1.weight);
+    System.out.println();
+
+    vol = mybox2.volume();
+    System.out.println("Objêtoœæ mybox2: " + vol);
+    System.out.println("Ciê¿ar mybox2: " + mybox2.weight);
+  }
+}
+
+Listing 4.
+// Nowa klasa rozszerza klasê Box o zmienn¹ color.
+class ColorBox extends Box {
+  int color; // kolor pude³ka
+
+  ColorBox(double w, double h, double d, int c) {
+    width = w;
+    height = h;
+    depth = d;
+    color = c;
+  }    
+}
+
+Listing 5.
+class RefDemo {
+  public static void main(String args[]) {
+    BoxWeight weightbox = new BoxWeight(3, 5, 7, 8.37);
+    Box plainbox = new Box();
+    double vol;
+
+    vol = weightbox.volume();
+    System.out.println("Objêtoœæ weightbox: " + vol);
+    System.out.println("Ciê¿ar weightbox: " + weightbox.weight);
+    System.out.println();
+
+    // przypisanie referencji BoxWeight do referencji Box
+    plainbox = weightbox;
+
+    vol = plainbox.volume(); // poprawne, metoda volume() jest zdefiniowana dla Box
+    System.out.println("Objêtoœæ plainbox: " + vol);
+
+    /* Poni¿sza instrukcja nie jest poprawna, poniewa¿ plainbox
+       nie definiuje sk³adowej weight. */
+    // System.out.println("Waga obiektu plainbox wynosi: " + plainbox.weight);
+  }
+}
+
+Listing 6.
+// Klasa BoxWeight u¿ywa referencji super do inicjalizacji atrybutów klasy Box.
+class BoxWeight extends Box {
+  double weight; // ciê¿ar pude³ka
+
+  // inicjalizacja width, height i depth za pomoc¹ konstruktora super()
+  BoxWeight(double w, double h, double d, double m) {
+    super(w, h, d); // wywo³anie konstruktora klasy bazowej
+    weight = m;
+  }
+}
+
+Listing 7.
+// Pe³na implementacja klasy BoxWeight.
+class Box {
+  private double width;
+  private double height;
+  private double depth;
+
+  // tworzenie klonu obiektu
+  Box(Box ob) { // konstruktor otrzymuje obiekt
+    width = ob.width;
+    height = ob.height;
+    depth = ob.depth;
+  }
+
+  // konstruktor u¿ywany, gdy podano wszystkie wymiary
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // konstruktor u¿ywany przy braku wymiarów
+  Box() {
+    width = -1;  // wartoœæ -1
+    height = -1; // wskazuje
+    depth = -1;  // niezainicjalizowane pude³ko
+  }
+
+  // konstruktor u¿ywany do tworzenia szeœcianów
+  Box(double len) {
+    width = height = depth = len;
+  }
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+// Teraz klasa BoxWeight w pe³ni implementuje wszystkie konstruktory.
+class BoxWeight extends Box {
+  double weight; // ciê¿ar pude³ka
+  // tworzenie klonu obiektu
+  BoxWeight(BoxWeight ob) { // konstruktor otrzymuje obiekt
+    super(ob);
+    weight = ob.weight;
+  }
+
+  // konstruktor u¿ywany, gdy podano wszystkie wymiary
+  BoxWeight(double w, double h, double d, double m) {
+    super(w, h, d); // wywo³anie konstruktora klasy bazowej
+    weight = m;
+  }    
+
+  // konstruktor domyœlny
+  BoxWeight() {
+    super();
+    weight = -1;
+  }
+
+  // konstruktor u¿ywany do tworzenia szeœcianów
+  BoxWeight(double len, double m) {
+    super(len);
+    weight = m;
+  }
+}
+  
+class DemoSuper {
+  public static void main(String args[]) {
+    BoxWeight mybox1 = new BoxWeight(10, 20, 15, 34.3);
+    BoxWeight mybox2 = new BoxWeight(2, 3, 4, 0.076);
+    BoxWeight mybox3 = new BoxWeight(); // domyœlny
+    BoxWeight mycube = new BoxWeight(3, 2);
+    BoxWeight myclone = new BoxWeight(mybox1);
+    double vol;
+
+    vol = mybox1.volume();
+    System.out.println("Objêtoœæ mybox1: " + vol);
+    System.out.println("Ciê¿ar mybox1: " + mybox1.weight);
+    System.out.println();
+
+    vol = mybox2.volume();
+    System.out.println("Objêtoœæ mybox2: " + vol);
+    System.out.println("Ciê¿ar mybox2: " + mybox2.weight);
+    System.out.println();
+
+    vol = mybox3.volume();
+    System.out.println("Objêtoœæ mybox3: " + vol);
+    System.out.println("Ciê¿ar mybox3: " + mybox3.weight);
+    System.out.println();
+ 
+    vol = myclone.volume();
+    System.out.println("Objêtoœæ myclone: " + vol);
+    System.out.println("Ciê¿ar myclone: " + myclone.weight);
+    System.out.println();
+
+    vol = mycube.volume();
+    System.out.println("Objêtoœæ mycube: " + vol);
+    System.out.println("Ciê¿ar mycube: " + mycube.weight);
+    System.out.println();
+  }
+}
+
+Listing 8.
+// tworzenie klonu obiektu
+BoxWeight(BoxWeight ob) { // konstruktor otrzymuje obiekt
+  super(ob);
+  weight = ob.weight;
+}
+
+Listing 9.
+// Zastosowanie super do obejœcia przes³aniania nazw.
+class A {
+  int i;
+}
+
+// Podklasa rozszerzaj¹ca klasê A.
+class B extends A {
+  int i; // to i przes³ania i z A
+
+  B(int a, int b) {
+    super.i = a; // i z A
+    i = b; // i z B
+  }
+
+  void show() {
+    System.out.println("i z klasy bazowej: " + super.i);
+    System.out.println("i z podklasy: " + i);
+  }
+}
+
+Listing 10.
+// Rozszerzenie klasy BoxWeight o koszt wysy³ki.
+
+// Zaczynamy od klasy Box.
+class Box {
+  private double width;
+  private double height;
+  private double depth;
+
+  // tworzenie klonu obiektu
+  Box(Box ob) { // konstruktor otrzymuje obiekt
+    width = ob.width;
+    height = ob.height;
+    depth = ob.depth;
+  }
+
+  // konstruktor u¿ywany, gdy podano wszystkie wymiary
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // konstruktor u¿ywany przy braku wymiarów
+  Box() {
+    width = -1;  // wartoœæ -1
+    height = -1; // wskazuje
+    depth = -1;  // niezainicjalizowane pude³ko
+  }
+
+  // konstruktor u¿ywany do tworzenia szeœcianów
+  Box(double len) {
+    width = height = depth = len;
+  }
+
+  // oblicz i zwróæ objêtoœæ
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+// dodanie ciê¿aru
+class BoxWeight extends Box {
+  double weight; // ciê¿ar pude³ka
+
+  // tworzenie klonu obiektu
+  BoxWeight(BoxWeight ob) { // konstruktor otrzymuje obiekt
+    super(ob);
+    weight = ob.weight;
+  }
+
+  // konstruktor u¿ywany, gdy podano wszystkie wymiary
+  BoxWeight(double w, double h, double d, double m) {
+    super(w, h, d); // wywo³anie konstruktora klasy bazowej
+    weight = m;
+  }
+
+  // konstruktor domyœlny
+  BoxWeight() {
+    super();
+    weight = -1;
+  }
+  // konstruktor u¿ywany do tworzenia szeœcianów
+  BoxWeight(double len, double m) {
+    super(len);
+    weight = m;
+  }
+}
+
+// dodanie kosztów przesy³ki
+class Shipment extends BoxWeight {
+  double cost;
+
+  // tworzenie klonu obiektu
+  Shipment(Shipment ob) { // konstruktor otrzymuje obiekt
+    super(ob);
+    cost = ob.cost;
+  }
+
+  // konstruktor u¿ywany, gdy podano wszystkie wymiary
+  Shipment(double w, double h, double d,
+            double m, double c) {
+    super(w, h, d, m); // wywo³anie konstruktora klasy bazowej
+    cost = c;
+  }
+
+  // konstruktor domyœlny
+  Shipment() {
+    super();
+    cost = -1;
+  }
+
+  // konstruktor u¿ywany do tworzenia szeœcianów
+  Shipment(double len, double m, double c) {
+    super(len, m);
+    cost = c;
+  }
+}
+
+class DemoShipment {
+  public static void main(String args[]) {
+    Shipment shipment1 =
+               new Shipment(10, 20, 15, 10, 3.41);
+    Shipment shipment2 =
+               new Shipment(2, 3, 4, 0.76, 1.28);
+
+    double vol;
+
+    vol = shipment1.volume();
+    System.out.println("Objêtoœæ shipment1: " + vol);
+    System.out.println("Ciê¿ar shipment1: "
+                        + shipment1.weight);
+    System.out.println("Koszt przesy³ki w z³otówkach: " + shipment1.cost);
+    System.out.println();
+
+    vol = shipment2.volume();
+    System.out.println("Objêtoœæ shipment2: " + vol);
+    System.out.println("Ciê¿ar shipment2: "
+                        + shipment2.weight);
+    System.out.println("Koszt przesy³ki w z³otówkach: " + shipment2.cost);
+  }
+}
+
+Listing 11.
+// Przyk³ad kolejnoœci wykonywania konstruktorów.
+
+// utworzenie klasy bazowej
+class A {
+  A() {
+    System.out.println("Konstruktor klasy A.");
+  }
+}
+
+// utworzenie podklasy rozszerzaj¹cej klasê A
+class B extends A {
+  B() {
+    System.out.println("Konstruktor klasy B.");
+  }
+}
+
+// utworzenie podklasy rozszerzaj¹cej klasê B
+class C extends B {
+  C() {
+    System.out.println("Konstruktor klasy C.");
+  }
+}
+
+class CallingCons {
+  public static void main(String args[]) {
+    C c = new C();
+  }
+}
+
+Listing 12.
+// Przes³anianie metod.
+class A {
+  int i, j;
+
+  A(int a, int b) {
+    i = a;
+    j = b;
+  }
+
+  // wyœwietla i oraz j
+  void show() {
+    System.out.println("i oraz j: " + i + " " + j);
+  }
+}
+
+class B extends A {
+  int k;
+
+  B(int a, int b, int c) {
+    super(a, b);
+    k = c;
+  }
+
+  // wyœwietla k -- przys³oniêcie metody show() z klasy A
+  void show() {
+    System.out.println("k: " + k);
+  }
+}
+
+class Override {
+  public static void main(String args[]) {
+    B subOb = new B(1, 2, 3);
+
+    subOb.show(); // wywo³uje metodê show() z klasy B
+  }
+}
+
+Listing 13.
+class B extends A {
+  int k;
+
+  B(int a, int b, int c) {
+    super(a, b);
+    k = c;
+  }
+  void show() {
+    super.show(); // wywo³uje metodê show() z klasy A
+    System.out.println("k: " + k);
+  }
+}
+
+Listing 14.
+// Metody o innych sygnaturach typów s¹ przeci¹¿ane, a nie przes³aniane.
+class A {
+  int i, j;
+
+  A(int a, int b) {
+    i = a;
+    j = b;
+  }
+
+  // wyœwietla i oraz j
+  void show() {
+    System.out.println("i oraz j: " + i + " " + j);
+  }
+}
+
+// utworzenie podklasy rozszerzaj¹cej klasê A
+class B extends A {
+  int k;
+
+  B(int a, int b, int c) {
+    super(a, b);
+    k = c;
+  }
+
+  // przeci¹¿ona wersja show()
+  void show(String msg) {
+    System.out.println(msg + k);
+  }
+}
+
+class Override {
+  public static void main(String args[]) {
+    B subOb = new B(1, 2, 3);
+
+    subOb.show("To jest k: "); // wywo³uje metodê show() z klasy B
+    subOb.show(); // wywo³uje metodê show() z klasy A
+  }
+}
+
+Listing 15.
+// dynamiczne przydzielanie metod
+class A {
+   void callme() {
+     System.out.println("Metoda callme() klasy A");
+  }
+}
+
+class B extends A {
+  // przes³ania callme()
+  void callme() {
+    System.out.println("Metoda callme() klasy B");
+  }
+}
+
+class C extends A {
+  // przes³ania callme()
+  void callme() {
+    System.out.println("Metoda callme() klasy C");
+  }
+}
+
+class Dispatch {
+  public static void main(String args[]) {
+    A a = new A(); // obiekt klasy A
+    B b = new B(); // obiekt klasy B
+    C c = new C(); // obiekt klasy C
+    A r; // mo¿e przechowywaæ referencjê do typu A
+
+    r = a; // r odnosi siê do obiektu A
+    r.callme(); // wywo³anie wersji callme() z klasy A
+
+    r = b; // r odnosi siê do obiektu B
+    r.callme(); // wywo³anie wersji callme() z klasy B
+
+    r = c; // r odnosi siê do obiektu C
+    r.callme(); // wywo³anie wersji callme() z klasy C
+  }
+}
+
+Listing 16.
+// Wykorzystanie polimorfizmu dynamicznego.
+class Figure {
+  double dim1;
+  double dim2;
+
+  Figure(double a, double b) {
+    dim1 = a;
+    dim2 = b;
+  }
+
+  double area() {
+    System.out.println("Pole figury nie jest zdefiniowane.");
+    return 0;
+  }
+}
+
+class Rectangle extends Figure {
+  Rectangle(double a, double b) {
+    super(a, b);
+  }
+
+  // przes³oniêcie pola dla prostok¹ta
+  double area() {
+    System.out.println("Wewn¹trz metody area() z Rectangle.");
+    return dim1 * dim2;
+  }
+}
+
+class Triangle extends Figure {
+  Triangle(double a, double b) {
+    super(a, b);
+  }
+
+  // przes³oniêcie pola dla trójk¹ta
+  double area() {
+    System.out.println("Wewn¹trz metody area() z Triangle.");
+    return dim1 * dim2 / 2;
+  }
+}
+
+class FindAreas {
+  public static void main(String args[]) {
+    Figure f = new Figure(10, 10);
+    Rectangle r = new Rectangle(9, 5);
+    Triangle t = new Triangle(10, 8);
+
+    Figure figref;
+
+    figref = r;
+    System.out.println("Pole: " + figref.area());
+
+    figref = t;
+    System.out.println("Pole: " + figref.area());
+
+    figref = f;
+    System.out.println("Pole: " + figref.area());
+  }
+}
+
+Listing 17.
+// Przyk³ad metody abstrakcyjnej.
+abstract class A {
+  abstract void callme();
+
+  // klasy abstrakcyjne mog¹ posiadaæ konkretne metody
+  void callmetoo() {
+    System.out.println("To jest konkretna metoda.");
+  }
+}
+
+class B extends A {
+  void callme() {
+    System.out.println("Implementacja callme() z klasy B.");
+  }
+}
+
+class AbstractDemo {
+  public static void main(String args[]) {
+    B b = new B();
+
+    b.callme();
+    b.callmetoo();
+  }
+}
+
+Listing 18.
+// Zastosowanie abstrakcyjnych metod i klas.
+abstract class Figure {
+  double dim1;
+  double dim2;
+
+  Figure(double a, double b) {
+    dim1 = a;
+    dim2 = b;
+  }
+
+  // ta metoda jest teraz abstrakcyjna
+  abstract double area();
+}
+
+class Rectangle extends Figure {
+  Rectangle(double a, double b) {
+    super(a, b);
+  }
+
+  // przes³oniêcie pola dla prostok¹ta
+  double area() {
+    System.out.println("Wewn¹trz metody area() z Rectangle.");
+    return dim1 * dim2;
+  }
+}
+
+class Triangle extends Figure {
+  Triangle(double a, double b) {
+    super(a, b);
+  }
+
+  // przes³oniêcie pola dla trójk¹ta
+  double area() {
+    System.out.println("Wewn¹trz metody area() z Triangle.");
+    return dim1 * dim2 / 2;
+  }
+}
+
+class AbstractAreas {
+  public static void main(String args[]) {
+    // Figure f = new Figure(10, 10); // teraz ten zapis nie jest ju¿ poprawny
+    Rectangle r = new Rectangle(9, 5);
+    Triangle t = new Triangle(10, 8);
+
+    Figure figref; // wszystko w porz¹dku, poniewa¿ nie jest tworzony obiekt
+
+    figref = r;
+    System.out.println("Pole: " + figref.area());
+
+    figref = t;
+    System.out.println("Pole: " + figref.area());
+  }
+}
+
+Listing 19.
+class A {
+  final void meth() {
+    System.out.println("To jest metoda finalna.");
+  }
+}
+
+class B extends A {
+  void meth() { // B£¥D! Nie mo¿na przes³oniæ.
+    System.out.println("Niepoprawne!");
+  }
+}
+
+Listing 20.
+final class A {
+  // ...
+}
+
+// Poni¿sza klasa jest niedopuszczalna.
+class B extends A { // B£¥D! Nie mo¿na utworzyæ podklasy klasy A.
+  // ...
+}
+
+

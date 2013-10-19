@@ -1,0 +1,62 @@
+Listing 1.
+/** 
+ * Klasa rysuj¹ca wykres s³upkowy. 
+ * @author Herbert Schildt 
+ * @version 3.2 
+ */
+
+Listing 2.
+import java.io.*;
+
+/** 
+ * Klasa demonstruj¹ca komentarze dokumentuj¹ce. 
+ * @author Herbert Schildt 
+ * @version 1.2 
+ */
+public class SquareNum {
+
+    /** 
+     * Metoda zwraca kwadrat przekazanej liczby. 
+     * To jest opis zajmuj¹cy wiele wierszy. Programista mo¿e u¿yæ 
+     * tylu wierszy, ile potrzebuje. 
+     * @param num Wartoœæ, która ma byæ podniesiona do kwadratu. 
+     * @return Wartoœæ num podniesiona do kwadratu. 
+     */
+    public double square(double num) {
+        return num * num;
+    }
+
+    /** 
+     * Metoda wyœwietla liczbê podan¹ przez u¿ytkownika. 
+     * @return Podana liczba w formie wartoœci typu double. 
+     * @exception IOException W razie b³êdu danych wejœciowych. 
+     * @see IOException 
+     */
+    public double getNumber() throws IOException {
+        // tworzy obiekt BufferedReader na podstawie obiektu System.in 
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader inData = new BufferedReader(isr);
+        String str;
+
+        str = inData.readLine();
+        return (new Double(str)).doubleValue();
+    }
+
+    /** 
+     * Metoda demonstruje u¿ycie metody square(). 
+     * @param args Nieu¿ywany. 
+     * @exception IOException W razie b³êdu danych wejœciowych. 
+     * @see IOException 
+     */
+    public static void main(String args[])
+            throws IOException {
+        SquareNum ob = new SquareNum();
+        double val;
+
+        System.out.println("Wpisz wartoœæ, która ma byæ podniesiona do kwadratu: ");
+        val = ob.getNumber();
+        val = ob.square(val);
+
+        System.out.println("Wartoœæ podniesiona do kwadratu wynosi " + val);
+    }
+}

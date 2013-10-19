@@ -1,0 +1,641 @@
+Listing 1.
+// U¿ycie BufferedReader do odczytu znaków z konsoli.
+import java.io.*;
+
+class BRRead {
+  public static void main(String args[]) 
+    throws IOException
+  {
+    char c;
+    BufferedReader br = new
+            BufferedReader(new InputStreamReader(System.in));
+    System.out.println("Wpisz znaki, wpisanie 'q' powoduje zakoñczenie programu.");
+
+    // odczyt znaków
+    do {
+      c = (char) br.read();
+      System.out.println(c);
+    } while(c != 'q');
+  }
+}
+
+Listing 2.
+// Odczyt ³añcucha z konsoli za pomoc¹ klasy BufferedReader.
+import java.io.*;
+
+class BRReadLines {
+  public static void main(String args[]) 
+    throws IOException
+  {
+    // utworzenie BufferedReader na podstawie System.in
+    BufferedReader br = new BufferedReader(new 
+                            InputStreamReader(System.in));
+    String str;
+    System.out.println("Wpisz wiersze tekstu.");
+    System.out.println("Wpisz 'stop', aby wyjœæ.");
+    do {
+      str = br.readLine();
+      System.out.println(str);
+    } while(!str.equals("stop"));
+  }
+}
+
+Listing 3.
+// Prosty edytor.
+import java.io.*;
+
+class TinyEdit {
+  public static void main(String args[])
+    throws IOException
+  {
+    // utworzenie BufferedReader na podstawie System.in
+    BufferedReader br = new BufferedReader(new
+                            InputStreamReader(System.in));
+    String str[] = new String[100];
+
+    System.out.println("Wpisz wiersze tekstu.");
+    System.out.println("Wpisz 'stop', aby wyjœæ.");
+    for(int i=0; i<100; i++) {
+      str[i] = br.readLine();
+      if(str[i].equals("stop")) break;
+    }
+
+    System.out.println("\nOto wpisane dane:");
+
+    // wyœwietlenie tekstu
+    for(int i=0; i<100; i++) {
+      if(str[i].equals("stop")) break;
+      System.out.println(str[i]);
+    }
+  }
+}
+
+Listing 4.
+// Przyk³ad u¿ycia System.out.write().
+class WriteDemo {
+  public static void main(String args[]) {
+    int b;
+
+    b = 'A';
+    System.out.write(b);
+    System.out.write('\n');
+  }
+}
+
+Listing 5.
+// Przyk³ad u¿ycia klasy PrintWriter.
+import java.io.*;
+
+public class PrintWriterDemo {
+  public static void main(String args[]) {
+    PrintWriter pw = new PrintWriter(System.out, true);
+    pw.println("To jest ³añcuch.");
+    int i = -7;
+    pw.println(i);
+    double d = 4.5e-7;
+    pw.println(d);
+  }
+}
+
+Listing 6.
+/* Wyœwietla zawartoœæ pliku tekstowego.
+
+   Aby u¿yæ programu, okreœl nazwê
+   pliku do wyœwietlenia.
+   Na przyk³ad wyœwietlenie pliku o nazwie TEST.TXT,
+   wymaga wpisania poni¿szego wiersza.
+
+   java ShowFile TEST.TXT
+*/
+
+import java.io.*;
+
+class ShowFile {
+  public static void main(String args[])
+  {
+    int i;
+    FileInputStream fin;
+
+    // Sprawdza, czy podano nazwê pliku.
+    if(args.length != 1) {
+      System.out.println("Sposób u¿ycia: ShowFile nazwa-pliku");
+      return;
+    }
+
+    // Próba otwarcia pliku.
+    try {
+      fin = new FileInputStream(args[0]);
+    } catch(FileNotFoundException e) {
+      System.out.println("Nie mo¿na otworzyæ pliku ");
+      return;
+    }
+
+    // Na tym etapie plik jest otwarty i gotowy do odczytu.
+    // Poni¿szy kod odczytuje znaki do osi¹gniêcia koñca pliku.
+    try {
+      do {
+        i = fin.read();
+        if(i != -1) System.out.print((char) i);
+      } while(i != -1);
+    } catch(IOException e) {
+      System.out.println("B³¹d odczytu pliku ");
+    }
+
+    // Zamyka plik.
+    try {
+      fin.close();
+    } catch(IOException e) {
+      System.out.println("B³¹d zamykania pliku ");
+    }
+  }
+}
+
+Listing 7.
+/* Wyœwietla zawartoœæ pliku tekstowego.
+
+   Podczas uruchamiania programu podaj nazwê
+   pliku do wyœwietlenia.
+   Na przyk³ad wyœwietlenie pliku o nazwie TEST.TXT,
+   wymaga wpisania poni¿szego wiersza.
+
+   java ShowFile TEST.TXT
+
+   Ta wersja programu umieszcza kod otwieraj¹cy plik i
+   uzyskuj¹cy dostêp do jego zawartoœci w jednym bloku
+   try. Plik jest zamykany w bloku finally.
+*/
+import java.io.*;
+
+class ShowFile {
+  public static void main(String args[])
+  {
+    int i;
+    FileInputStream fin = null;
+
+    // Sprawdza, czy podano nazwê pliku.
+    if(args.length != 1) {
+      System.out.println("Sposób u¿ycia: ShowFile nazwa-pliku");
+      return;
+    }
+
+    // Poni¿szy kod otwiera plik, odczytuje jego zawartoœæ do momentu
+    // osi¹gniêcia koñca pliku, po czym zamyka plik w bloku finally.
+    try {
+      fin = new FileInputStream(args[0]);
+      do {
+        i = fin.read();
+        if(i != -1) System.out.print((char) i);
+      } while(i != -1);
+
+    } catch(FileNotFoundException e) {
+      System.out.println("Nie znaleziono pliku");
+    } catch(IOException e) {
+      System.out.println("Wyst¹pi³ b³¹d wejœcia-wyjœcia");
+    } finally {
+      // Zamyka plik niezale¿nie od sytuacji.
+      try {
+        if(fin != null) fin.close();
+      } catch(IOException e) {
+        System.out.println("B³¹d zamykania pliku");
+      }
+    }
+  }
+}
+
+Listing 8.
+/* Kopiowanie plików tekstowych.
+
+   Aby u¿yæ programu, nale¿y wpisaæ nazwê 
+   pliku Ÿród³owego i docelowego.
+   Na przyk³ad, by skopiowaæ plik FIRST.TXT
+   do pliku SECOND.TXT, trzeba wpisaæ poni¿sze
+   polecenie w wierszu poleceñ.
+
+   java CopyFile FIRST.TXT SECOND.TXT
+*/
+
+import java.io.*;
+
+class CopyFile {
+  public static void main(String args[]) throws IOException
+  {
+    int i;
+    FileInputStream fin = null;
+    FileOutputStream fout = null;
+
+    // Najpierw sprawdza, czy podano nazwy obu plików.
+    if(args.length != 2) {
+      System.out.println("Sposób u¿ycia: CopyFile Ÿród³o cel");
+      return;
+    }
+
+    // Kopiuje plik.
+    try {
+      // Próba otwarcia plików.
+      fin = new FileInputStream(args[0]);
+      fout = new FileOutputStream(args[1]);
+
+      do {
+        i = fin.read();
+        if(i != -1) fout.write(i);
+      } while(i != -1);
+
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    } finally {
+      try {
+        if(fin != null) fin.close();
+      } catch(IOException e2) {
+        System.out.println("B³¹d zamykania pliku Ÿród³owego");
+      }
+      try {
+        if(fout != null) fout.close();
+      } catch(IOException e2) {
+        System.out.println("B³¹d zamykania pliku docelowego");
+      }
+    }
+  }
+}
+
+Listing 9.
+/* Ta wersja programu ShowFile u¿ywa wyra¿enia try-with-resources
+   do automatycznego zamkniêcia pliku, który nie jest ju¿ potrzebny.
+
+   Uwaga: ten kod wymaga wersji JDK 7 lub nowszej.
+*/
+
+import java.io.*;
+
+class ShowFile {
+  public static void main(String args[])
+  {
+    int i;
+
+    // Sprawdza, czy podano nazwê pliku.
+    if(args.length != 1) {
+      System.out.println("Sposób u¿ycia: ShowFile nazwa-pliku");
+      return;
+    }
+
+    // Poni¿szy kod u¿ywa wyra¿enia try-with-resources do otwarcia pliku, po czym
+    // automatycznie zamyka ten plik w momencie zakoñczenia bloku try.
+    try(FileInputStream fin = new FileInputStream(args[0])) {
+      do {
+        i = fin.read();
+        if(i != -1) System.out.print((char) i);
+      } while(i != -1);
+    } catch(FileNotFoundException e) {
+      System.out.println("Nie znaleziono pliku.");
+    } catch(IOException e) {
+      System.out.println("Wyst¹pi³ b³¹d wejœcia-wyjœcia ");
+    }
+  }
+}
+
+Listing 10.
+/* Wersja programu CopyFile korzystaj¹ca z konstrukcji try-with-resources.
+   Program demonstruje sposób zarz¹dzania dwoma zasobami (w tym przypadku
+   plikami) przez pojedyncze wyra¿enie try.
+*/
+
+import java.io.*;
+
+class CopyFile {
+  public static void main(String args[]) throws IOException
+  {
+    int i;
+
+    // Najpierw sprawdza, czy podano nazwy obu plików.
+    if(args.length != 2) {
+      System.out.println("Sposób u¿ycia: CopyFile Ÿród³o cel");
+      return;
+    }
+
+    // Otwiera dwa pliki i zarz¹dza nimi w ramach wyra¿enia try.
+    try (FileInputStream fin = new FileInputStream(args[0]);
+         FileOutputStream fout = new FileOutputStream(args[1]))
+    {
+      do {
+        i = fin.read();
+        if(i != -1) fout.write(i);
+      } while(i != -1);
+
+    } catch(IOException e) {
+      System.out.println("B³¹d wejœcia-wyjœcia: " + e);
+    }
+  }
+}
+
+Listing 11.
+import java.awt.*;
+import java.applet.*;
+
+public class SimpleApplet extends Applet {
+  public void paint(Graphics g) {
+    g.drawString("Prosty aplet", 20, 20);
+  }
+}
+
+Listing 12.
+import java.awt.*;
+import java.applet.*;
+/*
+<applet code="SimpleApplet" width=200 height=60>
+</applet>
+*/
+
+public class SimpleApplet extends Applet {
+  public void paint(Graphics g) {
+    g.drawString("Prosty aplet", 20, 20);
+  }
+}
+
+Listing 13.
+// Przyk³ad u¿ycia operatora instanceof.
+class A {
+  int i, j;
+}
+
+class B {
+  int i, j;
+}
+
+class C extends A {
+  int k;
+}
+
+class D extends A {
+  int k;
+}
+
+class InstanceOf {
+  public static void main(String args[]) {
+    A a = new A();
+    B b = new B();
+    C c = new C();
+    D d = new D();
+
+    if(a instanceof A)
+      System.out.println("a to egzemplarz A");
+    if(b instanceof B)
+      System.out.println("b to egzemplarz B");
+    if(c instanceof C)
+      System.out.println("c to egzemplarz C");
+    if(c instanceof A)
+      System.out.println("c mo¿e byæ rzutowany na A");
+
+    if(a instanceof C)
+      System.out.println("a mo¿e byæ rzutowany na C");
+
+    System.out.println();
+
+    // porównanie typów potomnych
+    A ob;
+
+    ob = d; // A zawiera referencjê do d
+    System.out.println("ob zawiera referencjê do d");
+    if(ob instanceof D)
+      System.out.println("ob to egzemplarz D");
+
+    System.out.println();
+
+    ob = c; // A zawiera referencjê do c
+    System.out.println("ob zawiera referencjê do c");
+
+    if(ob instanceof D)
+      System.out.println("ob mo¿e byæ rzutowany na D");
+    else
+      System.out.println("ob nie mo¿e byæ rzutowany na D");
+
+    if(ob instanceof A)
+      System.out.println("ob mo¿e byæ rzutowany na A");
+
+    System.out.println();
+
+    // wszystkie obiekty mo¿na rzutowaæ na Object
+    if(a instanceof Object)
+      System.out.println("a mo¿e byæ rzutowany na Object");
+    if(b instanceof Object)
+      System.out.println("b mo¿e byæ rzutowany na Object");
+    if(c instanceof Object)
+      System.out.println("c mo¿e byæ rzutowany na Object");
+    if(d instanceof Object)
+      System.out.println("d mo¿e byæ rzutowany na Object");
+  }
+}
+
+Listing 14.
+// Prosty przyk³ad u¿ywaj¹cy metody rdzennej.
+public class NativeDemo {
+  int i;
+  public static void main(String args[]) {
+    NativeDemo ob = new NativeDemo();
+
+    ob.i = 10;
+    System.out.println("To jest ob.i przed metod¹ typu native:" +
+                       ob.i);
+    ob.test(); // wywo³anie metody rdzennej
+    System.out.println("To jest ob.i po metodzie typu native:" +
+                       ob.i);
+  }
+  // deklaracja metody rdzennej
+  public native void test() ;
+
+  // za³adowanie pliku DLL zawieraj¹cego metodê rdzenn¹
+  static {
+    System.loadLibrary("NativeDemo");
+  }
+}
+
+Listing 15.
+/* DO NOT EDIT THIS FILE - it is machine generated */
+#include <jni.h>
+/* Header for class NativeDemo */
+
+#ifndef _Included_NativeDemo
+#define _Included_NativeDemo
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*
+ * Class:     NativeDemo
+ * Method:    test
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_NativeDemo_test
+  (JNIEnv *, jobject);
+
+#ifdef __cplusplus
+}
+#endif
+#endif
+
+Listing 16.
+/* Ten plik zawiera kod metody test() w jêzyku C.
+*/
+
+#include <jni.h>
+#include "NativeDemo.h"
+#include <stdio.h>
+
+JNIEXPORT void JNICALL Java_NativeDemo_test(JNIEnv *env, jobject obj)
+{
+  jclass cls;
+  jfieldID fid;
+  jint i;
+
+  printf("Pocz¹tek metody rdzennej.\n");
+  cls = (*env)->GetObjectClass(env, obj);
+  fid = (*env)->GetFieldID(env, cls, "i", "I");
+
+  if(fid == 0) {
+    printf("Nie mo¿na pobraæ identyfikatora pola.\n");
+    return;
+  }
+  i = (*env)->GetIntField(env, obj, fid);
+  printf("i = %d\n", i);
+  (*env)->SetIntField(env, obj, fid, 2*i);
+  printf("Koniec metody rdzennej.\n");
+}
+
+Listing 17.
+// Przyk³ad asercji.
+class AssertDemo {
+  static int val = 3;
+
+  // Zwraca wartoœæ ca³kowitoliczbow¹.
+  static int getnum() {
+    return val--;
+  }
+
+  public static void main(String args[])
+  {
+    int n;
+
+    for(int i=0; i < 10; i++) {
+      n = getnum();
+
+      assert n > 0; // spowoduje zg³oszenie wyj¹tku dla n równego 0
+
+      System.out.println("n wynosi " + n);
+    }
+  }
+}
+
+Listing 18.
+// Bardzo z³y sposób stosowania asercji!!!
+class AssertDemo {
+  // ustalenie wartoœci pocz¹tkowej
+  static int val = 3;
+
+  // zwrócenie liczby ca³kowitej
+  static int getnum() {
+    return val--;
+  }
+
+  public static void main(String args[])
+  {
+    int n = 0;
+
+    for(int i=0; i < 10; i++) {
+
+      assert (n = getnum()) > 0; // To na pewno nie jest dobry pomys³!
+
+      System.out.println("n wynosi " + n);
+    }
+  }
+}
+
+Listing 19.
+// Obliczenie przeciwprostok¹tnej trójk¹ta prostok¹tnego.
+class Hypot {
+  public static void main(String args[]) {
+    double side1, side2;
+    double hypot;
+
+    side1 = 3.0;
+    side2 = 4.0;
+
+    // Zauwa¿, ¿e metody sqrt() i pow() trzeba poprzedzaæ
+    // nazw¹ klasy, w której siê znajduj¹ — Math.
+    hypot = Math.sqrt(Math.pow(side1, 2) +
+                      Math.pow(side2, 2));
+
+    System.out.println("Dla przyprostok¹tnych " +
+                       side1 + " i " + side2 +
+                       " przeciwprostok¹tna wynosi " +
+                       hypot);
+  }
+}
+
+Listing 20.
+// U¿ycie importu statycznego do przeniesienia
+// metod sqrt() i pow() do aktualnej przestrzeni nazw.
+import static java.lang.Math.sqrt;
+import static java.lang.Math.pow;
+// Obliczenie przeciwprostok¹tnej trójk¹ta prostok¹tnego.
+class Hypot {
+  public static void main(String args[]) {
+    double side1, side2;
+    double hypot;
+
+    side1 = 3.0;
+    side2 = 4.0;
+
+    // Tutaj wywo³añ sqrt() i pow() nie trzeba 
+    // ju¿ poprzedzaæ nazw¹ klasy.
+    hypot = sqrt(pow(side1, 2) + pow(side2, 2));
+
+    System.out.println("Dla przyprostok¹tnych " +
+                       side1 + " i " + side2 +
+                       " przeciwprostok¹tna wynosi " +
+                       hypot);
+  }
+}
+
+Listing 21.
+class MyClass {
+  int a;
+  int b;
+
+  // inicjalizuje sk³adowe a oraz b
+  MyClass(int i, int j) {
+    a = i;
+    b = j;
+  }
+
+  // inicjalizuje sk³adowe a oraz b przy u¿yciu tej samej wartoœci
+  MyClass(int i) {
+    a = i;
+    b = i;
+  }
+
+  // przypisuje sk³adowym a oraz b domyœln¹ wartoœæ 0
+  MyClass( ) {
+    a = 0;
+    b = 0;
+  }
+}
+
+Listing 22.
+class MyClass {
+  int a;
+  int b;
+
+  // inicjalizuje sk³adowe a oraz b
+  MyClass(int i, int j) {
+    a = i;
+    b = j;
+  }
+
+  // inicjalizuje sk³adowe a oraz b przy u¿yciu tej samej wartoœci
+  MyClass(int i) {
+    this(i, i); // wywo³uje MyClass(i, i)
+  }
+
+  // przypisuje sk³adowym a oraz b domyœln¹ wartoœæ 0
+  MyClass( ) {
+    this(0); // wywo³uje MyClass(0)
+  }
+}
+

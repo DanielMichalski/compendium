@@ -1,0 +1,92 @@
+Listing 1.
+/*
+   To jest przyk³adowy program w jêzyku Java.
+   Nadaj plikowi nazwê "Example.java".
+*/
+class Example {
+  // Program rozpoczyna siê od wywo³ania metody main().
+  public static void main(String args[]) {
+    System.out.println("To jest przyk³adowy program w jêzyku Java.");
+  }
+}
+
+Listing 2.
+/*
+   Kolejny prosty program.
+   Nadaj plikowi nazwê "Example2.java".
+*/
+class Example2 {
+  public static void main(String args[]) {
+    int num; // deklaracja zmiennej o nazwie num
+
+    num = 100; // przypisanie zmiennej num wartoœci 100
+
+    System.out.println("Wartoœæ num wynosi " + num);
+
+    num = num * 2;
+
+    System.out.print("Wartoœæ 2 * num wynosi ");
+    System.out.println(num);
+  }
+}
+
+Listing 3.
+/*
+  Przyk³ad u¿ycia wyra¿enia if.
+  Nadaj plikowi nazwê "IfSample.java".
+*/
+class IfSample {
+  public static void main(String args[]) {
+    int x, y;
+
+    x = 10;
+    y = 20;
+
+    if(x < y) System.out.println("x jest mniejsze od y");
+
+    x = x * 2;
+    if(x == y) System.out.println("teraz x jest równe y");
+
+    x = x * 2;
+    if(x > y) System.out.println("teraz x jest wiêksze od y");
+
+    // poni¿sze wywo³anie metody println() nie zostanie wykonane
+    if(x == y) System.out.println("tego nie zobaczysz");
+  }
+}
+
+Listing 4.
+/*
+  Ilustracja u¿ycia pêtli for.
+  Nadaj plikowi nazwê "ForTest.java".
+*/
+class ForTest {
+  public static void main(String args[]) {
+    int x;
+
+    for(x = 0; x<10; x = x+1)
+      System.out.println("Wartoœæ x wynosi " + x);
+  }
+}
+
+Listing 5.
+/*
+  Przyk³ad wykorzystania bloku kodu.
+  Nadaj plikowi nazwê "BlockTest.java"
+*/
+class BlockTest {
+  public static void main(String args[]) {
+    int x, y;
+
+    y = 20;
+
+    // wyra¿eniem wykonywanym przez pêtlê jest blok kodu
+    for(x = 0; x<10; x++) {
+      System.out.println("Wartoœæ x wynosi " + x);
+      System.out.println("Wartoœæ y wynosi " + y);
+      y = y - 2;
+    }
+  }
+}
+
+

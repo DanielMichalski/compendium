@@ -1,0 +1,973 @@
+Listing 1.
+// Prosty przyk³ad wykorzystania semafora.
+
+import java.util.concurrent.*;
+
+class SemDemo 
+
+   public static void main(String args[]) {
+      Semaphore sem = new Semaphore(1);
+
+      new IncThread(sem, "A");
+      new DecThread(sem, "B");
+
+   }
+}
+
+// Zasoby udostêpnione.
+class Shared {
+   static int count = 0;
+}
+
+// W¹tek, którego uruchomienie powoduje zwiêkszenie wartoœci przechowywanej w liczniku.
+class IncThread  implements Runnable {
+   String name;
+   Semaphore sem;
+
+   IncThread(Semaphore s, String n) {
+      sem = s;
+      name = n;
+      new Thread(this).start();
+   }
+
+   public void run() {
+      System.out.println("Uruchamiam " + name);
+
+      try {
+         // Najpierw musimy uzyskaæ pozwolenie.
+         System.out.println(name + " czeka na pozwolenie.");
+         sem.acquire();
+         System.out.println(name + " uzyska³ pozwolenie.");
+         // Teraz kolej na dostêp do zasobów udostêpnionych.
+         for(int i=0; i < 5; i++) {
+            Shared.count++;
+            System.out.println(name +  ": " + Shared.count);
+
+            // Teraz, jeœli to mo¿liwe, pozwalamy na zmianê kontekstu.
+            Thread.sleep(10);
+         }
+      } catch (InterruptedException exc) {
+         System.out.println(exc);
+      }
+
+      // Zwalniamy pozwolenie.
+      System.out.println(name + " zwalnia pozwolenie na dostêp.");
+      sem.release();
+   }
+}
+
+// W¹tek, którego uruchomienie powoduje zmniejszenie wartoœci przechowywanej w liczniku.
+class DecThread implements Runnable {
+   String name;
+   Semaphore sem;
+   
+   DecThread(Semaphore s, String n) {
+      sem = s;
+      name = n;
+      new Thread(this).start();
+   }
+   
+   public void run() {
+
+      System.out.println("Uruchamiam " + name);
+
+      try {
+          // Najpierw musimy uzyskaæ pozwolenie.
+         System.out.println(name + " czeka na pozwolenie.");
+         sem.acquire();
+         System.out.println(name + " uzyska³ pozwolenie.");
+
+         // Teraz kolej na dostêp do zasobów udostêpnionych.
+         for(int i=0; i < 5; i++) {
+            Shared.count--;
+            System.out.println(name +  ": " + Shared.count);
+
+            // Teraz, jeœli to mo¿liwe, pozwalamy na zmianê kontekstu.
+            Thread.sleep(10);
+         }
+      } catch (InterruptedException exc) {
+         System.out.println(exc);
+      }
+
+      // Zwalniamy pozwolenie.
+      System.out.println(name + " zwalnia pozwolenie na dostêp.");
+      sem.release();
+   }
+}
+
+Listing 2.
+// Implementacja producenta i konsumenta
+// wykorzystuj¹ca semafory do kontrolowania synchronizacji.
+
+import java.util.concurrent.Semaphore;
+
+class Q {
+   int n;
+
+   // Zaczynamy od wy³¹czenia semafora konsumenta.
+   static Semaphore SemCon = new Semaphore(0);
+   static Semaphore SemProd = new Semaphore(1);
+
+   void get () {
+      try {
+         semCon.acquire();
+      } catch(InterruptedException e) {
+         System.out.println("Wyj¹tek InterruptedException z³apany");
+      }
+
+      System.out.println("Pobrane: " + n);
+      semProd.release();
+   }
+
+   void put(int n) {
+      try{
+         semProd.acquire();
+      } catch(InterruptedException e) {
+         System.out.println("Wyj¹tek InterruptedException z³apany");
+      }
+
+      this.n = n;
+      System.out.println("W³o¿one: " + n);
+      semCon.release();
+   }
+}
+
+class Producer implements Runnable {
+   Q q;
+   
+   Producer(Q q) {
+      this.q = q;
+      new Thread(this, "Producer").start();
+   }
+  
+   public void run() {
+      for(int i=0; i<20; i++) q.put(i);
+   }
+}
+
+class Consumer implements Runnable {
+    Q q;
+
+   Consumer(Q q) {
+      this.q = q;
+      new Thread(this, "Consumer").start();
+   }
+
+   public void run() {
+      for(int i=0; i<20; i++) q.get();
+   }
+}
+
+class ProdCon {
+   public static void main(String args[]) {
+      Q q = new Q();
+      new Consumer(q);
+      new Producer(q);
+   }
+}
+
+Listing 3.
+// Przyk³ad zastosowania klasy CountDownLatch.
+
+import java.util.concurrent.CountDownLatch;
+
+class CDLDemo {
+   public static void main(String args[]) {
+      CountDownLatch cdl = new CountDownLatch(5);
+
+       System.out.println("Start");
+
+      new MyThread(cdl);
+      try {
+         cdl.await();
+      } catch (InterruptedException exc) {
+         System.out.println(exc);
+      }
+
+      System.out.println("Gotowe");
+   }
+}
+
+class MyThread implements Runnable {
+   CountDownLatch latch;
+
+   MyThread(CountDownLatch c) {
+      latch = c;
+      new Thread(this).start();
+   }
+
+   public void run() {
+      for(int i = 0; i<5; i++) {
+         System.out.println(i);
+         latch.countDown(); // zmniejszenie wartoœci licznika
+      }
+   }
+}
+
+Listing 4.
+// Przyk³ad zastosowania klasy CyclicBarrier.
+
+import java.util.concurrent.*;
+
+class BarDemo {
+   public static void main(String args[]) {
+      CyclicBarrier cb = new CyclicBarrier(3, new BarAction() );
+      System.out.println("Start");
+
+      new MyThread(cb, "A");
+      new MyThread(cb, "B");
+      new MyThread(cb, "C");
+
+   }
+}
+
+// W¹tek wykorzystuj¹cy klasê CyclicBarrier
+class MyThread implements Runnable {
+   CyclicBarrier cbar;
+   String name;
+
+   MyThread(CyclicBarrier c, String n) {
+      cbar = c;
+      name = n;
+      new Thread(this).start();
+   }
+
+   public void run() {
+
+      System.out.println(name);
+
+      try {
+         cbar.await();
+      } catch (BrokenBarrierException exc) {
+         System.out.println(exc);
+      } catch (InterruptedException exc) {
+         System.out.println(exc);
+      }
+   }
+}
+
+// Obiekt bêd¹cy egzemplarzem tej klasy zostaje wywo³any
+// po osi¹gniêciu bariery.
+class BarAction implements Runnable {
+   public void run() {
+      System.out.println("Bariera osi¹gniêta!");
+   }
+}
+
+Listing 5.
+// Przyk³ad wykorzystania klasy Exchanger.
+
+import java.util.concurrent.Exchanger;
+
+class ExgrDemo {
+   public static void main(String args[]) {
+      Exchanger<String> exgr = new Exchanger<String>();
+
+      new UseString(exgr);
+      new MakeString(exgr);
+   }
+}
+
+// W¹tek, który tworzy ci¹g znaków.
+class MakeString implements Runnable {
+   Exchanger<String>ex;
+   String str;
+
+   MakeString(Exchanger<String> c) {
+      ex = c;
+      str = new String();
+
+      new Thread(this).start();
+   }
+
+   public void run() {
+      char ch = 'A';
+
+      for(int i=0; i<3; i++) {
+
+         // Wype³nianie bufora
+         for(int j = 0; j<5; j++)
+            str += (char) ch++;
+
+         try {
+            // Wymiana pe³nego bufora na pusty.
+            str = ex.exchange(str);
+         } catch(InterruptedException exc) {
+            System.out.println(exc);
+         }
+      }
+   }
+}
+
+// W¹tek, który wykorzystuje ci¹g znaków.
+class UsesString implements Runnable {
+   Exchanger<String> ex;
+   String str;
+
+   UsesString(Exchanger<String> c) {
+      ex = c;
+      new Thread(this).start();
+   }
+
+   public void run() {
+
+      for(int i=0; i<3; i++) {
+         try {
+            // Zamiana pustego bufora na pe³ny.
+            str = ex.exchange(new String());
+            System.out.println("Otrzyma³em: " + str);
+         } catch(InterruptedException exc) {
+            System.out.println(exc);
+         }
+      }
+   }
+}
+
+Listing 6.
+// Przyk³ad u¿ycia klasy Phaser.
+
+import java.util.concurrent.*;
+
+class PhaserDemo {
+  public static void main(String args[]) {
+    Phaser phsr = new Phaser(1);
+    int curPhase;
+
+    System.out.println("Start");
+
+    new MyThread(phsr, "A");
+    new MyThread(phsr, "B");
+    new MyThread(phsr, "C");
+
+    // Czeka, a¿ wszystkie w¹tki zakoñcz¹ pierwsz¹ fazê.
+    curPhase = phsr.getPhase();
+    phsr.arriveAndAwaitAdvance();
+    System.out.println("Faza nr " + curPhase + " zakoñczona");
+
+    // Czeka, a¿ wszystkie w¹tki zakoñcz¹ drug¹ fazê.
+    curPhase = phsr.getPhase();
+    phsr.arriveAndAwaitAdvance();
+    System.out.println("Faza nr " + curPhase + " zakoñczona");
+
+    curPhase = phsr.getPhase();
+    phsr.arriveAndAwaitAdvance();
+    System.out.println("Faza nr " + curPhase + " zakoñczona");
+
+    // Wyrejestrowuje g³ówny w¹tek.
+    phsr.arriveAndDeregister();
+
+    if(phsr.isTerminated())
+      System.out.println("Obiekt klasy Phaser zakoñczy³ dzia³anie");
+  }
+}
+
+// W¹tek wykonywania u¿ywaj¹cy obiektu klasy Phaser.
+class MyThread implements Runnable {
+  Phaser phsr;
+  String name;
+
+  MyThread(Phaser p, String n) {
+    phsr = p;
+    name = n;
+    phsr.register();
+    new Thread(this).start();
+  }
+
+  public void run() {
+
+    System.out.println("W¹tek " + name + " rozpocz¹³ fazê nr 1");
+    phsr.arriveAndAwaitAdvance(); // Wys³anie sygna³u.
+
+    // Chwilowe wstrzymanie dzia³ania, aby unikn¹æ zniekszta³cenia danych wynikowych.
+    // Ta czêœæ ma na celu tylko ilustracjê dzia³ania.
+    // Podobne rozwi¹zania nie s¹ wymagane do prawid³owego dzia³ania klasy Phaser.
+    try {
+      Thread.sleep(10);
+    } catch(InterruptedException e) {
+      System.out.println(e);
+    }
+
+    System.out.println("W¹tek " + name + " rozpocz¹³ fazê nr 2");
+    phsr.arriveAndAwaitAdvance(); // Wys³anie sygna³u.
+
+    // Chwilowe wstrzymanie dzia³ania, aby unikn¹æ zniekszta³cenia danych wynikowych.
+    // Ta czêœæ ma na celu tylko ilustracjê dzia³ania.
+    // Podobne rozwi¹zania nie s¹ wymagane do prawid³owego dzia³ania klasy Phaser.
+    try {
+      Thread.sleep(10);
+    } catch(InterruptedException e) {
+      System.out.println(e);
+    }
+
+    System.out.println("W¹tek " + name + " rozpocz¹³ fazê nr 3");
+    phsr.arriveAndDeregister(); // Wys³anie sygna³u i wyrejestrowanie.
+  }
+}
+
+Listing 7.
+// Rozszerza klasê Phaser i przykrywa metodê onAdvance(), tak aby
+// by³a wykonywana okreœlona liczba faz.
+
+import java.util.concurrent.*;
+
+// Rozszerza klasê Phaser, aby umo¿liwiæ wykonanie
+// okreœlonej liczby faz.
+class MyPhaser extends Phaser {
+  int numPhases;
+
+  MyPhaser(int parties, int phaseCount) {
+    super(parties);
+    numPhases = phaseCount - 1;
+  }
+
+  // Przykrywa onAdvance(), tak aby obiekt wykonywa³
+  // okreœlon¹ liczbê faz.
+  protected boolean onAdvance(int p, int regParties) {
+    // To wyra¿enie println() ma tylko ilustrowaæ dzia³anie programu.
+    // W normalnych okolicznoœciach metoda onAdvance() nie wyœwietla danych wynikowych.
+    System.out.println("Faza nr " + p + " zakoñczona.\n");
+
+    // Jeœli wszystkie fazy zosta³y zakoñczone, zwraca wartoœæ true.
+    if(p == numPhases || regParties == 0) return true;
+
+    // W przeciwnym razie zwraca wartoœæ false.
+    return false;
+  }
+}
+
+class PhaserDemo2 {
+  public static void main(String args[]) {
+
+    MyPhaser phsr = new MyPhaser(1, 4);
+
+    System.out.println("Start\n");
+
+    new MyThread(phsr, "A");
+    new MyThread(phsr, "B");
+    new MyThread(phsr, "C");
+
+    // Czeka na zakoñczenie okreœlonej liczby faz.
+    while(!phsr.isTerminated()) {
+      phsr.arriveAndAwaitAdvance();
+    }
+
+    System.out.println("Obiekt klasy Phaser zakoñczy³ dzia³anie");
+  }
+}
+
+// W¹tek wykonywania u¿ywaj¹cy obiektu klasy Phaser.
+class MyThread implements Runnable {
+  Phaser phsr;
+  String name;
+
+  MyThread(Phaser p, String n) {
+    phsr = p;
+    name = n;
+    phsr.register();
+    new Thread(this).start();
+  }
+
+  public void run() {
+    while(!phsr.isTerminated()) {
+      System.out.println("W¹tek " + name + " rozpocz¹³ fazê nr " +
+                         phsr.getPhase());
+
+      phsr.arriveAndAwaitAdvance();
+
+      // Chwilowe wstrzymanie dzia³ania, aby unikn¹æ zniekszta³cenia danych wynikowych.
+      // Ta czêœæ ma na celu tylko ilustracjê dzia³ania.
+      // Podobne rozwi¹zania nie s¹ wymagane do prawid³owego dzia³ania klasy Phaser.
+      try {
+        Thread.sleep(10);
+      } catch(InterruptedException e) {
+        System.out.println(e);
+      }
+    }
+  }
+}
+
+Listing 8.
+// Prosty przyk³ad wykorzystania egzekutora.
+
+import java.util.concurrent.*;
+
+class SmpExec {
+   public static void main(String args[]) {
+      CountDownLatch cd1 = new CountDownLatch(5);
+      CountDownLatch cd12 = new CountDownLatch(5);
+      CountDownLatch cd13 = new CountDownLatch(5);
+      CountDownLatch cd14 = new CountDownLatch(5);
+      ExecutorService es = Executors.newFixedThreadPool(2);
+
+      System.out.println("Start");
+ 
+      // Uruchamianie w¹tków.
+      es.execute(new MyThread(cd1, "A"));
+      es.execute(new MyThread(cd12, "B"));
+      es.execute(new MyThread(cd13, "C"));
+      es.execute(new MyThread(cd14, "D"));
+
+      try {
+         cd1.await()
+         cd12.await()
+         cd13.await()
+         cd14.await()
+      } catch (InterruptedException exc) {
+         System.out.println(exc);
+      }
+
+      es.shutdown();
+      System.out.println("Koniec");
+   }
+}
+
+class MyThread implements Runnable {
+  String name;
+   CountDownLatch latch;
+
+   MyThread(CountDownLatch c, String n) {
+      latch = c;
+      name = n;
+
+      new Thread(this);
+   }
+  
+   public void run() {
+ 
+      for(int i = 0; i < 5; i++) {
+         System.out.println(name + ": " + i);
+         latch.countDown();
+      }
+   }
+}
+
+Listing 9.
+// Przyk³ad wykorzystania interfejsu Callable.
+
+import java.util.concurrent.*;
+
+class CallableDemo {
+   public static void main(String args[]) {
+      ExecutorService es = Executors.newFixedThreadPool(3);
+      Future<Integer> f;
+      Future<Double> f2;
+      Future<Integer> f3;
+
+      System.out.println("Start");
+
+      f = es.submit(new Sum(10));
+      f2 = es.submit(new Hypot(3, 4));
+      f3 = es.submit(new Factorial(5));
+
+      try {
+         System.out.println(f.get());
+         System.out.println(f2.get());
+         System.out.println(f3.get());
+      } catch (InterruptedException exc) {
+        System.out.println(exc);
+      }
+      catch (ExecutionException exc) {
+         System.out.println(exc);
+      }
+
+      es.shutdown();
+      System.out.println("Koniec");
+   }
+}
+
+// Poni¿ej znajduj¹ siê trzy w¹tki wykonuj¹ce obliczenia.
+
+class Sum implements Callable<Integer> {
+   int stop;
+
+   Sum(int v) { stop = v; }
+
+   public Integer call() {
+      int sum = 0;
+      for(int i = 1; i <= stop; i++) {
+         sum += i;
+      }
+      return sum;
+   }
+}
+
+class Hypot implements Callable<Double> {
+   double side1, side2;
+
+   Hypot(double s1, double s2) {
+      side1 = s1;
+      side2 = s2;
+   }
+
+   public Double call() {
+      return Math.sqrt((side1*side1) + (side2*side2));
+   }
+}
+
+class Factorial implements Callable<Integer> {
+   int stop;
+ 
+   Factorial(int v) { stop = v; }
+
+   public Integer call() {
+      int fact = 1;
+      for(int i = 2; i <= stop; i++) {
+         fact += i;
+      }
+      return fact;
+   }
+}
+
+Listing 10.
+// Przyk³ad prostej blokady.
+
+import java.util.concurrent.locks.*;
+
+class LockDemo {
+
+   public static void main(String args[]) {
+      ReentrantLock lock = new ReentrantLock();
+
+      new LockThread(lock, "A");
+      new LockThread(lock, "B");
+
+   }
+}
+
+// Zasób udostêpniony.
+class Shared {
+   static int count = 0;
+}
+
+// W¹tek zwiêkszaj¹cy wartoœæ przechowywan¹ w zmiennej count.
+class LockThread implements Runnable {
+   String name;
+   ReentrantLock lock;
+
+   LockThread(ReentrantLock lk, String n) {
+      lock = lk;
+      name = n;
+      new Thread(this).start();
+   }
+   
+   public void run() {
+   
+      System.out.println("Uruchamiam " + name);
+
+      try {
+         // Najpierw blokujemy dostêp do zmiennej count.
+         System.out.println(name + " czeka na zablokowanie zmiennej count.");
+         lock.lock();
+         System.out.println(name + " zablokowa³ zmienn¹ count.");
+
+         Shared.count++;
+         System.out.println(name + ": " + Shared.count);
+
+         // Teraz pozwalamy na zmianê kontekstu (jeœli jest ona mo¿liwa).
+         System.out.println(name + " zosta³ zatrzymany.");
+         Thread.sleep(1000);
+      } catch (InterrputedException exc) {
+         System.out.println(exc);
+      } finally {
+         // Odblokowywanie
+         System.out.println(name + " odblokowuje zmienn¹ count.");
+         lock.unlock();
+      }
+   }
+}
+
+Listing 11.
+// Prosty przyk³ad operacji atomowej.
+
+import java.util.concurrent.atomic.*;
+
+class AtomicDemo {
+
+   public static void main(String args[]) {
+      new AtomThread("A");
+      new AtomThread("B");
+      new AtomThread("C");
+   }
+}
+
+class Shared {
+   static AtomicInteger ai = new AtomicInteger(0);
+}
+
+// W¹tek powoduj¹cy zwiêkszenie wartoœci zmiennej count.
+class AtomicThread implements Runnable {
+   String name;
+
+   AtomThread(String n) {
+      name = n;
+      new Thread(this).start();
+   }
+
+public void run() {
+   
+   System.out.println("Uruchamiam " + name);
+
+   for(int i=1; i <= 3; i++) 
+      System.out.println(name + "uzyska³ wartoœæ: " + 
+            Shared.ai.getAndSet(i));
+   }
+}
+
+Listing 12.
+// Prosty przyk³ad strategii dziel i zwyciê¿aj.
+// W tym przypadku zostanie u¿yta klasa RecursiveAction.
+import java.util.concurrent.*;
+import java.util.*;
+
+// Klasa ForkJoinTask (za poœrednictwem klasy RecursiveAction) przekszta³caj¹ca
+// elementy tablicy liczb typu double na ich pierwiastki kwadratowe.
+
+class SqrtTransform extends RecursiveAction {
+  // Na potrzeby tego przyk³adu u¿yto przypadkowo wybranej wartoœci progu równej 1000.
+  // W rzeczywistym kodzie nale¿a³oby wyznaczyæ optymaln¹ wartoœæ,
+  // stosuj¹c technikê profilowania i przeprowadzaj¹c odpowiednie eksperymenty.
+
+  final int seqThreshold = 1000;
+
+  // Tablica do przetworzenia.
+  double[] data;
+
+  // Okreœla fragment danych do przetworzenia.
+  int start, end;
+
+  SqrtTransform(double[] vals, int s, int e ) {
+    data = vals;
+    start = s;
+    end = e;
+  }
+
+  // W tej metodzie bêd¹ wykonywane równoleg³e obliczenia.
+  protected void compute() {
+
+    // Jeœli liczba elementów jest mniejsza od progu przetwarzania sekwencyjnego,
+    // przetwarza dane sekwencyjnie.
+    if((end - start) < seqThreshold) {
+      // Przekszta³ca ka¿dy element, wyznaczaj¹c jego pierwiastek kwadratowy.
+      for(int i = start; i < end; i++) {
+        data[i] = Math.sqrt(data[i]);
+      }
+    }
+    else {
+      // W przeciwnym razie kontynuuje dzielenie danych na mniejsze fragmenty.
+      // Wyznacza punkt œrodkowy.
+      int middle = (start + end) / 2;
+
+      // Wywo³uje nowe zadania dla podzielonych danych.
+      invokeAll(new SqrtTransform(data, start, middle),
+                new SqrtTransform(data, middle, end));
+    }
+  }
+}
+
+// Demonstruje równoleg³e wykonywanie zadañ.
+class ForkJoinDemo {
+  public static void main(String args[]) {
+    // Tworzy pulê zadañ.
+    ForkJoinPool fjp = new ForkJoinPool();
+
+    double[] nums = new double[100000];
+
+    // Nadaje wartoœci poszczególnym elementom tablicy.
+    for(int i = 0; i < nums.length; i++)
+      nums[i] = (double) i;
+
+    System.out.println("Fragment oryginalnej sekwencji:");
+
+    for(int i=0; i < 10; i++)
+      System.out.print(nums[i] + " ");
+    System.out.println("\n");
+
+    SqrtTransform task = new SqrtTransform(nums, 0, nums.length);
+
+    // Uruchamia g³ówne zadanie typu ForkJoinTask.
+    fjp.invoke(task);
+
+    System.out.println("Fragment przekszta³conej sekwencji" +
+                       " (do czterech miejsc po przecinku):");
+    for(int i=0; i < 10; i++)
+      System.out.format("%.4f ", nums[i]);
+    System.out.println();
+  }
+}
+
+Listing 13.
+// Prosty program umo¿liwiaj¹cy eksperymenty i obserwacjê skutków
+// zmian progu i poziomu równoleg³oœci obiektu typu ForkJoinTask.
+import java.util.concurrent.*;
+
+// Klasa ForkJoinTask (za poœrednictwem klasy RecursiveAction) przekszta³caj¹ca
+// elementy tablicy liczb typu double.
+class Transform extends RecursiveAction {
+
+  // Próg przetwarzania sekwencyjnego ustawiany przez konstruktor.
+  int seqThreshold;
+
+  // Tablica do przetworzenia.
+  double[] data;
+
+  // Okreœla fragment danych do przetworzenia.
+  int start, end;
+
+  Transform(double[] vals, int s, int e, int t ) {
+    data = vals;
+    start = s;
+    end = e;
+    seqThreshold = t;
+  }
+
+  // W tej metodzie bêd¹ wykonywane równoleg³e obliczenia.
+  protected void compute() {
+
+    // Jeœli liczba elementów jest mniejsza od progu przetwarzania sekwencyjnego,
+    // przetwarza dane sekwencyjnie.
+    if((end - start) < seqThreshold) {
+      // Poni¿szy kod przypisuje elementowi z parzystym indeksem
+      // pierwiastek kwadratowy oryginalnej wartoœci. Elementowi z nieparzystym indeksem
+      // jest przypisywany pierwiastek szeœcienny. Kod zaprojektowano z myœl¹
+      // o zajmowaniu czasu procesora, tak aby mo¿na by³o ³atwiej obserwowaæ
+      // efekty przetwarzania wspó³bie¿nego.
+      for(int i = start; i < end; i++) {
+        if((data[i] % 2) == 0)
+          data[i] = Math.sqrt(data[i]);
+        else
+          data[i] = Math.cbrt(data[i]);
+      }
+    }
+    else {
+      // W przeciwnym razie kontynuuje dzielenie danych na mniejsze fragmenty.
+
+      // Wyznacza punkt œrodkowy.
+      int middle = (start + end) / 2;
+
+      // Wywo³uje nowe zadania dla podzielonych danych.
+      invokeAll(new Transform(data, start, middle, seqThreshold),
+                new Transform(data, middle, end, seqThreshold));
+    }
+  }
+}
+
+// Demonstruje równoleg³e wykonywanie zadañ.
+class FJExperiment {
+
+  public static void main(String args[]) {
+    int pLevel;
+    int threshold;
+
+    if(args.length != 2) {
+      System.out.println("Sposób u¿ycia: FJExperiment poziom-równoleg³oœci próg ");
+      return;
+    }
+
+    pLevel = Integer.parseInt(args[0]);
+    threshold = Integer.parseInt(args[1]);
+
+    // Poni¿sze zmienne s³u¿¹ do mierzenia czasu wykonywania zadania.
+    long beginT, endT;
+
+    // Tworzy pulê zadañ. Warto zwróciæ uwagê na ustawiony poziom równoleg³oœci.
+    ForkJoinPool fjp = new ForkJoinPool(pLevel);
+
+    double[] nums = new double[1000000];
+
+    for(int i = 0; i < nums.length; i++)
+      nums[i] = (double) i;
+
+    Transform task = new Transform(nums, 0, nums.length, threshold);
+
+    // Rozpoczyna pomiar czasu.
+    beginT = System.nanoTime();
+
+    // Rozpoczyna g³ówne zadanie typu ForkJoinTask.
+    fjp.invoke(task);
+
+    // Koniec pomiaru czasu.
+    endT = System.nanoTime();
+
+    System.out.println("Poziom równoleg³oœci: " + pLevel);
+    System.out.println("Próg przetwarzania sekwencyjnego: " + threshold);
+    System.out.println("Czas dzia³ania: " + (endT - beginT) + " ns");
+    System.out.println();
+  }
+}
+
+Listing 14.
+// Przyk³ad u¿ycia klasy RecursiveTask<V>.
+import java.util.concurrent.*;
+
+// Klasa rozszerzaj¹ca klasê RecursiveTask i obliczaj¹ca sumê elementów tablicy liczb typu double.
+class Sum extends RecursiveTask<Double> {
+
+  // Wartoœæ progu przetwarzania sekwencyjnego.
+  final int seqThresHold = 500;
+
+  // Tablica do przetworzenia.
+  double[] data;
+
+  // Okreœla fragment danych do przetworzenia.
+  int start, end;
+
+  Sum(double[] vals, int s, int e ) {
+    data = vals;
+    start = s;
+    end = e;
+  }
+
+  // Oblicza sumê elementów tablicy z³o¿onej z liczb typu double.
+  protected Double compute() {
+    double sum = 0;
+
+    // Jeœli liczba elementów jest mniejsza od progu przetwarzania sekwencyjnego,
+    // przetwarza dane sekwencyjnie.
+    if((end - start) < seqThresHold) {
+      // Sumuje elementy.
+      for(int i = start; i < end; i++) sum += data[i];
+    }
+    else {
+      // W przeciwnym razie kontynuuje dzielenie danych na mniejsze fragmenty.
+      // Wyznacza punkt œrodkowy.
+      int middle = (start + end) / 2;
+
+      // Wywo³uje nowe zadania dla podzielonych danych.
+      Sum subTaskA = new Sum(data, start, middle);
+      Sum subTaskB = new Sum(data, middle, end);
+
+      // Rozpoczyna dwa podzadania za pomoc¹ metody fork().
+      subTaskA.fork();
+      subTaskB.fork();
+
+      // Czeka na zwrócenie sterowania przez podzadania i ³¹czy uzyskane wyniki.
+      sum = subTaskA.join() + subTaskB.join();
+    }
+    // Zwraca ³¹czn¹ sumê wartoœci.
+    return sum;
+  }
+}
+
+// Demonstruje równoleg³e wykonywanie zadañ.
+class RecurTaskDemo {
+  public static void main(String args[]) {
+    // Tworzy pulê zadañ.
+    ForkJoinPool fjp = new ForkJoinPool();
+
+    double[] nums = new double[5000];
+
+    // Inicjalizuje tablicê nums, stosuj¹c naprzemiennie
+    // wartoœci dodatnie i ujemne.
+    for(int i=0; i < nums.length; i++)
+      nums[i] = (double) (((i%2) == 0) ? i : -i) ;
+
+    Sum task = new Sum(nums, 0, nums.length);
+
+    // Uruchamia zadania typu ForkJoinTasks. £atwo zauwa¿yæ, ¿e tym razem
+    // metoda invoke() zwraca wynik.
+    double summation = fjp.invoke(task);
+
+    System.out.println("Suma: " + summation);
+  }
+}
+

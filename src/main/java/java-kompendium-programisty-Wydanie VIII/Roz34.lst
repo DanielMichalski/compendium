@@ -1,0 +1,591 @@
+Listing 1.
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+// Klasa pobiera plik z podanego adresu URL.
+class Download extends Observable implements Runnable {
+  // Maksymalny rozmiar bufora pobierania.
+  private static final int MAX_BUFFER_SIZE = 1024;
+
+  // Nazwy statusów.
+  public static final String STATUSES[] = {"Pobieranie",
+    "Pauza", "Ukoñczony", "Anulowany", "B³¹d"};
+
+  // Kody stanów.
+  public static final int DOWNLOADING = 0;
+  public static final int PAUSED = 1;
+  public static final int COMPLETE = 2;
+  public static final int CANCELLED = 3;
+  public static final int ERROR = 4;
+  private URL url; // adres URL
+  private int size; // rozmiar pliku w bajtach
+  private int downloaded; // liczba pobranych ju¿ bajtów
+  private int status; // aktualny status
+
+  // Konstruktor Download.
+  public Download(URL url) {
+    this.url = url;
+    size = -1;
+    downloaded = 0;
+    status = DOWNLOADING;
+
+    // Rozpoczêcie pobierania.
+    download();
+  }
+
+  // Pobranie adresu URL.
+  public String getUrl() {
+    return url.toString();
+  }
+
+  // Pobranie rozmiaru.
+  public int getSize() {
+    return size;
+  }
+
+  // Pobranie postêpu.
+  public float getProgress() {
+    return ((float) downloaded / size) * 100;
+  }
+
+  // Pobranie statusu.
+  public int getStatus() {
+    return status;
+  }
+
+  // Wstrzymanie.
+  public void pause() {
+    status = PAUSED;
+    stateChanged();
+  }
+
+  // Wznowienie.
+  public void resume() {
+    status = DOWNLOADING;
+    stateChanged();
+    download();
+  }
+
+  // Anulowanie.
+  public void cancel() {
+    status = CANCELLED;
+    stateChanged();
+  }
+
+  // Oznaczenie pobierania jako b³êdnego.
+  private void error() {
+    status = ERROR;
+    stateChanged();
+  }
+
+  // Rozpoczêcie lub wznowienie pobierania.
+  private void download() {
+    Thread thread = new Thread(this);
+    thread.start();
+  }
+
+  // Pobranie nazwy pliku z adresu URL.
+  private String getFileName(URL url) {
+    String fileName = url.getFile();
+    return fileName.substring(fileName.lastIndexOf('/') + 1);
+  }
+
+  // Pobieranie pliku.
+  public void run() {
+    RandomAccessFile file = null;
+    InputStream stream = null;
+
+    try {
+      // Otwarcie po³¹czenia URL.
+      HttpURLConnection connection =
+        (HttpURLConnection) url.openConnection();
+
+      // Okreœlenie czêœci pliku do pobierania.
+      connection.setRequestProperty("Range",
+        "bytes=" + downloaded + "-");
+
+      // Po³¹czenie z serwerem.
+      connection.connect();
+
+      // Upewnienie siê, i¿ kod odpowiedzi znajduje siê w zakresie 200.
+      if (connection.getResponseCode() / 100 != 2) {
+        error();
+      }
+
+      // Sprawdzenie poprawnoœci d³ugoœci.
+      int contentLength = connection.getContentLength();
+      if (contentLength < 1) {
+        error();
+      }
+
+      /* Ustawienie rozmiaru pobieranego pliku, jeœli
+         jeszcze tego nie zrobiono. */
+      if (size == -1) {
+        size = contentLength;
+        stateChanged();
+      }
+
+      // Otwarcie pliku i przejœcie na jego koniec.
+      file = new RandomAccessFile(getFileName(url), "rw");
+      file.seek(downloaded);
+
+      stream = connection.getInputStream();
+      while (status == DOWNLOADING) {
+        /* Rozmiar bufora w zale¿noœci od tego,
+           ile jeszcze pozosta³o do pobrania. */
+        byte buffer[];
+        if (size - downloaded > MAX_BUFFER_SIZE) {
+          buffer = new byte[MAX_BUFFER_SIZE];
+        } else {
+          buffer = new byte[size - downloaded];
+        }
+
+        // Odczyt z serwera do bufora.
+        int read = stream.read(buffer);
+        if (read == -1)
+          break;
+
+        // Zapis bufora do pliku.
+        file.write(buffer, 0, read);
+        downloaded += read;
+        stateChanged();
+      }
+
+      /* Zmiana statusu na ukoñczony, gdy pobrano ca³y plik. */
+      if (status == DOWNLOADING) {
+        status = COMPLETE;
+        stateChanged();
+      }
+    } catch (Exception e) {
+      error();
+    } finally {
+      // Zamkniêcie pliku.
+      if (file != null) {
+        try {
+          file.close();
+        } catch (Exception e) {}
+      }
+
+      // Zamkniêcie po³¹czenia z serwerem.
+      if (stream != null) {
+        try {
+          stream.close();
+        } catch (Exception e) {}
+      }
+    }
+  }
+
+  // Poinformowanie obserwatorów o zmianie statusu pobierania.
+  private void stateChanged() {
+    setChanged();
+    notifyObservers();
+  }
+}
+
+Listing 2.
+import java.awt.*;
+import java.awt.event.*;
+import java.net.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
+// Mened¿er pobierania.
+public class DownloadManager extends JFrame
+  implements Observer
+{
+  // Dodanie pola tekstowego pobierania.
+  private JTextField addTextField;
+
+  // Model danych tabeli pobierania.
+  private DownloadsTableModel tableModel;
+
+  // Tabela z pobraniami.
+  private JTable table;
+
+  // Przyciski zarz¹dzania poszczególnymi pobraniami.
+  private JButton pauseButton, resumeButton;
+  private JButton cancelButton, clearButton;
+
+  // Aktualnie zaznaczone pobieranie.
+  private Download selectedDownload;
+
+  // Informacja o tym, czy usuniêto zaznaczenie z elementu tabeli.
+  private boolean clearing;
+
+  // Konstruktor DownloadManager.
+  public DownloadManager()
+  {
+    // Tytu³ aplikacji.
+    setTitle("Mened¿er pobierania");
+
+    // Ustaw rozmiar okna.
+    setSize(640, 480);
+
+    // Obs³uga zdarzenia zamkniêcia okna.
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        actionExit();
+      }
+    });
+
+    // Ustawienie menu.
+    JMenuBar menuBar = new JMenuBar();
+    JMenu fileMenu = new JMenu("Plik");
+    fileMenu.setMnemonic(KeyEvent.VK_P);
+    JMenuItem fileExitMenuItem = new JMenuItem("Wyjœcie",
+      KeyEvent.VK_W);
+    fileExitMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        actionExit();
+      }
+    });
+    fileMenu.add(fileExitMenuItem);
+    menuBar.add(fileMenu);
+    setJMenuBar(menuBar);
+
+    // Wykonanie panelu pobierania.
+    JPanel addPanel = new JPanel();
+    addTextField = new JTextField(30);
+    addPanel.add(addTextField);
+    JButton addButton = new JButton("Dodaj adres");
+    addButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        actionAdd();
+      }
+    });
+    addPanel.add(addButton);
+
+    // Tabela pobrañ.
+    tableModel = new DownloadsTableModel();
+    table = new JTable(tableModel);
+    table.getSelectionModel().addListSelectionListener(new
+      ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        tableSelectionChanged();
+      }
+    });
+    // Mo¿liwoœæ zaznaczenia w danym momencie tylko jednego wiersza.
+    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+    // Ustawienie ProgressBar jako renderera kolumny postêpu.
+    ProgressRenderer renderer = new ProgressRenderer(0, 100);
+    renderer.setStringPainted(true); // pokazanie tekstu postêpu
+    table.setDefaultRenderer(JProgressBar.class, renderer);
+
+    // Ustawienie takiej wysokoœci wiersza, aby zmieœciæ JProgressBar.
+    table.setRowHeight(
+      (int) renderer.getPreferredSize().getHeight());
+
+    // Ustawienie panelu Pliki.
+    JPanel downloadsPanel = new JPanel();
+    downloadsPanel.setBorder(
+      BorderFactory.createTitledBorder("Pliki"));
+    downloadsPanel.setLayout(new BorderLayout());
+    downloadsPanel.add(new JScrollPane(table),
+      BorderLayout.CENTER);
+
+    // Ustawienie panelu przycisków.
+    JPanel buttonsPanel = new JPanel();
+    pauseButton = new JButton("Zatrzymaj");
+    pauseButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        actionPause();
+      }
+    });
+    pauseButton.setEnabled(false);
+    buttonsPanel.add(pauseButton);
+    resumeButton = new JButton("Wznów");
+    resumeButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        actionResume();
+      }
+    });
+    resumeButton.setEnabled(false);
+    buttonsPanel.add(resumeButton);
+    cancelButton = new JButton("Anuluj");
+    cancelButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        actionCancel();
+      }
+    });
+    cancelButton.setEnabled(false);
+    buttonsPanel.add(cancelButton);
+    clearButton = new JButton("Wyczyœæ");
+    clearButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        actionClear();
+      }
+    });
+    clearButton.setEnabled(false);
+    buttonsPanel.add(clearButton);
+
+    // Dodanie paneli do wyœwietlania.
+    getContentPane().setLayout(new BorderLayout());
+    getContentPane().add(addPanel, BorderLayout.NORTH);
+    getContentPane().add(downloadsPanel, BorderLayout.CENTER);
+    getContentPane().add(buttonsPanel, BorderLayout.SOUTH);
+  }
+
+  // Wyjœcie z programu.
+  private void actionExit() {
+    System.exit(0);
+  }
+
+  // Dodanie nowego pliku.
+  private void actionAdd() {
+    URL verifiedUrl = verifyUrl(addTextField.getText());
+    if (verifiedUrl != null) {
+      tableModel.addDownload(new Download(verifiedUrl));
+      addTextField.setText(""); // zresetowanie pola dodawania
+    } else {
+      JOptionPane.showMessageDialog(this,
+        "B³êdny adres URL", "B³¹d",
+        JOptionPane.ERROR_MESSAGE);
+    }
+  }
+
+  // Weryfikacja adresu URL.
+  private URL verifyUrl(String url) {
+    // Tylko adresy HTTP.
+    if (!url.toLowerCase().startsWith("http://"))
+      return null;
+
+    // Weryfikacja formatu URL.
+    URL verifiedUrl = null;
+    try {
+      verifiedUrl = new URL(url);
+    } catch (Exception e) {
+      return null;
+    }
+
+    // Upewnienie siê, i¿ adres URL wskazuje plik.
+    if (verifiedUrl.getFile().length() < 2)
+      return null;
+
+    return verifiedUrl;
+  }
+
+  // Wywo³ywane przy zmianie zaznaczonego wiersza.
+  private void tableSelectionChanged() {
+    /* Usuniêcie opcji powiadamiania z
+       ostatnio zaznaczonego wiersza. */
+    if (selectedDownload != null)
+      selectedDownload.deleteObserver(DownloadManager.this);
+
+    /* Jeœli to nie jest usuwanie wiersza,
+       ustaw otrzymywanie powiadomieñ od tego wiersza. */
+    if (!clearing && table.getSelectedRow() > -1) {
+      selectedDownload =
+        tableModel.getDownload(table.getSelectedRow());
+      selectedDownload.addObserver(DownloadManager.this);
+      updateButtons();
+    }
+  }
+
+  // Wstrzymanie wybranego pliku.
+  private void actionPause() {
+    selectedDownload.pause();
+    updateButtons();
+  }
+
+  // Wznowienie pobierania pliku.
+  private void actionResume() {
+    selectedDownload.resume();
+    updateButtons();
+  }
+
+  // Anulowanie pobierania.
+  private void actionCancel() {
+    selectedDownload.cancel();
+    updateButtons();
+  }
+
+  // Usuniêcie pobierania.
+  private void actionClear() {
+    clearing = true;
+    tableModel.clearDownload(table.getSelectedRow());
+    clearing = false;
+    selectedDownload = null;
+    updateButtons();
+  }
+
+  /* Aktualizacja aktualnego stanu przycisków w zale¿noœci
+     od stanu zaznaczonego pobierania. */
+  private void updateButtons() {
+    if (selectedDownload != null) {
+      int status = selectedDownload.getStatus();
+      switch (status) {
+        case Download.DOWNLOADING:
+          pauseButton.setEnabled(true);
+          resumeButton.setEnabled(false);
+          cancelButton.setEnabled(true);
+          clearButton.setEnabled(false);
+          break;
+        case Download.PAUSED:
+          pauseButton.setEnabled(false);
+          resumeButton.setEnabled(true);
+          cancelButton.setEnabled(true);
+          clearButton.setEnabled(false);
+          break;
+        case Download.ERROR:
+          pauseButton.setEnabled(false);
+          resumeButton.setEnabled(true);
+          cancelButton.setEnabled(false);
+          clearButton.setEnabled(true);
+          break;
+        default: // CA£Y lub ANULOWANY
+          pauseButton.setEnabled(false);
+          resumeButton.setEnabled(false);
+          cancelButton.setEnabled(false);
+          clearButton.setEnabled(true);
+      }
+    } else {
+      // Nie jest zaznaczone ¿adne pobieranie.
+      pauseButton.setEnabled(false);
+      resumeButton.setEnabled(false);
+      cancelButton.setEnabled(false);
+      clearButton.setEnabled(false);
+    }
+  }
+
+  /* Aktualizacja po otrzymaniu informacji o dowolnych zmianach
+     w klasie Download. */
+  public void update(Observable o, Object arg) {
+    // Aktualizacja przycisków w przypadku zmiany zaznaczonego pobierania.
+    if (selectedDownload != null && selectedDownload.equals(o))
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          updateButtons();
+        }
+      });
+  }
+
+  // Uruchomienie programu.
+  public static void main(String[] args) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        DownloadManager manager = new DownloadManager();
+        manager.setVisible(true);
+      }
+    });
+  }
+}
+
+Listing 3.
+import java.util.*;
+import javax.swing.*;
+import javax.swing.table.*;
+
+// Ta klasa zarz¹dza danymi pobieranych plików.
+class DownloadsTableModel extends AbstractTableModel
+  implements Observer
+{
+  // Tutaj znajduj¹ siê nazwy kolumn tabeli.
+  private static final String[] columnNames = {"URL", "Rozmiar",
+    "Postêp", "Status"};
+
+  // Oto klasy dla poszczególnych wartoœci kolumn.
+  private static final Class[] columnClasses = {String.class,
+    String.class, JProgressBar.class, String.class};
+
+  // Lista pobierania tabeli.
+  private ArrayList<Download> downloadList = new ArrayList<Download>();
+
+  // Dodanie nowego pobierania do tabeli.
+  public void addDownload(Download download) {
+    // Rejestracja jako odbiorca zmian w pobieraniu.
+    download.addObserver(this);
+
+    downloadList.add(download);
+
+    // Wys³anie powiadomienia o wstawieniu nowego wiersza do tabeli.
+    fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
+  }
+
+  // Pobranie pobierania dla okreœlonego wiersza.
+  public Download getDownload(int row) {
+    return (Download) downloadList.get(row);
+  }
+
+  // Usuwanie pobierania z tabeli.
+  public void clearDownload(int row) {
+    downloadList.remove(row);
+
+    // Wys³anie powiadomienia o usuwaniu wiersza z tabeli.
+    fireTableRowsDeleted(row, row);
+  }
+
+  // Pobranie liczby kolumn.
+  public int getColumnCount() {
+    return columnNames.length;
+  }
+
+  // Pobranie nazw kolumn.
+  public String getColumnName(int col) {
+     return columnNames[col];
+  }
+
+  // Pobranie klas kolumn.
+  public Class<?> getColumnClass(int col) {
+    return columnClasses[col];
+  }
+  // Pobranie liczby wierszy.
+  public int getRowCount() {
+    return downloadList.size();
+  }
+
+  // Pobranie wartoœci dla danego wiersza i kolumny.
+  public Object getValueAt(int row, int col) {
+    Download download = (Download) downloadList.get(row);
+    switch (col) {
+      case 0: // URL
+        return download.getUrl();
+      case 1: // Rozmiar
+        int size = download.getSize();
+        return (size == -1) ? "" : Integer.toString(size);
+      case 2: // Postêp
+        return new Float(download.getProgress());
+      case 3: // Status
+        return Download.STATUSES[download.getStatus()];
+    }
+    return "";
+  }
+
+  /* Aktualizacja, gdy klasa Download powiadomi o
+     jakichkolwiek zmianach. */
+  public void update(Observable o, Object arg) {
+    int index = downloadList.indexOf(o);
+
+    // Wys³anie powiadomienia o aktualizacji wiersza.
+    fireTableRowsUpdated(index, index);
+  }
+}
+
+Listing 4.
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.table.*;
+
+// Ta klasa renderuje JProgressBar w komórce tablicy.
+class ProgressRenderer extends JProgressBar
+  implements TableCellRenderer
+{
+  // Konstruktor ProgressRenderer.
+  public ProgressRenderer(int min, int max) {
+    super(min, max);
+  }
+
+  /* Zwraca ten JProgressBar jako renderer
+     dla danej komórki tabeli. */
+  public Component getTableCellRendererComponent(
+    JTable table, Object value, boolean isSelected,
+    boolean hasFocus, int row, int column)
+  {
+    // Ustawianie procentowej wartoœci dla JProgressBar.
+    setValue((int) ((Float) value).floatValue());
+    return this;
+  }
+}
+
+
